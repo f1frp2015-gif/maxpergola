@@ -11,6 +11,14 @@
     {"source": "/index.html", "destination": "/", "permanent": true},
     {"source": "/pergola-kits/index.html", "destination": "/pergola-kits/", "permanent": true},
     {"source": "/pergola-kits/louvered/index.html", "destination": "/pergola-kits/louvered/", "permanent": true},
+    {"source": "/pergola-kits/standard/index.html", "destination": "/pergola-kits/standard/", "permanent": true},
+    {"source": "/pergola-kits/pro/index.html", "destination": "/pergola-kits/pro/", "permanent": true},
+    {"source": "/pergola-kits/max/index.html", "destination": "/pergola-kits/max/", "permanent": true},
+    {"source": "/engineering/specifications/index.html", "destination": "/engineering/specifications/", "permanent": true},
+    {"source": "/engineering-calculator/index.html", "destination": "/engineering-calculator/", "permanent": true},
+    {"source": "/warranty/index.html", "destination": "/warranty/", "permanent": true},
+    {"source": "/request-quote/index.html", "destination": "/request-quote/", "permanent": true},
+    {"source": "/crm/index.html", "destination": "/crm/", "permanent": true},
     {"source": "/pergola-lighting-ideas/index.html", "destination": "/pergola-lighting-ideas/", "permanent": true},
     {"source": "/pergola-installation/index.html", "destination": "/pergola-installation/", "permanent": true},
     {"source": "/pergola-cost/index.html", "destination": "/pergola-cost/", "permanent": true},
@@ -89,6 +97,24 @@
     {
       "source": "/shipping-returns/",
       "headers": [{"key": "X-Robots-Tag", "value": "noindex, follow"}]
+    },
+    {
+      "source": "/request-quote/",
+      "headers": [{"key": "X-Robots-Tag", "value": "noindex, follow"}]
+    },
+    {
+      "source": "/crm/",
+      "headers": [
+        {"key": "X-Robots-Tag", "value": "noindex, nofollow"},
+        {"key": "Cache-Control", "value": "private, no-store"}
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {"key": "X-Robots-Tag", "value": "noindex, nofollow"},
+        {"key": "Cache-Control", "value": "private, no-store"}
+      ]
     }
   ]
 }

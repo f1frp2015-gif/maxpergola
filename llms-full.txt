@@ -69,9 +69,35 @@ Lighting guide: https://maxpergola.com/pergola-lighting-ideas/
 
 ## Project cost scope
 
-A complete pergola budget includes the configured product, freight, unloading, foundations and anchors, assembly labor, electrical work, accessories, permits and professional review, applicable taxes, inspections, and an identified contingency. The website does not publish an incomplete universal price. A written quote is tied to the configuration SKU, destination ZIP code, site information, and stated inclusions and exclusions.
+A complete pergola budget includes the configured product, freight, unloading, foundations and anchors, assembly labor, electrical work, accessories, permits and professional review, applicable taxes, inspections, and an identified contingency. Published prices are 10 × 10 product starting prices; a written quote is tied to the configuration SKU, destination ZIP code, site information, and stated inclusions and exclusions.
 
 Cost guide: https://maxpergola.com/pergola-cost/
+
+## Published 10 × 10 pricing
+
+Standard manual louvers: launch price $4,089; compare-at price $5,841. Pro motorized louvers: launch price $5,034; compare-at price $7,191. Max premium motorized and louver-light-prepared package: launch price $7,239; compare-at price $10,341.
+
+Both prices in each pair were set 10% below the corresponding public PERGOLUX benchmark viewed August 9, 2026. Competitor prices and promotions can change. These are starting product prices for a freestanding 10 × 10 Graphite configuration; taxes, site work, foundations, anchors, unloading, permits, electrical work, and installation are separate unless itemized in the accepted quote.
+
+Standard: https://maxpergola.com/pergola-kits/standard/
+Pro: https://maxpergola.com/pergola-kits/pro/
+Max: https://maxpergola.com/pergola-kits/max/
+
+## Material specifications, BOM and warranty
+
+The order design basis is extruded 6063-T6 aluminum, subject to confirmation by mill certificate. Current profile drawing values are: 150 × 150 × 2.2 mm columns; 165 × 40 × 1.8 mm crossbeams; 83.75 × 65 × 1.3 mm crossbeam sinks; and 175 × 35 × 1.2 mm flap/louver profiles. The default nominal planning height is 2.7 m. These dimensions do not establish structural capacity by themselves.
+
+Specifications and BOM: https://maxpergola.com/engineering/specifications/
+
+The limited consumer warranty provides 10 years of coverage for covered structural frame defects, 5 years for covered powder-coat defects, and 2 years for covered moving and electrical components, subject to the full terms and exclusions.
+
+Warranty: https://maxpergola.com/warranty/
+
+## Engineering screening
+
+The online calculator accepts site wind speed, ground snow load, exposure, footprint, and entered span for preliminary routing. It is not a structural approval, component capacity rating, or permit package. Exact site hazard data should come from the ASCE Hazard Tool or local authority, and final design must address the adopted code, pressure coefficients, drift, load combinations, section properties, connections, anchors, and foundations.
+
+Calculator: https://maxpergola.com/engineering-calculator/
 
 ## Material and ownership context
 
@@ -117,6 +143,12 @@ Do not infer prices, discounts, inventory, certifications, engineering values, w
 - Official site: https://maxpergola.com/
 - Product configurator: https://maxpergola.com/pergola-kits/
 - Louvered pergola kits: https://maxpergola.com/pergola-kits/louvered/
+- Standard manual pergola: https://maxpergola.com/pergola-kits/standard/
+- Pro motorized pergola: https://maxpergola.com/pergola-kits/pro/
+- Max premium pergola: https://maxpergola.com/pergola-kits/max/
+- Specifications and BOM: https://maxpergola.com/engineering/specifications/
+- Wind, snow, and span calculator: https://maxpergola.com/engineering-calculator/
+- Limited warranty: https://maxpergola.com/warranty/
 - Pergola lighting ideas: https://maxpergola.com/pergola-lighting-ideas/
 - Pergola installation: https://maxpergola.com/pergola-installation/
 - Pergola cost guide: https://maxpergola.com/pergola-cost/
