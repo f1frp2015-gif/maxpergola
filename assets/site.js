@@ -283,3 +283,61 @@ if (configurator) {
 
   updateConfigurator();
 }
+
+const partnerForm = document.querySelector('[data-partner-form]');
+
+if (partnerForm) {
+  const trackSelect = partnerForm.querySelector('[data-partner-track-select]');
+  const status = partnerForm.querySelector('[data-partner-form-status]');
+  const trackLabels = {
+    dealer: 'Dealer / Fabricator',
+    installer: 'Certified Installer',
+    builder: 'Builder / Project Partner'
+  };
+
+  const selectTrack = (track) => {
+    if (!trackSelect || !trackLabels[track]) return;
+    trackSelect.value = track;
+  };
+
+  selectTrack(new URLSearchParams(window.location.search).get('track'));
+
+  document.querySelectorAll('[data-partner-track]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      selectTrack(link.dataset.partnerTrack);
+      document.querySelector('#apply')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.setTimeout(() => trackSelect?.focus({ preventScroll: true }), 550);
+    });
+  });
+
+  partnerForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (!partnerForm.reportValidity()) return;
+
+    const data = new FormData(partnerForm);
+    const track = data.get('track');
+    const subject = `Max Pergola partner application — ${trackLabels[track] || 'Trade account'}`;
+    const body = [
+      'Hello Max Pergola,',
+      '',
+      'Please review this partner application:',
+      `Partner track: ${trackLabels[track] || track}`,
+      `Name: ${data.get('name')}`,
+      `Business: ${data.get('business')}`,
+      `Work email: ${data.get('email')}`,
+      `Phone: ${data.get('phone') || 'Not supplied'}`,
+      `Service area or ZIP: ${data.get('region')}`,
+      `Website or social profile: ${data.get('website') || 'Not supplied'}`,
+      `Expected annual volume: ${data.get('volume')}`,
+      '',
+      'Customers and typical projects:',
+      data.get('details'),
+      '',
+      'Please share qualification questions, the applicable pricing structure, commercial terms, and next steps.'
+    ].join('\n');
+
+    if (status) status.textContent = 'Your email app is opening with the completed application.';
+    window.location.href = `mailto:inquiry@maxpergola.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  });
+}

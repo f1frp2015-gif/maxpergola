@@ -13,7 +13,8 @@ const pages = [
   {file: 'pergola-cost/index.html', canonical: `${siteOrigin}/pergola-cost/`, keyword: 'pergola cost', keywordOccurrences: 16, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article', 'FAQPage']},
   {file: 'diy-pergola/index.html', canonical: `${siteOrigin}/diy-pergola/`, keyword: 'diy pergola', keywordOccurrences: 9, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'HowTo']},
   {file: 'backyard-pergola-ideas/index.html', canonical: `${siteOrigin}/backyard-pergola-ideas/`, keyword: 'backyard pergola ideas', keywordOccurrences: 10, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article']},
-  {file: 'pergola-vs-gazebo/index.html', canonical: `${siteOrigin}/pergola-vs-gazebo/`, keyword: 'pergola vs gazebo', keywordOccurrences: 12, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article']}
+  {file: 'pergola-vs-gazebo/index.html', canonical: `${siteOrigin}/pergola-vs-gazebo/`, keyword: 'pergola vs gazebo', keywordOccurrences: 12, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article']},
+  {file: 'partner-program/index.html', canonical: `${siteOrigin}/partner-program/`, keyword: 'partner program', keywordOccurrences: 14, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'FAQPage']}
 ];
 const noindexPages = [
   {file: 'privacy-policy/index.html', canonical: `${siteOrigin}/privacy-policy/`},
