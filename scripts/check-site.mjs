@@ -83,7 +83,7 @@ for (const file of allHtml) {
   }
 }
 
-for (const required of ['robots.txt', 'sitemap.xml', 'favicon.svg', 'vercel.json', 'assets/styles.css', 'assets/site.js']) {
+for (const required of ['robots.txt', 'sitemap.xml', 'maxpergola-icon.svg', 'vercel.json', 'assets/styles.css', 'assets/site.js']) {
   if (!existsSync(join(root, required))) errors.push(`Missing required file: ${required}`);
 }
 
