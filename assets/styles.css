@@ -923,6 +923,20 @@ a {
   box-shadow: var(--shadow-tech);
 }
 
+.feature-media-infographic img {
+  aspect-ratio: auto;
+  object-fit: contain;
+  background: #fff;
+}
+
+.feature-media-infographic .feature-media-label {
+  position: static;
+  max-width: none;
+  margin-top: 10px;
+  border: 1px solid var(--line);
+  box-shadow: none;
+}
+
 .feature-media-label {
   position: absolute;
   right: -18px;
@@ -4279,6 +4293,18 @@ a {
   transition: transform 520ms cubic-bezier(0.2, 0.72, 0.25, 1);
 }
 
+.package-card-image-diagram {
+  background: #fff;
+}
+
+.package-card-image-diagram::after {
+  display: none;
+}
+
+.package-card-image-diagram img {
+  object-fit: contain;
+}
+
 .package-card-image img[src$="led-lounge-pergola.jpg"] {
   object-position: center bottom;
   transform: scale(1.28);
@@ -4287,6 +4313,10 @@ a {
 
 .package-card:hover .package-card-image img {
   transform: scale(1.04);
+}
+
+.package-card:hover .package-card-image-diagram img {
+  transform: none;
 }
 
 .package-card:hover .package-card-image img[src$="led-lounge-pergola.jpg"] {
