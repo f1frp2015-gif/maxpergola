@@ -1,6 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="16" fill="#173d2f"/>
-  <path d="M16 19h32v7H16zm0 13h32v7H16zm0 13h32v7H16z" fill="#cad8c5"/>
-  <path d="M16 16v40M48 16v40" stroke="#fffdf8" stroke-width="5" stroke-linecap="round"/>
-  <circle cx="49" cy="49" r="7" fill="#e56f3d"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="MAX PERGOLA symbol">
+  <defs><clipPath id="symbol-crop"><rect x="0" y="0" width="390" height="278"/></clipPath></defs>
+  <rect width="512" height="512" fill="#181818"/>
+  <g transform="translate(35 99) scale(1.13)" clip-path="url(#symbol-crop)">
+    <path d="M0 64L25 64L194 144L366 64L389 64L389 278L344 278L344 127L194 197L44 127L44 278L0 278Z" fill="#F7F2E9" fill-rule="evenodd"/>
+    <path d="M194 0L216 9L40 71L0 64Z" fill="#F7F2E9" fill-rule="evenodd"/>
+    <path d="M74 74L237 16L255 23L91 83ZM115 93L278 31L297 39L132 102ZM157 113L323 47L341 55L174 123Z" fill="#BE995B" fill-rule="evenodd"/>
+  </g>
 </svg>
