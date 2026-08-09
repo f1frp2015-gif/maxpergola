@@ -15,6 +15,12 @@ const pages = [
   {file: 'backyard-pergola-ideas/index.html', canonical: `${siteOrigin}/backyard-pergola-ideas/`, keyword: 'backyard pergola ideas', keywordOccurrences: 10, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article']},
   {file: 'pergola-vs-gazebo/index.html', canonical: `${siteOrigin}/pergola-vs-gazebo/`, keyword: 'pergola vs gazebo', keywordOccurrences: 12, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article']}
 ];
+const noindexPages = [
+  {file: 'privacy-policy/index.html', canonical: `${siteOrigin}/privacy-policy/`},
+  {file: 'terms-of-use/index.html', canonical: `${siteOrigin}/terms-of-use/`},
+  {file: 'shipping-returns/index.html', canonical: `${siteOrigin}/shipping-returns/`}
+];
+const legalPaths = noindexPages.map((page) => new URL(page.canonical).pathname);
 
 const errors = [];
 const canonicalUrls = new Set();
@@ -79,6 +85,26 @@ for (const page of pages) {
   }
 }
 
+for (const page of noindexPages) {
+  const html = read(page.file);
+  requireMatch(html, /<html lang="en-US" dir="ltr">/, `${page.file}: expected en-US language and ltr direction`);
+  requireMatch(html, /<meta name="robots" content="noindex, follow">/, `${page.file}: noindex, follow robots directive missing`);
+  requireMatch(html, /<meta name="googlebot" content="noindex, follow">/, `${page.file}: noindex, follow Googlebot directive missing`);
+  requireMatch(html, new RegExp(`<link rel="canonical" href="${page.canonical.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}">`), `${page.file}: canonical does not match ${page.canonical}`);
+  requireMatch(html, new RegExp(`<link rel="icon" href="${brandIcon.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}" type="image/svg\\+xml">`), `${page.file}: official brand icon missing`);
+}
+
+const contactFiles = [...pages.map((page) => page.file), ...noindexPages.map((page) => page.file)];
+for (const file of contactFiles) {
+  const html = read(file);
+  requireMatch(html, /Sales Director/, `${file}: sales director title missing`);
+  requireMatch(html, /Doris Li/, `${file}: sales director name missing`);
+  requireMatch(html, /href="tel:\+8613883338993">\+86 138 8333 8993<\/a>/, `${file}: sales phone link missing or malformed`);
+  for (const path of legalPaths) {
+    if (!html.includes(`href="${path}"`)) errors.push(`${file}: legal link ${path} missing`);
+  }
+}
+
 const notFound = read('404.html');
 requireMatch(notFound, /<html lang="en-US" dir="ltr">/, '404.html: expected en-US language and ltr direction');
 requireMatch(notFound, /<meta name="robots" content="noindex, follow">/, '404.html: noindex, follow missing');
@@ -91,6 +117,9 @@ const sitemapUrls = [...sitemap.matchAll(/<url>\s*<loc>([^<]+)<\/loc>/g)].map((m
 if (sitemapUrls.length !== pages.length) errors.push(`sitemap.xml: expected ${pages.length} canonical URLs, found ${sitemapUrls.length}`);
 for (const page of pages) {
   if (!sitemapUrls.includes(page.canonical)) errors.push(`sitemap.xml: missing ${page.canonical}`);
+}
+for (const page of noindexPages) {
+  if (sitemapUrls.includes(page.canonical)) errors.push(`sitemap.xml: noindex URL must be excluded: ${page.canonical}`);
 }
 for (const date of sitemap.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date[1])) errors.push(`sitemap.xml: invalid lastmod ${date[1]}`);
@@ -119,7 +148,7 @@ for (const page of pages) {
   if (!llmsFull.includes(page.canonical)) errors.push(`llms-full.txt: missing canonical URL ${page.canonical}`);
 }
 
-const publicFiles = [...pages.map((page) => read(page.file)), llms, llmsFull, read('feed.xml')].join('\n');
+const publicFiles = [...pages.map((page) => read(page.file)), ...noindexPages.map((page) => read(page.file)), llms, llmsFull, read('feed.xml')].join('\n');
 if (/ori@f1composite\.com|doris\.li@f1composite\.com/i.test(publicFiles)) errors.push('Public SEO/GEO resources expose an internal forwarding address');
 
 const feed = read('feed.xml');
@@ -138,12 +167,21 @@ if (indexNowKey !== '7728d1e43c48ba5d3a9c7d6411fb24fc') errors.push('IndexNow ke
 const vercel = JSON.parse(read('vercel.json'));
 if (vercel.trailingSlash !== true) errors.push('vercel.json: trailingSlash must remain true');
 const redirects = new Map((vercel.redirects || []).map((redirect) => [redirect.source, redirect]));
+const headersBySource = new Map((vercel.headers || []).map((entry) => [entry.source, entry.headers || []]));
 const wwwRedirect = (vercel.redirects || []).find((redirect) => redirect.has?.some((condition) => condition.type === 'host' && condition.value === 'www.maxpergola.com'));
 if (!wwwRedirect || wwwRedirect.destination !== 'https://maxpergola.com/:path*' || wwwRedirect.permanent !== true) errors.push('vercel.json: permanent www-to-apex redirect missing');
 for (const page of pages) {
   const source = page.file === 'index.html' ? '/index.html' : `/${page.file}`;
   const redirect = redirects.get(source);
   if (!redirect || redirect.destination !== new URL(page.canonical).pathname || redirect.permanent !== true) errors.push(`vercel.json: permanent canonical redirect missing for ${source}`);
+}
+for (const page of noindexPages) {
+  const source = `/${page.file}`;
+  const path = new URL(page.canonical).pathname;
+  const redirect = redirects.get(source);
+  if (!redirect || redirect.destination !== path || redirect.permanent !== true) errors.push(`vercel.json: permanent canonical redirect missing for ${source}`);
+  const xRobotsTag = headersBySource.get(path)?.find((header) => header.key.toLowerCase() === 'x-robots-tag')?.value;
+  if (xRobotsTag !== 'noindex, follow') errors.push(`vercel.json: ${path} must send X-Robots-Tag: noindex, follow`);
 }
 
 if (errors.length) {
