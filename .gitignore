@@ -1,0 +1,7 @@
+.DS_Store
+artifacts/
+
+# Unreferenced source copies retained locally; optimized JPEGs are deployed.
+assets/images/poolside-glass-pergola.png
+assets/images/export-packaging.png
+.vercel
