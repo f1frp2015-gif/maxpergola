@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const siteOrigin = 'https://maxpergola.com';
+const brandIcon = '/maxpergola-icon.svg';
 const pages = [
   {file: 'index.html', canonical: `${siteOrigin}/`, types: ['Organization', 'WebSite', 'WebPage', 'FAQPage']},
   {file: 'pergola-kits/index.html', canonical: `${siteOrigin}/pergola-kits/`, types: ['Organization', 'WebSite', 'CollectionPage', 'BreadcrumbList', 'ItemList']},
@@ -34,6 +35,7 @@ for (const page of pages) {
   requireMatch(html, /<link rel="sitemap" type="application\/xml" href="https:\/\/maxpergola\.com\/sitemap\.xml">/, `${page.file}: sitemap discovery link missing`);
   requireMatch(html, /<link rel="alternate" type="application\/atom\+xml"[^>]+href="https:\/\/maxpergola\.com\/feed\.xml">/, `${page.file}: Atom discovery link missing`);
   requireMatch(html, /<link rel="manifest" href="\/site\.webmanifest">/, `${page.file}: web manifest link missing`);
+  requireMatch(html, new RegExp(`<link rel="icon" href="${brandIcon.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}" type="image/svg\\+xml">`), `${page.file}: official brand icon missing`);
 
   for (const property of ['og:type', 'og:title', 'og:description', 'og:url', 'og:site_name', 'og:locale', 'og:image', 'og:image:width', 'og:image:height', 'og:image:alt']) {
     requireMatch(html, new RegExp(`<meta property="${property.replace(':', '\\:')}" content="[^"]+">`), `${page.file}: ${property} missing`);
@@ -69,6 +71,7 @@ for (const page of pages) {
 const notFound = read('404.html');
 requireMatch(notFound, /<html lang="en-US" dir="ltr">/, '404.html: expected en-US language and ltr direction');
 requireMatch(notFound, /<meta name="robots" content="noindex, follow">/, '404.html: noindex, follow missing');
+requireMatch(notFound, new RegExp(`<link rel="icon" href="${brandIcon.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}" type="image/svg\\+xml">`), '404.html: official brand icon missing');
 if (/rel="canonical"/.test(notFound)) errors.push('404.html: should not declare a canonical URL');
 
 const sitemap = read('sitemap.xml');
@@ -116,7 +119,7 @@ for (const page of pages.slice(1)) {
 
 const manifest = JSON.parse(read('site.webmanifest'));
 if (manifest.name !== 'Max Pergola' || manifest.lang !== 'en-US' || manifest.start_url !== '/') errors.push('site.webmanifest: brand, language or start URL is invalid');
-if (!manifest.icons?.some((icon) => icon.src === '/favicon.svg')) errors.push('site.webmanifest: favicon icon missing');
+if (!manifest.icons?.some((icon) => icon.src === brandIcon)) errors.push('site.webmanifest: official brand icon missing');
 
 const indexNowKey = read('7728d1e43c48ba5d3a9c7d6411fb24fc.txt').trim();
 if (indexNowKey !== '7728d1e43c48ba5d3a9c7d6411fb24fc') errors.push('IndexNow key file content does not match its filename');
