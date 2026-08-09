@@ -1,22 +1,22 @@
 # Max Pergola
 
-> Max Pergola is a factory-direct brand for aluminum louvered pergola kits serving residential projects in the United States. The site uses US customary dimensions as the primary units and provides metric references.
+> Max Pergola supplies factory-direct aluminum louvered pergola kits for residential projects in the United States. Product pages lead with U.S. customary dimensions and include metric references for drawings and production.
 
-Current fulfillment: factory-direct DDP delivery from Chongqing to a quoted US destination. Max Pergola plans to begin Los Angeles warehouse fulfillment for qualifying in-stock standard SKUs in July 2027. Prices, engineering criteria, availability and delivery are confirmed by written project quote rather than assumed from the website.
+Current shipping: orders are quoted factory-direct from Chongqing under Delivered Duty Paid (DDP) terms to a confirmed U.S. destination. Max Pergola plans to begin Los Angeles fulfillment for select in-stock standard SKUs in July 2027. The written project quote controls pricing, design criteria, availability, shipping terms, and ship-from location.
 
 ## Products
 
-- [Aluminum pergola kits](https://maxpergola.com/pergola-kits/): Configure seven nominal footprints from 10 × 10 ft through 13 × 19 ft, compare metric dimensions, select preparation options and create a quote-ready SKU.
+- [Aluminum pergola kits](https://maxpergola.com/pergola-kits/): Compare seven nominal footprints from 10 × 10 ft through 13 × 19 ft; choose the roof package, layout, finish, and factory-prepared accessories; and create a configuration SKU for a written quote.
 
 ## Planning guides
 
-- [DIY pergola guide](https://maxpergola.com/diy-pergola/): Site, foundation, inventory, frame, roof and final-check planning sequence for an aluminum pergola kit.
-- [Backyard pergola ideas](https://maxpergola.com/backyard-pergola-ideas/): Six practical residential layouts for dining, poolside kitchens, compact patios and evening lounges.
-- [Pergola vs gazebo](https://maxpergola.com/pergola-vs-gazebo/): Neutral comparison of roof design, shade, rain response, appearance and use.
+- [DIY pergola guide](https://maxpergola.com/diy-pergola/): Jobsite, footing, anchor, delivery, frame, louvered-roof, drainage, and final-inspection checklist.
+- [Backyard pergola ideas](https://maxpergola.com/backyard-pergola-ideas/): Six residential layouts for outdoor dining, kitchens, pool decks, small patios, and evening lounges.
+- [Pergola vs gazebo](https://maxpergola.com/pergola-vs-gazebo/): Comparison of roof type, shade control, rain coverage, footings, maintenance, and common backyard uses.
 
 ## Brand and machine-readable context
 
-- [Max Pergola home](https://maxpergola.com/): Official brand overview, fulfillment explanation and frequently asked questions.
+- [Max Pergola home](https://maxpergola.com/): Brand overview, package summary, shipping explanation, and frequently asked questions.
 - [Full site context](https://maxpergola.com/llms-full.txt): Consolidated factual context for AI assistants and research tools.
 - [XML sitemap](https://maxpergola.com/sitemap.xml): Canonical indexable URLs and associated images.
 - [Atom feed](https://maxpergola.com/feed.xml): Discoverable guide and product-page updates.
@@ -24,4 +24,4 @@ Current fulfillment: factory-direct DDP delivery from Chongqing to a quoted US d
 ## Optional
 
 - [Robots policy](https://maxpergola.com/robots.txt): Crawler access policy.
-- [Contact Max Pergola](mailto:inquiry@maxpergola.com): Product configuration and US delivery inquiries.
+- [Contact Max Pergola](mailto:inquiry@maxpergola.com): Product configuration and U.S. delivery inquiries.
