@@ -24,6 +24,10 @@ SEO/GEO maintenance and search-engine onboarding are documented in [`SEO-GEO-OPE
 
 - `/` — Max Pergola brand + aluminum pergola category
 - `/pergola-kits/` — `pergola kits`
+- `/pergola-kits/louvered/` — `louvered pergola kits`, `pergola roof`, `pergola with roof`
+- `/pergola-lighting-ideas/` — `pergola lighting ideas`, `LED pergola lights`
+- `/pergola-installation/` — `pergola installation`, DIY versus professional scope
+- `/pergola-cost/` — `pergola cost`, complete-project budgeting
 - `/diy-pergola/` — `diy pergola`
 - `/backyard-pergola-ideas/` — `backyard pergola ideas`
 - `/pergola-vs-gazebo/` — `pergola vs gazebo`
