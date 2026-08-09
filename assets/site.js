@@ -83,21 +83,53 @@ if (configurator) {
       image: '/assets/images/led-lounge-pergola.jpg',
       imageAlt: "Max 10 foot by 10 foot aluminum pergola kit"
     },
-    1216: {
-      imperial: "12' × 16'",
-      metric: '3.66 × 4.88 m',
-      millimeters: '3658 × 4877 mm',
-      area: '192 sq ft • 17.8 m²',
+    1013: {
+      imperial: "10' × 13'",
+      metric: '3.05 × 3.96 m',
+      millimeters: '3048 × 3962 mm',
+      area: '130 sq ft • 12.1 m²',
       image: '/assets/images/poolside-glass-pergola.jpg',
-      imageAlt: "Max 12 foot by 16 foot aluminum pergola kit"
+      imageAlt: "Max 10 foot by 13 foot aluminum pergola kit"
     },
-    1220: {
-      imperial: "12' × 20'",
-      metric: '3.66 × 6.10 m',
-      millimeters: '3658 × 6096 mm',
-      area: '240 sq ft • 22.3 m²',
+    1016: {
+      imperial: "10' × 16'",
+      metric: '3.05 × 4.88 m',
+      millimeters: '3048 × 4877 mm',
+      area: '160 sq ft • 14.9 m²',
       image: '/assets/images/led-lounge-pergola.jpg',
-      imageAlt: "Max 12 foot by 20 foot aluminum pergola kit"
+      imageAlt: "Max 10 foot by 16 foot aluminum pergola kit"
+    },
+    1019: {
+      imperial: "10' × 19'",
+      metric: '3.05 × 5.79 m',
+      millimeters: '3048 × 5791 mm',
+      area: '190 sq ft • 17.7 m²',
+      image: '/assets/images/poolside-glass-pergola.jpg',
+      imageAlt: "Max 10 foot by 19 foot aluminum pergola kit"
+    },
+    1313: {
+      imperial: "13' × 13'",
+      metric: '3.96 × 3.96 m',
+      millimeters: '3962 × 3962 mm',
+      area: '169 sq ft • 15.7 m²',
+      image: '/assets/images/led-lounge-pergola.jpg',
+      imageAlt: "Max 13 foot by 13 foot aluminum pergola kit"
+    },
+    1316: {
+      imperial: "13' × 16'",
+      metric: '3.96 × 4.88 m',
+      millimeters: '3962 × 4877 mm',
+      area: '208 sq ft • 19.3 m²',
+      image: '/assets/images/poolside-glass-pergola.jpg',
+      imageAlt: "Max 13 foot by 16 foot aluminum pergola kit"
+    },
+    1319: {
+      imperial: "13' × 19'",
+      metric: '3.96 × 5.79 m',
+      millimeters: '3962 × 5791 mm',
+      area: '247 sq ft • 22.9 m²',
+      image: '/assets/images/led-lounge-pergola.jpg',
+      imageAlt: "Max 13 foot by 19 foot aluminum pergola kit"
     }
   };
 
