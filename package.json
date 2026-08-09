@@ -5,6 +5,7 @@
   "description": "Max Pergola brand and product website",
   "scripts": {
     "dev": "python3 -m http.server 4173",
-    "check": "node scripts/check-site.mjs"
+    "check": "node scripts/check-site.mjs && node scripts/check-seo.mjs",
+    "seo:submit": "node scripts/submit-indexnow.mjs"
   }
 }
