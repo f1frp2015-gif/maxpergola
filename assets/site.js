@@ -43,6 +43,37 @@ document.querySelectorAll('[data-year]').forEach((element) => {
 const configurator = document.querySelector('[data-configurator]');
 
 if (configurator) {
+  const packageData = {
+    ST: {
+      name: 'Standard',
+      roof: 'Manual adjustable louvers',
+      included: 'Core aluminum frame, manual louvers, integrated drainage',
+      image: '/assets/images/poolside-glass-pergola.jpg',
+      imageAlt: 'Max Pergola Standard manual louver package beside a pool'
+    },
+    PR: {
+      name: 'Pro',
+      roof: 'Motorized louver package',
+      included: 'Motorized roof scope, perimeter LED preparation, controls review',
+      image: '/assets/images/led-lounge-pergola.jpg',
+      imageAlt: 'Max Pergola Pro motorized louver package with warm lighting'
+    },
+    MX: {
+      name: 'Max',
+      roof: 'Motorized louvers + louver LED preparation',
+      included: 'Motorized roof scope, louver LED preparation, full integration review',
+      image: '/assets/images/led-lounge-pergola.jpg',
+      imageAlt: 'Max Pergola Max premium motorized package with louver lighting preparation'
+    },
+    CU: {
+      name: 'Custom',
+      roof: 'Manual or motorized — selected by project',
+      included: 'Custom dimensions, dedicated drawing review, project-specific packing',
+      image: '/assets/images/poolside-glass-pergola.jpg',
+      imageAlt: 'Custom-sized Max Pergola with optional glass wall system'
+    }
+  };
+
   const sizeData = {
     1010: {
       imperial: "10' × 10'",
@@ -72,12 +103,14 @@ if (configurator) {
 
   const labels = {
     layout: { FS: 'Freestanding', WM: 'Wall-attached — engineering review' },
-    roof: { ML: 'Manual louvers', MR: 'Motor-ready preparation' },
     finish: { GR: 'Graphite', WH: 'Matte white — availability review', CX: 'Custom finish — color-match review' },
     accessories: {
-      LED: 'LED preparation',
-      SCR: 'Retractable screen preparation',
-      GLS: 'Glass wall preparation'
+      LED: 'Additional LED system',
+      SCR: 'Retractable screens',
+      GLS: 'Glass wall system',
+      SLT: 'Privacy slat wall',
+      HTR: 'Radiant heater preparation',
+      OUT: 'Outlet preparation'
     }
   };
 
@@ -88,36 +121,61 @@ if (configurator) {
   };
 
   const updateConfigurator = () => {
+    const packageCode = getValue('kit-package');
     const sizeCode = getValue('kit-size');
     const layoutCode = getValue('kit-layout');
-    const roofCode = getValue('kit-roof');
     const finishCode = getValue('kit-finish');
     const selectedAccessories = [...configurator.querySelectorAll('[name="kit-accessory"]:checked')]
       .map((input) => input.value);
     const zip = configurator.querySelector('[data-config-zip]')?.value.trim() || '';
-    const size = sizeData[sizeCode];
+    const customWidth = Number(configurator.querySelector('[data-custom-width]')?.value || 0);
+    const customDepth = Number(configurator.querySelector('[data-custom-depth]')?.value || 0);
+    const customHeight = Number(configurator.querySelector('[data-custom-height]')?.value || 0);
+    const isCustom = packageCode === 'CU';
+    const packageDetails = packageData[packageCode];
+    const customDimensionsReady = customWidth > 0 && customDepth > 0;
+    const customMetricWidth = customWidth * 0.3048;
+    const customMetricDepth = customDepth * 0.3048;
+    const customArea = customWidth * customDepth;
+    const customAreaMetric = customArea * 0.092903;
+    const customImperial = customDimensionsReady ? `${customWidth}' × ${customDepth}'` : 'Custom width × depth';
+    const customMetric = customDimensionsReady ? `${customMetricWidth.toFixed(2)} × ${customMetricDepth.toFixed(2)} m` : 'Metric conversion appears after entry';
+    const customMillimeters = customDimensionsReady ? `${Math.round(customWidth * 304.8)} × ${Math.round(customDepth * 304.8)} mm` : 'Factory confirmation required';
+    const customHeightText = customHeight > 0 ? `${customHeight}' target (${(customHeight * 0.3048).toFixed(2)} m)` : 'Not supplied';
+    const size = isCustom ? {
+      imperial: customImperial,
+      metric: customMetric,
+      millimeters: customMillimeters,
+      area: customDimensionsReady ? `${customArea.toFixed(customArea % 1 ? 1 : 0)} sq ft • ${customAreaMetric.toFixed(1)} m²` : 'Calculated after dimension review'
+    } : sizeData[sizeCode];
+    const sizeGrid = configurator.querySelector('.config-choice-grid-size');
+    const customPanel = configurator.querySelector('[data-custom-dimensions]');
+    if (sizeGrid) sizeGrid.hidden = isCustom;
+    if (customPanel) customPanel.hidden = !isCustom;
     const accessorySuffix = selectedAccessories.length ? `+${selectedAccessories.join('+')}` : '';
-    const sku = `MP-${layoutCode}-${sizeCode}-${roofCode}-${finishCode}${accessorySuffix}`;
+    const sku = `MP-${packageCode}-${layoutCode}-${isCustom ? 'CUSTOM' : sizeCode}-${finishCode}${accessorySuffix}`;
     const accessoryText = selectedAccessories.length
       ? selectedAccessories.map((code) => labels.accessories[code]).join(', ')
       : 'None selected';
 
-    setText('[data-config-name]', `Max ${size.imperial} Kit`);
+    setText('[data-config-name]', `${packageDetails.name} · ${size.imperial}`);
     setText('[data-config-sku]', sku);
+    setText('[data-config-package]', packageDetails.name);
     setText('[data-config-size]', size.imperial);
-    setText('[data-config-size-metric]', `${size.metric} • ${size.millimeters}`);
+    setText('[data-config-size-metric]', `${size.metric} • ${size.millimeters}${isCustom ? ` • Clear height: ${customHeightText}` : ''}`);
     setText('[data-config-area]', size.area);
     setText('[data-config-layout]', labels.layout[layoutCode]);
-    setText('[data-config-roof]', labels.roof[roofCode]);
+    setText('[data-config-roof]', packageDetails.roof);
+    setText('[data-config-included]', packageDetails.included);
     setText('[data-config-finish]', labels.finish[finishCode]);
     setText('[data-config-accessories]', accessoryText);
     setText('[data-config-imperial]', size.imperial);
     setText('[data-config-metric]', size.metric);
 
     const image = configurator.querySelector('[data-config-image]');
-    if (image && image.getAttribute('src') !== size.image) {
-      image.setAttribute('src', size.image);
-      image.setAttribute('alt', size.imageAlt);
+    if (image && image.getAttribute('src') !== packageDetails.image) {
+      image.setAttribute('src', packageDetails.image);
+      image.setAttribute('alt', packageDetails.imageAlt);
     }
 
     const subject = `Max Pergola configuration ${sku}`;
@@ -126,12 +184,15 @@ if (configurator) {
       '',
       'Please quote the following configuration:',
       `Configuration SKU: ${sku}`,
+      `Package: ${packageDetails.name}`,
       `Nominal size: ${size.imperial} (${size.metric}; ${size.millimeters})`,
+      ...(isCustom ? [`Target clear height: ${customHeightText}`] : []),
       `Covered area: ${size.area}`,
       `Layout: ${labels.layout[layoutCode]}`,
-      `Roof: ${labels.roof[roofCode]}`,
+      `Roof: ${packageDetails.roof}`,
+      `Included package scope: ${packageDetails.included}`,
       `Finish request: ${labels.finish[finishCode]}`,
-      `Add-on planning: ${accessoryText}`,
+      `Optional accessories: ${accessoryText}`,
       'Current fulfillment: Chongqing factory → US doorstep (DDP; current phase through June 2027)',
       `US delivery ZIP: ${zip || 'Not supplied'}`,
       '',
@@ -142,7 +203,7 @@ if (configurator) {
   };
 
   configurator.querySelectorAll('input').forEach((input) => {
-    input.addEventListener(input.matches('[data-config-zip]') ? 'input' : 'change', updateConfigurator);
+    input.addEventListener(input.matches('[data-config-zip], [data-custom-width], [data-custom-depth], [data-custom-height]') ? 'input' : 'change', updateConfigurator);
   });
 
   const copyButton = configurator.querySelector('[data-copy-sku]');
@@ -161,12 +222,32 @@ if (configurator) {
     button.addEventListener('click', () => {
       const sizeInput = configurator.querySelector(`[name="kit-size"][value="${button.dataset.selectSize}"]`);
       if (!sizeInput) return;
+      const customPackage = configurator.querySelector('[name="kit-package"][value="CU"]');
+      const standardPackage = configurator.querySelector('[name="kit-package"][value="ST"]');
+      if (customPackage?.checked && standardPackage) standardPackage.checked = true;
       sizeInput.checked = true;
       updateConfigurator();
       document.querySelector('#configure')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       window.setTimeout(() => sizeInput.focus({ preventScroll: true }), 550);
     });
   });
+
+  document.querySelectorAll('[data-select-package]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const packageInput = configurator.querySelector(`[name="kit-package"][value="${button.dataset.selectPackage}"]`);
+      if (!packageInput) return;
+      packageInput.checked = true;
+      updateConfigurator();
+      document.querySelector('#configure')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.setTimeout(() => packageInput.focus({ preventScroll: true }), 550);
+    });
+  });
+
+  const requestedPackage = new URLSearchParams(window.location.search).get('package')?.toUpperCase();
+  if (requestedPackage && packageData[requestedPackage]) {
+    const requestedInput = configurator.querySelector(`[name="kit-package"][value="${requestedPackage}"]`);
+    if (requestedInput) requestedInput.checked = true;
+  }
 
   updateConfigurator();
 }

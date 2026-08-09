@@ -55,6 +55,15 @@ for (const page of pages) {
   }
   const ids = nodes.map((node) => node['@id']).filter(Boolean);
   if (ids.length !== new Set(ids).size) errors.push(`${page.file}: duplicate JSON-LD @id values`);
+
+  if (page.file === 'pergola-kits/index.html') {
+    const catalog = nodes.find((node) => node['@id'] === `${siteOrigin}/pergola-kits/#catalog`);
+    if (catalog?.numberOfItems !== 4) errors.push('pergola-kits/index.html: catalog must declare four package paths');
+    const productIds = catalog?.itemListElement?.map((entry) => entry.item?.['@id']) || [];
+    for (const tier of ['standard', 'pro', 'max', 'custom']) {
+      if (!productIds.includes(`${siteOrigin}/pergola-kits/#product-${tier}`)) errors.push(`pergola-kits/index.html: ${tier} Product entity missing from catalog`);
+    }
+  }
 }
 
 const notFound = read('404.html');
