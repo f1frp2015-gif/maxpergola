@@ -132,9 +132,10 @@ if (configurator) {
       `Roof: ${labels.roof[roofCode]}`,
       `Finish request: ${labels.finish[finishCode]}`,
       `Add-on planning: ${accessoryText}`,
+      'Current fulfillment: Chongqing factory → US doorstep (DDP; current phase through June 2027)',
       `US delivery ZIP: ${zip || 'Not supplied'}`,
       '',
-      'Please confirm final dimensions, compatibility, engineering inputs, delivery scope and current pricing.'
+      'Please confirm final dimensions, compatibility, engineering inputs, fulfillment route, delivery scope and current pricing.'
     ].join('\n');
     const cta = configurator.querySelector('[data-config-cta]');
     if (cta) cta.href = `mailto:inquiry@maxpergola.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
