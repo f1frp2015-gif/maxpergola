@@ -97,11 +97,12 @@ for (const page of noindexPages) {
 const contactFiles = [...pages.map((page) => page.file), ...noindexPages.map((page) => page.file)];
 for (const file of contactFiles) {
   const html = read(file);
-  requireMatch(html, /Sales Director/, `${file}: sales director title missing`);
-  requireMatch(html, /Doris Li/, `${file}: sales director name missing`);
-  requireMatch(html, /href="tel:\+8613883338993">\+86 138 8333 8993<\/a>/, `${file}: sales phone link missing or malformed`);
+  requireMatch(html, /<div class="utility-contact"><span>Sales Director: Doris Li<\/span>\s*<a href="tel:\+8613883338993">\+86 138 8333 8993<\/a><\/div>/, `${file}: sales contact must appear in the top-right utility bar`);
+  requireMatch(html, /<div class="footer-bottom"><span>©[\s\S]*?All rights reserved\.<\/span><nav class="footer-legal" aria-label="Legal">/, `${file}: legal navigation must replace the footer-bottom note`);
+  if (html.includes('contact-policy-bar')) errors.push(`${file}: oversized contact-policy bar must not be present`);
+  const footerLegal = html.match(/<nav class="footer-legal" aria-label="Legal">([\s\S]*?)<\/nav>/)?.[1] || '';
   for (const path of legalPaths) {
-    if (!html.includes(`href="${path}"`)) errors.push(`${file}: legal link ${path} missing`);
+    if (!footerLegal.includes(`href="${path}"`)) errors.push(`${file}: footer legal link ${path} missing`);
   }
 }
 

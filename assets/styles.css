@@ -3019,9 +3019,16 @@ a {
     justify-content: center;
   }
 
-  .utility-proof span:first-child,
-  .utility-contact {
+  .utility-proof {
     display: none;
+  }
+
+  .utility-contact {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    font-size: 9px;
+    letter-spacing: 0.05em;
   }
 
   .hero {
@@ -3213,7 +3220,7 @@ a {
     display: block;
   }
 
-  .footer-bottom span:last-child {
+  .footer-bottom > span + span {
     display: block;
     margin-top: 8px;
   }
@@ -5042,86 +5049,5 @@ a {
   .legal-content p,
   .legal-content li {
     font-size: 15px;
-  }
-}
-
-.contact-policy-bar {
-  color: rgba(247, 242, 233, 0.74);
-  border-bottom: 1px solid rgba(247, 242, 233, 0.12);
-  background: var(--max-carbon-black);
-}
-
-.contact-policy-inner {
-  display: grid;
-  grid-template-columns: auto auto minmax(0, 1fr);
-  align-items: center;
-  gap: 28px;
-  min-height: 92px;
-  padding-top: 18px;
-  padding-bottom: 18px;
-}
-
-.contact-policy-person {
-  display: grid;
-  gap: 3px;
-}
-
-.contact-policy-person span {
-  color: var(--max-champagne-gold);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.contact-policy-person strong {
-  color: var(--max-warm-ivory);
-  font-size: 17px;
-}
-
-.contact-policy-links,
-.contact-policy-legal {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  flex-wrap: wrap;
-}
-
-.contact-policy-links a,
-.contact-policy-legal a {
-  color: rgba(247, 242, 233, 0.76);
-  font-size: 13px;
-}
-
-.contact-policy-links a:hover,
-.contact-policy-legal a:hover {
-  color: var(--max-champagne-gold);
-}
-
-.contact-policy-legal {
-  justify-content: flex-end;
-}
-
-@media (max-width: 980px) {
-  .contact-policy-inner {
-    grid-template-columns: auto 1fr;
-  }
-
-  .contact-policy-legal {
-    grid-column: 1 / -1;
-    justify-content: flex-start;
-  }
-}
-
-@media (max-width: 620px) {
-  .contact-policy-inner {
-    grid-template-columns: 1fr;
-    gap: 14px;
-    padding-top: 24px;
-    padding-bottom: 24px;
-  }
-
-  .contact-policy-legal {
-    grid-column: auto;
   }
 }
