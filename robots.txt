@@ -27,5 +27,7 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /crm/
+Disallow: /api/
 
 Sitemap: https://maxpergola.com/sitemap.xml

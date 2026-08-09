@@ -40,6 +40,26 @@ document.querySelectorAll('[data-year]').forEach((element) => {
   element.textContent = new Date().getFullYear();
 });
 
+const getAttribution = () => {
+  const params = new URLSearchParams(window.location.search);
+  return ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content']
+    .reduce((result, key) => {
+      if (params.get(key)) result[key] = params.get(key);
+      return result;
+    }, {});
+};
+
+const submitLead = async (payload) => {
+  const response = await fetch('/api/inquiries', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({...payload, pageUrl: window.location.href, utm: getAttribution()})
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok || !result.ok) throw new Error(result.error || 'Unable to submit your request.');
+  return result;
+};
+
 const configurator = document.querySelector('[data-configurator]');
 
 if (configurator) {
@@ -48,6 +68,8 @@ if (configurator) {
       name: 'Standard',
       roof: 'Manual louvers',
       included: 'Aluminum frame, manual louvers, integrated gutters and post drainage',
+      startPrice: '$4,089',
+      comparePrice: '$5,841',
       image: '/assets/images/poolside-glass-pergola.jpg',
       imageAlt: 'Max Pergola Standard manual louver package beside a pool'
     },
@@ -55,6 +77,8 @@ if (configurator) {
       name: 'Pro',
       roof: 'Motorized louvers',
       included: 'Motorized louvers, perimeter LED preparation, controls and wiring review',
+      startPrice: '$5,034',
+      comparePrice: '$7,191',
       image: '/assets/images/led-lounge-pergola.jpg',
       imageAlt: 'Max Pergola Pro motorized louver package with warm lighting'
     },
@@ -62,6 +86,8 @@ if (configurator) {
       name: 'Max',
       roof: 'Motorized louvers with louver-mounted LED preparation',
       included: 'Motorized louvers, louver-mounted LED preparation, accessory compatibility review',
+      startPrice: '$7,239',
+      comparePrice: '$10,341',
       image: '/assets/images/led-lounge-pergola.jpg',
       imageAlt: 'Max Pergola Max premium motorized package with louver lighting preparation'
     },
@@ -69,6 +95,8 @@ if (configurator) {
       name: 'Custom',
       roof: 'Manual or motorized louvers — selected during review',
       included: 'Custom dimensions, project shop drawings, configuration-specific packing',
+      startPrice: 'Written quote',
+      comparePrice: '',
       image: '/assets/images/poolside-glass-pergola.jpg',
       imageAlt: 'Custom-sized Max Pergola with optional glass wall system'
     }
@@ -201,6 +229,8 @@ if (configurator) {
     setText('[data-config-included]', packageDetails.included);
     setText('[data-config-finish]', labels.finish[finishCode]);
     setText('[data-config-accessories]', accessoryText);
+    setText('[data-config-price]', packageDetails.startPrice);
+    setText('[data-config-compare-price]', packageDetails.comparePrice ? `Compare-at ${packageDetails.comparePrice}` : 'Project-specific pricing');
     setText('[data-config-imperial]', size.imperial);
     setText('[data-config-metric]', size.metric);
 
@@ -210,28 +240,13 @@ if (configurator) {
       image.setAttribute('alt', packageDetails.imageAlt);
     }
 
-    const subject = `Max Pergola configuration ${sku}`;
-    const body = [
-      'Hello Max Pergola,',
-      '',
-      'Please provide a quote for this configuration:',
-      `Configuration SKU: ${sku}`,
-      `Package: ${packageDetails.name}`,
-      `Nominal size: ${size.imperial} (${size.metric}; ${size.millimeters})`,
-      ...(isCustom ? [`Target clear height: ${customHeightText}`] : []),
-      `Covered area: ${size.area}`,
-      `Layout: ${labels.layout[layoutCode]}`,
-      `Roof: ${packageDetails.roof}`,
-      `Package includes: ${packageDetails.included}`,
-      `Finish request: ${labels.finish[finishCode]}`,
-      `Optional accessories: ${accessoryText}`,
-      'Current shipping route: Chongqing factory → U.S. destination (DDP through June 2027)',
-      `U.S. delivery ZIP code: ${zip || 'Not supplied'}`,
-      '',
-      'Please confirm overall dimensions, option compatibility, applicable design criteria, ship-from location, DDP terms, and current price.'
-    ].join('\n');
+    const quoteParams = new URLSearchParams({
+      source: 'configurator', package: packageCode, sku, size: size.imperial,
+      layout: labels.layout[layoutCode], finish: labels.finish[finishCode], zip,
+      accessories: selectedAccessories.join(',')
+    });
     const cta = configurator.querySelector('[data-config-cta]');
-    if (cta) cta.href = `mailto:inquiry@maxpergola.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    if (cta) cta.href = `/request-quote/?${quoteParams.toString()}`;
   };
 
   configurator.querySelectorAll('input').forEach((input) => {
@@ -311,33 +326,159 @@ if (partnerForm) {
     });
   });
 
-  partnerForm.addEventListener('submit', (event) => {
+  partnerForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     if (!partnerForm.reportValidity()) return;
 
     const data = new FormData(partnerForm);
     const track = data.get('track');
-    const subject = `Max Pergola partner application — ${trackLabels[track] || 'Trade account'}`;
-    const body = [
-      'Hello Max Pergola,',
-      '',
-      'Please review this partner application:',
-      `Partner track: ${trackLabels[track] || track}`,
-      `Name: ${data.get('name')}`,
-      `Business: ${data.get('business')}`,
-      `Work email: ${data.get('email')}`,
-      `Phone: ${data.get('phone') || 'Not supplied'}`,
-      `Service area or ZIP: ${data.get('region')}`,
-      `Website or social profile: ${data.get('website') || 'Not supplied'}`,
-      `Expected annual volume: ${data.get('volume')}`,
-      '',
-      'Customers and typical projects:',
-      data.get('details'),
-      '',
-      'Please share qualification questions, the applicable pricing structure, commercial terms, and next steps.'
-    ].join('\n');
+    const button = partnerForm.querySelector('button[type="submit"]');
+    if (button) button.disabled = true;
+    if (status) status.textContent = 'Submitting your application…';
+    try {
+      const result = await submitLead({
+        source: 'partner-program', contactName: data.get('name'), company: data.get('business'),
+        email: data.get('email'), phone: data.get('phone'), zipCode: data.get('region'),
+        projectType: trackLabels[track] || track, budget: data.get('volume'), consent: true,
+        website: '', message: `Website: ${data.get('website') || 'Not supplied'}\n\n${data.get('details')}`
+      });
+      partnerForm.reset();
+      if (status) status.textContent = `Application received. Reference ${result.reference}.`;
+    } catch (error) {
+      if (status) status.textContent = `${error.message} You can also email inquiry@maxpergola.com.`;
+    } finally {
+      if (button) button.disabled = false;
+    }
+  });
+}
 
-    if (status) status.textContent = 'Your email app is opening with the completed application.';
-    window.location.href = `mailto:inquiry@maxpergola.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+const inquiryForm = document.querySelector('[data-inquiry-form]');
+if (inquiryForm) {
+  const params = new URLSearchParams(window.location.search);
+  let engineeringInputs = {};
+  try { engineeringInputs = JSON.parse(params.get('engineering') || '{}'); } catch {}
+  const fieldMap = {package: 'packageCode', sku: 'sku', size: 'sizeLabel', layout: 'layout', finish: 'finish', zip: 'zipCode'};
+  Object.entries(fieldMap).forEach(([param, name]) => {
+    const field = inquiryForm.elements.namedItem(name);
+    if (field && params.get(param)) field.value = params.get(param);
+  });
+  const accessoryField = inquiryForm.elements.namedItem('accessories');
+  if (accessoryField && params.get('accessories')) accessoryField.value = params.get('accessories');
+  const messageField = inquiryForm.elements.namedItem('message');
+  if (messageField && Object.keys(engineeringInputs).length) {
+    messageField.value = `Engineering screening inputs:\n${JSON.stringify(engineeringInputs, null, 2)}\n\nPlease review these values against the selected configuration.`;
+    if (engineeringInputs.zip) inquiryForm.elements.namedItem('zipCode').value = engineeringInputs.zip;
+  }
+  const status = inquiryForm.querySelector('[data-form-status]');
+  inquiryForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!inquiryForm.reportValidity()) return;
+    const data = new FormData(inquiryForm);
+    const button = inquiryForm.querySelector('button[type="submit"]');
+    if (button) button.disabled = true;
+    if (status) status.textContent = 'Saving your project…';
+    try {
+      const result = await submitLead({
+        source: params.get('source') || inquiryForm.dataset.source || 'quote-form',
+        contactName: data.get('contactName'), company: data.get('company'), email: data.get('email'),
+        phone: data.get('phone'), zipCode: data.get('zipCode'), projectType: data.get('projectType'),
+        packageCode: data.get('packageCode'), sku: data.get('sku'), sizeLabel: data.get('sizeLabel'),
+        layout: data.get('layout'), finish: data.get('finish'),
+        accessories: String(data.get('accessories') || '').split(',').map((item) => item.trim()).filter(Boolean),
+        budget: data.get('budget'), timeline: data.get('timeline'), message: data.get('message'), engineeringInputs,
+        consent: data.get('consent'), website: data.get('website')
+      });
+      inquiryForm.hidden = true;
+      const success = document.querySelector('[data-inquiry-success]');
+      if (success) {
+        success.hidden = false;
+        success.querySelector('[data-reference]').textContent = result.reference;
+        success.focus();
+      }
+    } catch (error) {
+      if (status) status.textContent = `${error.message} You can also email inquiry@maxpergola.com.`;
+    } finally {
+      if (button) button.disabled = false;
+    }
+  });
+}
+
+const loadCalculator = document.querySelector('[data-load-calculator]');
+if (loadCalculator) {
+  const number = (name) => Number(loadCalculator.elements.namedItem(name)?.value || 0);
+  const result = document.querySelector('[data-load-result]');
+  const calculate = () => {
+    if (!loadCalculator.reportValidity()) return;
+    const windSpeed = number('windSpeed');
+    const groundSnow = number('groundSnow');
+    const width = number('width');
+    const depth = number('depth');
+    const span = number('span');
+    const zip = loadCalculator.elements.namedItem('zip').value;
+    const exposure = loadCalculator.elements.namedItem('exposure').value;
+    const kz = {B: 0.57, C: 0.85, D: 1.03}[exposure];
+    const velocityPressure = 0.00256 * kz * 0.85 * windSpeed * windSpeed;
+    const roofSnow = 0.7 * groundSnow;
+    const area = width * depth;
+    const upliftScreen = velocityPressure * 1.5;
+    result.querySelector('[data-qz]').textContent = `${velocityPressure.toFixed(1)} psf`;
+    result.querySelector('[data-uplift]').textContent = `${upliftScreen.toFixed(1)} psf`;
+    result.querySelector('[data-roof-snow]').textContent = `${roofSnow.toFixed(1)} psf`;
+    result.querySelector('[data-area]').textContent = `${area.toFixed(0)} sq ft`;
+    result.querySelector('[data-span]').textContent = `${span.toFixed(1)} ft entered`;
+    result.hidden = false;
+    result.dataset.engineering = JSON.stringify({zip, windSpeed, groundSnow, width, depth, span, exposure, velocityPressure, upliftScreen, roofSnow});
+  };
+  loadCalculator.addEventListener('submit', (event) => { event.preventDefault(); calculate(); });
+  document.querySelector('[data-send-engineering]')?.addEventListener('click', () => {
+    if (result.hidden) calculate();
+    const inputs = encodeURIComponent(result.dataset.engineering || '{}');
+    window.location.href = `/request-quote/?source=engineering-calculator&engineering=${inputs}`;
+  });
+}
+
+const crmApp = document.querySelector('[data-crm-app]');
+if (crmApp) {
+  const tokenInput = crmApp.querySelector('[data-crm-token]');
+  const status = crmApp.querySelector('[data-crm-status]');
+  const list = crmApp.querySelector('[data-crm-list]');
+  const filter = crmApp.querySelector('[data-crm-filter]');
+  const search = crmApp.querySelector('[data-crm-search]');
+  tokenInput.value = sessionStorage.getItem('maxpergolaCrmToken') || '';
+
+  const escapeHtml = (value = '') => String(value).replace(/[&<>'"]/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+  const loadLeads = async () => {
+    const token = tokenInput.value.trim();
+    if (!token) { status.textContent = 'Enter the administrator token.'; return; }
+    sessionStorage.setItem('maxpergolaCrmToken', token);
+    status.textContent = 'Loading leads…';
+    const params = new URLSearchParams();
+    if (filter.value) params.set('status', filter.value);
+    if (search.value.trim()) params.set('search', search.value.trim());
+    const response = await fetch(`/api/crm/leads?${params}`, {headers: {Authorization: `Bearer ${token}`}});
+    const data = await response.json();
+    if (!response.ok) { status.textContent = data.error || 'Unable to load leads.'; return; }
+    status.textContent = `${data.leads.length} lead${data.leads.length === 1 ? '' : 's'}`;
+    list.innerHTML = data.leads.map((lead) => `
+      <article class="crm-lead" data-lead-id="${lead.id}">
+        <div class="crm-lead-head"><div><span>${escapeHtml(lead.source)}</span><h2>${escapeHtml(lead.contact_name)}</h2><p>${escapeHtml(lead.email)} · ${escapeHtml(lead.phone || 'No phone')} · ${escapeHtml(lead.zip_code)}</p></div><strong>${lead.lead_score}/100</strong></div>
+        <div class="crm-lead-facts"><span>Package <b>${escapeHtml(lead.package_code || '—')}</b></span><span>Size <b>${escapeHtml(lead.size_label || '—')}</b></span><span>Timeline <b>${escapeHtml(lead.timeline || '—')}</b></span><span>Created <b>${new Date(lead.created_at).toLocaleString()}</b></span></div>
+        <p>${escapeHtml(lead.message || 'No project note supplied.')}</p>
+        <div class="crm-edit"><label>Status<select data-lead-status>${['new','qualified','quoted','won','lost','archived'].map((option) => `<option value="${option}"${option === lead.status ? ' selected' : ''}>${option}</option>`).join('')}</select></label><label>Owner<input data-lead-owner value="${escapeHtml(lead.owner)}"></label><label class="crm-notes">Notes<textarea data-lead-notes>${escapeHtml(lead.notes)}</textarea></label><button class="button button-secondary" type="button" data-save-lead>Save</button></div>
+      </article>`).join('') || '<p class="empty-state">No leads match this view.</p>';
+  };
+
+  crmApp.querySelector('[data-crm-login]').addEventListener('click', loadLeads);
+  filter.addEventListener('change', loadLeads);
+  crmApp.querySelector('[data-crm-search-button]').addEventListener('click', loadLeads);
+  list.addEventListener('click', async (event) => {
+    const button = event.target.closest('[data-save-lead]');
+    if (!button) return;
+    const card = button.closest('[data-lead-id]');
+    button.disabled = true;
+    const response = await fetch('/api/crm/leads', {method: 'PATCH', headers: {'Content-Type':'application/json', Authorization: `Bearer ${tokenInput.value.trim()}`}, body: JSON.stringify({id: card.dataset.leadId, status: card.querySelector('[data-lead-status]').value, owner: card.querySelector('[data-lead-owner]').value, notes: card.querySelector('[data-lead-notes]').value})});
+    const data = await response.json();
+    status.textContent = response.ok ? 'Lead updated.' : (data.error || 'Update failed.');
+    button.disabled = false;
   });
 }

@@ -8,6 +8,15 @@ Current shipping: orders are quoted factory-direct from Chongqing under Delivere
 
 - [Aluminum pergola kits](https://maxpergola.com/pergola-kits/): Compare seven nominal footprints from 10 × 10 ft through 13 × 19 ft; choose the roof package, layout, finish, and factory-prepared accessories; and create a configuration SKU for a written quote.
 - [Louvered pergola kits](https://maxpergola.com/pergola-kits/louvered/): Compare manual and motorized aluminum louvers, adjustable shade, integrated drainage, lighting preparation, and project scope.
+- [Standard manual pergola](https://maxpergola.com/pergola-kits/standard/): 10 × 10 launch price $4,089; compare-at $5,841; manual louvers.
+- [Pro motorized pergola](https://maxpergola.com/pergola-kits/pro/): 10 × 10 launch price $5,034; compare-at $7,191; motorized louvers and perimeter LED preparation.
+- [Max premium pergola](https://maxpergola.com/pergola-kits/max/): 10 × 10 launch price $7,239; compare-at $10,341; motorized louvers and louver-light preparation.
+
+## Technical and warranty
+
+- [Aluminum specifications and BOM](https://maxpergola.com/engineering/specifications/): 6063-T6 order design basis, current profile dimensions, wall thicknesses, and package BOM scope.
+- [Wind, snow, and span calculator](https://maxpergola.com/engineering-calculator/): Nationwide U.S. preliminary load screening; not a structural approval or permit package.
+- [Limited warranty](https://maxpergola.com/warranty/): 10 years for covered frame defects, 5 years for covered powder-coat defects, and 2 years for covered moving and electrical components.
 
 ## Planning guides
 

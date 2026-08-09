@@ -1,5 +1,9 @@
 .DS_Store
 artifacts/
+.env
+.env.*
+!.env.example
+node_modules/
 
 # Unreferenced source copies retained locally; optimized JPEGs are deployed.
 assets/images/poolside-glass-pergola.png

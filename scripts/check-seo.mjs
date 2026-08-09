@@ -8,6 +8,12 @@ const pages = [
   {file: 'index.html', canonical: `${siteOrigin}/`, keyword: 'aluminum pergola', keywordOccurrences: 15, types: ['Organization', 'WebSite', 'WebPage', 'FAQPage']},
   {file: 'pergola-kits/index.html', canonical: `${siteOrigin}/pergola-kits/`, keyword: 'pergola kits', keywordOccurrences: 15, types: ['Organization', 'WebSite', 'CollectionPage', 'BreadcrumbList', 'ItemList']},
   {file: 'pergola-kits/louvered/index.html', canonical: `${siteOrigin}/pergola-kits/louvered/`, keyword: 'louvered pergola', keywordOccurrences: 25, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'FAQPage']},
+  {file: 'pergola-kits/standard/index.html', canonical: `${siteOrigin}/pergola-kits/standard/`, keyword: 'manual louvered pergola', keywordOccurrences: 4, types: ['Product', 'BreadcrumbList']},
+  {file: 'pergola-kits/pro/index.html', canonical: `${siteOrigin}/pergola-kits/pro/`, keyword: 'motorized louvered pergola', keywordOccurrences: 7, types: ['Product', 'BreadcrumbList']},
+  {file: 'pergola-kits/max/index.html', canonical: `${siteOrigin}/pergola-kits/max/`, keyword: 'louvered pergola', keywordOccurrences: 6, types: ['Product', 'BreadcrumbList']},
+  {file: 'engineering/specifications/index.html', canonical: `${siteOrigin}/engineering/specifications/`, keyword: 'aluminum pergola', keywordOccurrences: 5, types: ['TechArticle']},
+  {file: 'engineering-calculator/index.html', canonical: `${siteOrigin}/engineering-calculator/`, keyword: 'pergola', keywordOccurrences: 41, types: ['WebApplication', 'BreadcrumbList']},
+  {file: 'warranty/index.html', canonical: `${siteOrigin}/warranty/`, keyword: 'warranty', keywordOccurrences: 33, types: ['WebPage']},
   {file: 'pergola-lighting-ideas/index.html', canonical: `${siteOrigin}/pergola-lighting-ideas/`, keyword: 'pergola lighting', keywordOccurrences: 14, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article', 'FAQPage']},
   {file: 'pergola-installation/index.html', canonical: `${siteOrigin}/pergola-installation/`, keyword: 'pergola installation', keywordOccurrences: 13, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'HowTo', 'FAQPage']},
   {file: 'pergola-cost/index.html', canonical: `${siteOrigin}/pergola-cost/`, keyword: 'pergola cost', keywordOccurrences: 16, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article', 'FAQPage']},
@@ -80,8 +86,14 @@ for (const page of pages) {
     const catalog = nodes.find((node) => node['@id'] === `${siteOrigin}/pergola-kits/#catalog`);
     if (catalog?.numberOfItems !== 4) errors.push('pergola-kits/index.html: catalog must declare four package paths');
     const productIds = catalog?.itemListElement?.map((entry) => entry.item?.['@id']) || [];
-    for (const tier of ['standard', 'pro', 'max', 'custom']) {
-      if (!productIds.includes(`${siteOrigin}/pergola-kits/#product-${tier}`)) errors.push(`pergola-kits/index.html: ${tier} Product entity missing from catalog`);
+    const expectedProducts = {
+      standard: `${siteOrigin}/pergola-kits/standard/#product`,
+      pro: `${siteOrigin}/pergola-kits/pro/#product`,
+      max: `${siteOrigin}/pergola-kits/max/#product`,
+      custom: `${siteOrigin}/pergola-kits/#product-custom`
+    };
+    for (const [tier, id] of Object.entries(expectedProducts)) {
+      if (!productIds.includes(id)) errors.push(`pergola-kits/index.html: ${tier} Product entity missing from catalog`);
     }
   }
 }
