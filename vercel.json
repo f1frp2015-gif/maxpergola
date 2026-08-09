@@ -1,12 +1,27 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "trailingSlash": true,
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{"type": "host", "value": "www.maxpergola.com"}],
+      "destination": "https://maxpergola.com/:path*",
+      "permanent": true
+    },
+    {"source": "/index.html", "destination": "/", "permanent": true},
+    {"source": "/pergola-kits/index.html", "destination": "/pergola-kits/", "permanent": true},
+    {"source": "/diy-pergola/index.html", "destination": "/diy-pergola/", "permanent": true},
+    {"source": "/backyard-pergola-ideas/index.html", "destination": "/backyard-pergola-ideas/", "permanent": true},
+    {"source": "/pergola-vs-gazebo/index.html", "destination": "/pergola-vs-gazebo/", "permanent": true}
+  ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
         {"key": "X-Content-Type-Options", "value": "nosniff"},
         {"key": "Referrer-Policy", "value": "strict-origin-when-cross-origin"},
-        {"key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()"}
+        {"key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()"},
+        {"key": "Content-Language", "value": "en-US"}
       ]
     },
     {
@@ -14,6 +29,46 @@
       "headers": [
         {"key": "Cache-Control", "value": "public, max-age=31536000, immutable"}
       ]
+    },
+    {
+      "source": "/robots.txt",
+      "headers": [{"key": "Cache-Control", "value": "public, max-age=0, must-revalidate"}]
+    },
+    {
+      "source": "/sitemap.xml",
+      "headers": [{"key": "Cache-Control", "value": "public, max-age=0, must-revalidate"}]
+    },
+    {
+      "source": "/llms.txt",
+      "headers": [
+        {"key": "Cache-Control", "value": "public, max-age=0, must-revalidate"},
+        {"key": "X-Robots-Tag", "value": "noindex"}
+      ]
+    },
+    {
+      "source": "/llms-full.txt",
+      "headers": [
+        {"key": "Cache-Control", "value": "public, max-age=0, must-revalidate"},
+        {"key": "X-Robots-Tag", "value": "noindex"}
+      ]
+    },
+    {
+      "source": "/feed.xml",
+      "headers": [
+        {"key": "Cache-Control", "value": "public, max-age=0, must-revalidate"},
+        {"key": "X-Robots-Tag", "value": "noindex"}
+      ]
+    },
+    {
+      "source": "/7728d1e43c48ba5d3a9c7d6411fb24fc.txt",
+      "headers": [
+        {"key": "Cache-Control", "value": "public, max-age=0, must-revalidate"},
+        {"key": "X-Robots-Tag", "value": "noindex, nofollow"}
+      ]
+    },
+    {
+      "source": "/404.html",
+      "headers": [{"key": "X-Robots-Tag", "value": "noindex, follow"}]
     }
   ]
 }

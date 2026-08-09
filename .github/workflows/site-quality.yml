@@ -1,0 +1,49 @@
+name: Site quality and search submission
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Validate site and SEO/GEO
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm run check
+      - run: INDEXNOW_DRY_RUN=1 npm run seo:submit
+
+  indexnow:
+    name: Notify IndexNow after production is live
+    if: github.event_name == 'push'
+    needs: quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Wait for the production ownership key
+        run: |
+          for attempt in {1..30}; do
+            if curl --fail --silent --show-error https://maxpergola.com/7728d1e43c48ba5d3a9c7d6411fb24fc.txt | grep --fixed-strings --line-regexp 7728d1e43c48ba5d3a9c7d6411fb24fc; then
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Production ownership key was not available after five minutes."
+          exit 1
+      - run: npm run seo:submit

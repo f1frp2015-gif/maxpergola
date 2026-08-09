@@ -1,0 +1,19 @@
+{
+  "name": "Max Pergola",
+  "short_name": "Max Pergola",
+  "description": "Factory-direct aluminum pergola kits and planning guides for US residential outdoor shade projects.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "browser",
+  "background_color": "#F7F2E9",
+  "theme_color": "#181818",
+  "lang": "en-US",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

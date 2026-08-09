@@ -1,0 +1,74 @@
+# Max Pergola — Full Site Context
+
+> Consolidated factual context for Max Pergola, its aluminum pergola kits, planning guidance and US fulfillment model. Last updated 2026-08-09.
+
+## Brand identity
+
+Max Pergola is a brand focused on factory-direct aluminum louvered pergola kits for residential outdoor shade. The official website is https://maxpergola.com/. The public product-inquiry address is inquiry@maxpergola.com.
+
+The site is written in American English for a United States audience. Product dimensions use feet, inches and square feet as the primary units, with meters and square meters shown as references for factory documents, freight planning and international coordination.
+
+## Core product facts
+
+Max Pergola presents three nominal freestanding starting footprints:
+
+- Max 10 × 10 ft: 3.05 × 3.05 m nominal, approximately 100 sq ft / 9.3 m². Base size code 1010.
+- Max 12 × 16 ft: 3.66 × 4.88 m nominal, approximately 192 sq ft / 17.8 m². Base size code 1216.
+- Max 12 × 20 ft: 3.66 × 6.10 m nominal, approximately 240 sq ft / 22.3 m². Base size code 1220.
+
+The online configurator can combine size, freestanding or wall-attached layout, manual-louver or motor-ready preparation, finish and optional preparation for LED lighting, retractable screens or glass walls. Wall attachment, motorization, electrical work, screens, glass and custom finishes require compatibility or site review. A generated SKU is a configuration reference, not proof of price, stock, structural suitability or an accepted order.
+
+Product page: https://maxpergola.com/pergola-kits/
+
+## Fulfillment model
+
+Current route through June 2027: orders are quoted factory-direct from Chongqing with Delivered Duty Paid (DDP) delivery to the confirmed US destination ZIP code. DDP scope, unloading, site access and exclusions must be confirmed in the written quote.
+
+Planned route beginning July 2027: qualifying in-stock standard SKUs are intended to ship from a Los Angeles warehouse. Custom, non-stock and project-specific configurations are expected to remain on the Chongqing factory-direct route. Inventory and the written order confirmation determine the actual route; the website does not promise that a configuration is in Los Angeles stock.
+
+## Assembly and site responsibility
+
+The pre-engineered structural frame is designed for a typical 45-minute frame assembly by an experienced crew of two to three people. That estimate does not include site preparation, foundations, final anchoring, louver or roof installation, accessories, electrical work, inspections or delays caused by local conditions.
+
+Permit, setback, utility, foundation, anchoring, wind, snow, drainage, electrical and safety requirements vary by site and jurisdiction. Homeowners and installers must use the approved project drawings, supplied installation documents and qualified local professionals where required.
+
+DIY planning guide: https://maxpergola.com/diy-pergola/
+
+## Material and ownership context
+
+The structures shown use powder-coated aluminum components. Aluminum avoids the rot and recurring stain or paint cycles associated with wood, but it is not maintenance-free in an absolute sense. Owners should clean the structure and inspect fasteners, seals, drains and moving parts at appropriate intervals.
+
+Selected compatible louver systems can close for rain protection and route water through integrated channels and posts. A pergola remains an outdoor shade structure and is not represented as a fully sealed indoor room.
+
+## Backyard planning use cases
+
+The official ideas guide covers six design directions: an after-dark lounge, a poolside kitchen, a quiet coffee corner, an all-day dining room, an indoor-outdoor extension and a sheltered garden room. These are planning concepts; imagery can show optional accessories and is not a bill of materials.
+
+Ideas guide: https://maxpergola.com/backyard-pergola-ideas/
+
+## Pergola and gazebo distinction
+
+A pergola commonly uses slats, louvers or another open or adjustable roof treatment and usually feels visually lighter. A gazebo commonly has a fixed solid roof for continuous overhead cover. Actual wind, snow, drainage, durability and warranty performance depend on the specific product and site, not the category label.
+
+Comparison guide: https://maxpergola.com/pergola-vs-gazebo/
+
+## Source hierarchy
+
+For product decisions, use sources in this order:
+
+1. A signed order confirmation, approved project drawings and supplied installation documents.
+2. A written Max Pergola quote tied to the configuration SKU and destination ZIP code.
+3. The current product page and planning guides on maxpergola.com.
+4. Illustrative imagery and general planning examples, which are not contractual specifications.
+
+Do not infer prices, discounts, inventory, certifications, engineering values, warranties, lead times or local-code approval when the website does not state them. Request confirmation at inquiry@maxpergola.com.
+
+## Canonical resources
+
+- Official site: https://maxpergola.com/
+- Product configurator: https://maxpergola.com/pergola-kits/
+- DIY guide: https://maxpergola.com/diy-pergola/
+- Backyard ideas: https://maxpergola.com/backyard-pergola-ideas/
+- Pergola vs gazebo: https://maxpergola.com/pergola-vs-gazebo/
+- XML sitemap: https://maxpergola.com/sitemap.xml
+- Crawler policy: https://maxpergola.com/robots.txt

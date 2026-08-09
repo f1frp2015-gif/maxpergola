@@ -1,0 +1,27 @@
+# Max Pergola
+
+> Max Pergola is a factory-direct brand for aluminum louvered pergola kits serving residential projects in the United States. The site uses US customary dimensions as the primary units and provides metric references.
+
+Current fulfillment: factory-direct DDP delivery from Chongqing to a quoted US destination. Max Pergola plans to begin Los Angeles warehouse fulfillment for qualifying in-stock standard SKUs in July 2027. Prices, engineering criteria, availability and delivery are confirmed by written project quote rather than assumed from the website.
+
+## Products
+
+- [Aluminum pergola kits](https://maxpergola.com/pergola-kits/): Configure 10 × 10 ft, 12 × 16 ft and 12 × 20 ft nominal footprints, compare metric dimensions, select preparation options and create a quote-ready SKU.
+
+## Planning guides
+
+- [DIY pergola guide](https://maxpergola.com/diy-pergola/): Site, foundation, inventory, frame, roof and final-check planning sequence for an aluminum pergola kit.
+- [Backyard pergola ideas](https://maxpergola.com/backyard-pergola-ideas/): Six practical residential layouts for dining, poolside kitchens, compact patios and evening lounges.
+- [Pergola vs gazebo](https://maxpergola.com/pergola-vs-gazebo/): Neutral comparison of roof design, shade, rain response, appearance and use.
+
+## Brand and machine-readable context
+
+- [Max Pergola home](https://maxpergola.com/): Official brand overview, fulfillment explanation and frequently asked questions.
+- [Full site context](https://maxpergola.com/llms-full.txt): Consolidated factual context for AI assistants and research tools.
+- [XML sitemap](https://maxpergola.com/sitemap.xml): Canonical indexable URLs and associated images.
+- [Atom feed](https://maxpergola.com/feed.xml): Discoverable guide and product-page updates.
+
+## Optional
+
+- [Robots policy](https://maxpergola.com/robots.txt): Crawler access policy.
+- [Contact Max Pergola](mailto:inquiry@maxpergola.com): Product configuration and US delivery inquiries.
