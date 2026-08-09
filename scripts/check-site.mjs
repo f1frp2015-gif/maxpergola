@@ -87,6 +87,23 @@ for (const required of ['robots.txt', 'sitemap.xml', 'favicon.svg', 'vercel.json
   if (!existsSync(join(root, required))) errors.push(`Missing required file: ${required}`);
 }
 
+const kitsHtml = readFileSync(join(root, 'pergola-kits/index.html'), 'utf8');
+for (const packageCode of ['ST', 'PR', 'MX', 'CU']) {
+  if (!kitsHtml.includes(`name="kit-package" value="${packageCode}"`)) errors.push(`pergola-kits/index.html: package ${packageCode} missing from configurator`);
+}
+for (const accessoryCode of ['LED', 'SCR', 'GLS', 'SLT', 'HTR', 'OUT']) {
+  if (!kitsHtml.includes(`name="kit-accessory" value="${accessoryCode}"`)) errors.push(`pergola-kits/index.html: accessory ${accessoryCode} missing from configurator`);
+}
+for (const customField of ['data-custom-width', 'data-custom-depth', 'data-custom-height']) {
+  if (!kitsHtml.includes(customField)) errors.push(`pergola-kits/index.html: ${customField} missing from Custom package inputs`);
+}
+if (!kitsHtml.includes('id="package-comparison"')) errors.push('pergola-kits/index.html: package comparison missing');
+
+const siteScript = readFileSync(join(root, 'assets/site.js'), 'utf8');
+if (!siteScript.includes("const packageData = {") || !siteScript.includes("'CUSTOM'") || !siteScript.includes('URLSearchParams')) {
+  errors.push('assets/site.js: package selection, Custom SKU, or deep-link behavior missing');
+}
+
 if (errors.length) {
   console.error(`Site check failed with ${errors.length} issue(s):`);
   for (const error of errors) console.error(`- ${error}`);

@@ -30,6 +30,8 @@ SEO/GEO maintenance and search-engine onboarding are documented in [`SEO-GEO-OPE
 
 ## Content notes
 
+- Product selection is organized into Standard, Pro, Max and Custom package paths. Standard sizes remain 10 × 10 ft, 12 × 16 ft and 12 × 20 ft; Custom dimensions are planning inputs until approved drawings are issued.
+- Accessories remain optional across all packages and are represented as quote-planning flags, not confirmed compatibility or price.
 - Product prices are intentionally not invented; quotes require configuration and delivery ZIP.
 - Images are supplied concept/configuration visuals and are labeled accordingly.
 - The 45-minute message is scoped to typical structural frame assembly by an experienced crew. Site preparation, anchoring, roof components and accessories take additional time.
