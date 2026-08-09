@@ -92,6 +92,16 @@ for (const required of ['robots.txt', 'sitemap.xml', 'maxpergola-icon.svg', 'ver
   if (!existsSync(join(root, required))) errors.push(`Missing required file: ${required}`);
 }
 
+const packagingImage = 'assets/images/maxpergola-export-packaging.png';
+const legacyPackagingImage = 'assets/images/export-packaging.jpg';
+if (!existsSync(join(root, packagingImage))) errors.push(`Missing required packaging image: ${packagingImage}`);
+if (existsSync(join(root, legacyPackagingImage))) errors.push(`Legacy packaging image must be removed: ${legacyPackagingImage}`);
+for (const relative of ['index.html', 'pergola-kits/index.html', 'pergola-installation/index.html', 'pergola-cost/index.html', 'diy-pergola/index.html', 'sitemap.xml']) {
+  const content = readFileSync(join(root, relative), 'utf8');
+  if (!content.includes(packagingImage)) errors.push(`${relative}: approved packaging image missing`);
+  if (content.includes(legacyPackagingImage)) errors.push(`${relative}: legacy packaging image still referenced`);
+}
+
 const kitsHtml = readFileSync(join(root, 'pergola-kits/index.html'), 'utf8');
 for (const packageCode of ['ST', 'PR', 'MX', 'CU']) {
   if (!kitsHtml.includes(`name="kit-package" value="${packageCode}"`)) errors.push(`pergola-kits/index.html: package ${packageCode} missing from configurator`);
