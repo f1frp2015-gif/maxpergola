@@ -91,6 +91,16 @@ A pergola commonly has an open, slatted, or adjustable louvered roof. A gazebo c
 
 Comparison guide: https://maxpergola.com/pergola-vs-gazebo/
 
+## Trade partner program
+
+The Max Pergola partner program serves qualified dealers, fabricators, installers, builders, design-build firms, landscape professionals, and commercial buyers. The current U.S. channel model shows maximum indicative discounts of 35% from MSRP for approved dealer and fabricator accounts, 28% for approved installer accounts, and 25% for approved builder or project-partner accounts.
+
+Those percentages are modeled ceilings, not automatic discounts or universal quotes. The approved tier depends on the partner role, business fit, service capability, annual volume, display or inventory commitment, and project responsibilities. Freight, unloading, taxes, installation labor, foundations, anchors, electrical work, permits, and site work are separate unless the written quote expressly includes them.
+
+Partners can register opportunities, request configuration review, coordinate delivery terms, and receive account-specific sales and installation handoff assets. Installers and builders may register individual projects without holding inventory. Dealer and fabricator programs may include display units, stocking plans, or consolidated orders when approved.
+
+Partner program: https://maxpergola.com/partner-program/
+
 ## Source hierarchy
 
 For product decisions, use sources in this order:
@@ -113,5 +123,6 @@ Do not infer prices, discounts, inventory, certifications, engineering values, w
 - DIY guide: https://maxpergola.com/diy-pergola/
 - Backyard ideas: https://maxpergola.com/backyard-pergola-ideas/
 - Pergola vs gazebo: https://maxpergola.com/pergola-vs-gazebo/
+- Partner program: https://maxpergola.com/partner-program/
 - XML sitemap: https://maxpergola.com/sitemap.xml
 - Crawler policy: https://maxpergola.com/robots.txt

@@ -31,6 +31,19 @@ SEO/GEO maintenance and search-engine onboarding are documented in [`SEO-GEO-OPE
 - `/diy-pergola/` — `diy pergola`
 - `/backyard-pergola-ideas/` — `backyard pergola ideas`
 - `/pergola-vs-gazebo/` — `pergola vs gazebo`
+- `/partner-program/` — trade pricing, partner qualification, support, and application
+
+## Intent-led browsing path
+
+The site moves visitors through one primary decision sequence while preserving direct access to every search-intent page:
+
+1. **Discover** — backyard layouts and lighting ideas help visitors define the outdoor use.
+2. **Compare** — the pergola-versus-gazebo and louvered-roof guides resolve structure and roof questions.
+3. **Plan** — DIY, installation, and cost guides turn the preferred concept into site facts and a complete-project budget.
+4. **Choose** — the pergola kit comparison and configurator create a package, footprint, layout, finish, accessory list, and delivery ZIP.
+5. **Inquire** — the configurator opens a prefilled written request containing the quote-ready SKU and project scope.
+
+Global navigation groups pages by these user tasks. Contextual next-step cards connect every informational guide to the most relevant planning page and then to `/pergola-kits/#configure`; informational pages do not send visitors directly to an unqualified blank email.
 
 ## Content notes
 
