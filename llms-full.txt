@@ -33,6 +33,14 @@ Configuration SKUs use this structure: MP–package–layout–size–finish plu
 
 Product page: https://maxpergola.com/pergola-kits/
 
+## Louvered roof planning
+
+Max Pergola louvered-roof packages use rotating aluminum blades. Open blades admit direct light and release warm air; angled blades create adjustable shade; compatible closed blades shed rain into perimeter channels and selected post drains. A pergola remains an open-sided outdoor structure and is not a sealed indoor room.
+
+Standard uses manual adjustable louvers. Pro and Max use motorized louver packages, with different factory-prepared lighting and controls scope. The written quote defines the motor, controls, electrical preparation, lighting, and accessories included.
+
+Louvered pergola guide: https://maxpergola.com/pergola-kits/louvered/
+
 ## Fulfillment model
 
 Current shipping through June 2027: orders are quoted factory-direct from Chongqing under Delivered Duty Paid (DDP) terms to the confirmed U.S. destination ZIP code. The written quote must identify DDP terms, unloading responsibility, jobsite access, and exclusions.
@@ -46,6 +54,24 @@ The pre-engineered structural frame is designed for a typical 45-minute frame as
 Permit, setback, utility, footing, anchoring, wind, snow, drainage, electrical, and safety requirements vary by jobsite and jurisdiction. Homeowners and installers must follow the approved shop drawings, supplied installation manual, and local requirements, using qualified trades where required.
 
 DIY planning guide: https://maxpergola.com/diy-pergola/
+
+The broader installation guide separates the project into jobsite review, foundations and anchors, receiving and staging, prepared-frame assembly, roof and drainage installation, electrical and accessory work, testing, and required inspections. Installation is not assumed to be included in the product quote.
+
+Installation guide: https://maxpergola.com/pergola-installation/
+
+## Lighting planning
+
+Pergola lighting should be planned by activity. Ambient light supports conversation and dining, task light supports cooking and serving, accent light highlights the roof or landscape, and low circulation light helps mark steps and paths. Fixture locations, circuits, controls, drivers, wire routes, moving louvers, drains, screens, heaters, and service access should be coordinated before production.
+
+Lighting preparation does not replace electrical design or field installation. Qualified trades and local requirements govern outdoor circuits, component ratings, grounding, bonding, GFCI protection, permits, and final connections.
+
+Lighting guide: https://maxpergola.com/pergola-lighting-ideas/
+
+## Project cost scope
+
+A complete pergola budget includes the configured product, freight, unloading, foundations and anchors, assembly labor, electrical work, accessories, permits and professional review, applicable taxes, inspections, and an identified contingency. The website does not publish an incomplete universal price. A written quote is tied to the configuration SKU, destination ZIP code, site information, and stated inclusions and exclusions.
+
+Cost guide: https://maxpergola.com/pergola-cost/
 
 ## Material and ownership context
 
@@ -80,6 +106,10 @@ Do not infer prices, discounts, inventory, certifications, engineering values, w
 
 - Official site: https://maxpergola.com/
 - Product configurator: https://maxpergola.com/pergola-kits/
+- Louvered pergola kits: https://maxpergola.com/pergola-kits/louvered/
+- Pergola lighting ideas: https://maxpergola.com/pergola-lighting-ideas/
+- Pergola installation: https://maxpergola.com/pergola-installation/
+- Pergola cost guide: https://maxpergola.com/pergola-cost/
 - DIY guide: https://maxpergola.com/diy-pergola/
 - Backyard ideas: https://maxpergola.com/backyard-pergola-ideas/
 - Pergola vs gazebo: https://maxpergola.com/pergola-vs-gazebo/

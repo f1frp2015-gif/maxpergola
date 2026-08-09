@@ -5,6 +5,10 @@ const root = resolve(import.meta.dirname, '..');
 const primaryPages = [
   'index.html',
   'pergola-kits/index.html',
+  'pergola-kits/louvered/index.html',
+  'pergola-lighting-ideas/index.html',
+  'pergola-installation/index.html',
+  'pergola-cost/index.html',
   'diy-pergola/index.html',
   'backyard-pergola-ideas/index.html',
   'pergola-vs-gazebo/index.html'

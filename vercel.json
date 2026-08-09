@@ -10,6 +10,10 @@
     },
     {"source": "/index.html", "destination": "/", "permanent": true},
     {"source": "/pergola-kits/index.html", "destination": "/pergola-kits/", "permanent": true},
+    {"source": "/pergola-kits/louvered/index.html", "destination": "/pergola-kits/louvered/", "permanent": true},
+    {"source": "/pergola-lighting-ideas/index.html", "destination": "/pergola-lighting-ideas/", "permanent": true},
+    {"source": "/pergola-installation/index.html", "destination": "/pergola-installation/", "permanent": true},
+    {"source": "/pergola-cost/index.html", "destination": "/pergola-cost/", "permanent": true},
     {"source": "/diy-pergola/index.html", "destination": "/diy-pergola/", "permanent": true},
     {"source": "/backyard-pergola-ideas/index.html", "destination": "/backyard-pergola-ideas/", "permanent": true},
     {"source": "/pergola-vs-gazebo/index.html", "destination": "/pergola-vs-gazebo/", "permanent": true}

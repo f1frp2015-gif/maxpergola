@@ -7,8 +7,12 @@ const brandIcon = '/maxpergola-icon.svg';
 const pages = [
   {file: 'index.html', canonical: `${siteOrigin}/`, keyword: 'aluminum pergola', keywordOccurrences: 15, types: ['Organization', 'WebSite', 'WebPage', 'FAQPage']},
   {file: 'pergola-kits/index.html', canonical: `${siteOrigin}/pergola-kits/`, keyword: 'pergola kits', keywordOccurrences: 15, types: ['Organization', 'WebSite', 'CollectionPage', 'BreadcrumbList', 'ItemList']},
+  {file: 'pergola-kits/louvered/index.html', canonical: `${siteOrigin}/pergola-kits/louvered/`, keyword: 'louvered pergola', keywordOccurrences: 25, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'FAQPage']},
+  {file: 'pergola-lighting-ideas/index.html', canonical: `${siteOrigin}/pergola-lighting-ideas/`, keyword: 'pergola lighting', keywordOccurrences: 14, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article', 'FAQPage']},
+  {file: 'pergola-installation/index.html', canonical: `${siteOrigin}/pergola-installation/`, keyword: 'pergola installation', keywordOccurrences: 13, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'HowTo', 'FAQPage']},
+  {file: 'pergola-cost/index.html', canonical: `${siteOrigin}/pergola-cost/`, keyword: 'pergola cost', keywordOccurrences: 16, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article', 'FAQPage']},
   {file: 'diy-pergola/index.html', canonical: `${siteOrigin}/diy-pergola/`, keyword: 'diy pergola', keywordOccurrences: 9, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'HowTo']},
-  {file: 'backyard-pergola-ideas/index.html', canonical: `${siteOrigin}/backyard-pergola-ideas/`, keyword: 'backyard pergola ideas', keywordOccurrences: 9, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article']},
+  {file: 'backyard-pergola-ideas/index.html', canonical: `${siteOrigin}/backyard-pergola-ideas/`, keyword: 'backyard pergola ideas', keywordOccurrences: 10, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article']},
   {file: 'pergola-vs-gazebo/index.html', canonical: `${siteOrigin}/pergola-vs-gazebo/`, keyword: 'pergola vs gazebo', keywordOccurrences: 12, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article']}
 ];
 
