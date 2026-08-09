@@ -1218,6 +1218,69 @@ a {
   margin: 0;
 }
 
+.home-faq-section {
+  padding-block: 72px 86px;
+}
+
+.home-faq-section .section-header {
+  margin-bottom: 24px;
+}
+
+.home-faq-section .section-header-copy {
+  max-width: 600px;
+}
+
+.home-faq-section .eyebrow {
+  font-size: 8px;
+  opacity: 0.78;
+}
+
+.home-faq-section .section-title {
+  max-width: 560px;
+  color: var(--ink-soft);
+  font-size: clamp(28px, 3vw, 38px);
+  letter-spacing: -0.04em;
+  line-height: 1.08;
+}
+
+.home-faq-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(32px, 5vw, 72px);
+  border-top: 0;
+}
+
+.home-faq-grid .faq-item {
+  border-top: 1px solid var(--line);
+  border-bottom: 0;
+}
+
+.home-faq-grid .faq-item summary {
+  padding: 17px 36px 17px 0;
+  color: var(--ink-soft);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
+}
+
+.home-faq-grid .faq-item summary::after {
+  right: 0;
+  width: 22px;
+  height: 22px;
+  font-size: 18px;
+  line-height: 22px;
+  opacity: 0.72;
+}
+
+.home-faq-grid .faq-answer {
+  max-width: none;
+  padding: 0 36px 18px 0;
+  color: var(--ink-soft);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
 .cta-panel {
   position: relative;
   display: grid;
@@ -3044,6 +3107,22 @@ a {
 
   .section-intro {
     font-size: 16px;
+  }
+
+  .home-faq-section {
+    padding-block: 52px 64px;
+  }
+
+  .home-faq-section .section-header {
+    margin-bottom: 20px;
+  }
+
+  .home-faq-section .section-title {
+    font-size: 30px;
+  }
+
+  .home-faq-grid {
+    grid-template-columns: 1fr;
   }
 
   .story-grid {
