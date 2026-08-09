@@ -5,11 +5,11 @@ const root = resolve(import.meta.dirname, '..');
 const siteOrigin = 'https://maxpergola.com';
 const brandIcon = '/maxpergola-icon.svg';
 const pages = [
-  {file: 'index.html', canonical: `${siteOrigin}/`, types: ['Organization', 'WebSite', 'WebPage', 'FAQPage']},
-  {file: 'pergola-kits/index.html', canonical: `${siteOrigin}/pergola-kits/`, types: ['Organization', 'WebSite', 'CollectionPage', 'BreadcrumbList', 'ItemList']},
-  {file: 'diy-pergola/index.html', canonical: `${siteOrigin}/diy-pergola/`, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'HowTo']},
-  {file: 'backyard-pergola-ideas/index.html', canonical: `${siteOrigin}/backyard-pergola-ideas/`, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article']},
-  {file: 'pergola-vs-gazebo/index.html', canonical: `${siteOrigin}/pergola-vs-gazebo/`, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article']}
+  {file: 'index.html', canonical: `${siteOrigin}/`, keyword: 'aluminum pergola', keywordOccurrences: 15, types: ['Organization', 'WebSite', 'WebPage', 'FAQPage']},
+  {file: 'pergola-kits/index.html', canonical: `${siteOrigin}/pergola-kits/`, keyword: 'pergola kits', keywordOccurrences: 15, types: ['Organization', 'WebSite', 'CollectionPage', 'BreadcrumbList', 'ItemList']},
+  {file: 'diy-pergola/index.html', canonical: `${siteOrigin}/diy-pergola/`, keyword: 'diy pergola', keywordOccurrences: 9, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'HowTo']},
+  {file: 'backyard-pergola-ideas/index.html', canonical: `${siteOrigin}/backyard-pergola-ideas/`, keyword: 'backyard pergola ideas', keywordOccurrences: 9, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article']},
+  {file: 'pergola-vs-gazebo/index.html', canonical: `${siteOrigin}/pergola-vs-gazebo/`, keyword: 'pergola vs gazebo', keywordOccurrences: 12, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article']}
 ];
 
 const errors = [];
@@ -25,6 +25,13 @@ function read(relative) {
 
 for (const page of pages) {
   const html = read(page.file);
+  const keywordPattern = new RegExp(page.keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+  const keywordCount = (html.match(keywordPattern) || []).length;
+  const title = html.match(/<title>([^<]+)<\/title>/)?.[1] || '';
+  const metaDescription = html.match(/<meta name="description" content="([^"]+)"/)?.[1] || '';
+  if (keywordCount !== page.keywordOccurrences) errors.push(`${page.file}: expected ${page.keywordOccurrences} uses of protected keyword "${page.keyword}", found ${keywordCount}`);
+  if (!title.toLowerCase().includes(page.keyword)) errors.push(`${page.file}: protected keyword "${page.keyword}" missing from title`);
+  if (!metaDescription.toLowerCase().includes(page.keyword)) errors.push(`${page.file}: protected keyword "${page.keyword}" missing from meta description`);
   requireMatch(html, /<html lang="en-US" dir="ltr">/, `${page.file}: expected en-US language and ltr direction`);
   requireMatch(html, /<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">/, `${page.file}: complete robots directive missing`);
   requireMatch(html, /<meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">/, `${page.file}: Googlebot directive missing`);

@@ -46,29 +46,29 @@ if (configurator) {
   const packageData = {
     ST: {
       name: 'Standard',
-      roof: 'Manual adjustable louvers',
-      included: 'Core aluminum frame, manual louvers, integrated drainage',
+      roof: 'Manual louvers',
+      included: 'Aluminum frame, manual louvers, integrated gutters and post drainage',
       image: '/assets/images/poolside-glass-pergola.jpg',
       imageAlt: 'Max Pergola Standard manual louver package beside a pool'
     },
     PR: {
       name: 'Pro',
-      roof: 'Motorized louver package',
-      included: 'Motorized roof scope, perimeter LED preparation, controls review',
+      roof: 'Motorized louvers',
+      included: 'Motorized louvers, perimeter LED preparation, controls and wiring review',
       image: '/assets/images/led-lounge-pergola.jpg',
       imageAlt: 'Max Pergola Pro motorized louver package with warm lighting'
     },
     MX: {
       name: 'Max',
-      roof: 'Motorized louvers + louver LED preparation',
-      included: 'Motorized roof scope, louver LED preparation, full integration review',
+      roof: 'Motorized louvers with louver-mounted LED preparation',
+      included: 'Motorized louvers, louver-mounted LED preparation, accessory compatibility review',
       image: '/assets/images/led-lounge-pergola.jpg',
       imageAlt: 'Max Pergola Max premium motorized package with louver lighting preparation'
     },
     CU: {
       name: 'Custom',
-      roof: 'Manual or motorized — selected by project',
-      included: 'Custom dimensions, dedicated drawing review, project-specific packing',
+      roof: 'Manual or motorized louvers — selected during review',
+      included: 'Custom dimensions, project shop drawings, configuration-specific packing',
       image: '/assets/images/poolside-glass-pergola.jpg',
       imageAlt: 'Custom-sized Max Pergola with optional glass wall system'
     }
@@ -134,10 +134,10 @@ if (configurator) {
   };
 
   const labels = {
-    layout: { FS: 'Freestanding', WM: 'Wall-attached — engineering review' },
+    layout: { FS: 'Freestanding', WM: 'Attached — wall connection review' },
     finish: { GR: 'Graphite', WH: 'Matte white — availability review', CX: 'Custom finish — color-match review' },
     accessories: {
-      LED: 'Additional LED system',
+      LED: 'Additional LED lighting',
       SCR: 'Retractable screens',
       GLS: 'Glass wall system',
       SLT: 'Privacy slat wall',
@@ -170,15 +170,15 @@ if (configurator) {
     const customMetricDepth = customDepth * 0.3048;
     const customArea = customWidth * customDepth;
     const customAreaMetric = customArea * 0.092903;
-    const customImperial = customDimensionsReady ? `${customWidth}' × ${customDepth}'` : 'Custom width × depth';
-    const customMetric = customDimensionsReady ? `${customMetricWidth.toFixed(2)} × ${customMetricDepth.toFixed(2)} m` : 'Metric conversion appears after entry';
-    const customMillimeters = customDimensionsReady ? `${Math.round(customWidth * 304.8)} × ${Math.round(customDepth * 304.8)} mm` : 'Factory confirmation required';
+    const customImperial = customDimensionsReady ? `${customWidth}' × ${customDepth}'` : 'Enter custom width × depth';
+    const customMetric = customDimensionsReady ? `${customMetricWidth.toFixed(2)} × ${customMetricDepth.toFixed(2)} m` : 'Metric dimensions appear after entry';
+    const customMillimeters = customDimensionsReady ? `${Math.round(customWidth * 304.8)} × ${Math.round(customDepth * 304.8)} mm` : 'Confirmed on shop drawings';
     const customHeightText = customHeight > 0 ? `${customHeight}' target (${(customHeight * 0.3048).toFixed(2)} m)` : 'Not supplied';
     const size = isCustom ? {
       imperial: customImperial,
       metric: customMetric,
       millimeters: customMillimeters,
-      area: customDimensionsReady ? `${customArea.toFixed(customArea % 1 ? 1 : 0)} sq ft • ${customAreaMetric.toFixed(1)} m²` : 'Calculated after dimension review'
+      area: customDimensionsReady ? `${customArea.toFixed(customArea % 1 ? 1 : 0)} sq ft • ${customAreaMetric.toFixed(1)} m²` : 'Calculated after dimensions are entered'
     } : sizeData[sizeCode];
     const sizeGrid = configurator.querySelector('.config-choice-grid-size');
     const customPanel = configurator.querySelector('[data-custom-dimensions]');
@@ -214,7 +214,7 @@ if (configurator) {
     const body = [
       'Hello Max Pergola,',
       '',
-      'Please quote the following configuration:',
+      'Please provide a quote for this configuration:',
       `Configuration SKU: ${sku}`,
       `Package: ${packageDetails.name}`,
       `Nominal size: ${size.imperial} (${size.metric}; ${size.millimeters})`,
@@ -222,13 +222,13 @@ if (configurator) {
       `Covered area: ${size.area}`,
       `Layout: ${labels.layout[layoutCode]}`,
       `Roof: ${packageDetails.roof}`,
-      `Included package scope: ${packageDetails.included}`,
+      `Package includes: ${packageDetails.included}`,
       `Finish request: ${labels.finish[finishCode]}`,
       `Optional accessories: ${accessoryText}`,
-      'Current fulfillment: Chongqing factory → US doorstep (DDP; current phase through June 2027)',
-      `US delivery ZIP: ${zip || 'Not supplied'}`,
+      'Current shipping route: Chongqing factory → U.S. destination (DDP through June 2027)',
+      `U.S. delivery ZIP code: ${zip || 'Not supplied'}`,
       '',
-      'Please confirm final dimensions, compatibility, engineering inputs, fulfillment route, delivery scope and current pricing.'
+      'Please confirm overall dimensions, option compatibility, applicable design criteria, ship-from location, DDP terms, and current price.'
     ].join('\n');
     const cta = configurator.querySelector('[data-config-cta]');
     if (cta) cta.href = `mailto:inquiry@maxpergola.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
