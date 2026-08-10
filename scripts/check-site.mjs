@@ -17,7 +17,8 @@ const primaryPages = [
   'diy-pergola/index.html',
   'backyard-pergola-ideas/index.html',
   'pergola-vs-gazebo/index.html',
-  'partner-program/index.html'
+  'partner-program/index.html',
+  'about-max-pergola/index.html'
 ];
 
 const allHtml = [];

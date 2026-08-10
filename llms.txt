@@ -38,6 +38,7 @@ Current shipping: orders are quoted factory-direct from Chongqing under Delivere
 ## Brand and machine-readable context
 
 - [Max Pergola home](https://maxpergola.com/): Brand overview, package summary, shipping explanation, and frequently asked questions.
+- [About Max Pergola](https://maxpergola.com/about-max-pergola/): Public contact, product scope, editorial method, source hierarchy, and correction path.
 - [Full site context](https://maxpergola.com/llms-full.txt): Consolidated factual context for AI assistants and research tools.
 - [XML sitemap](https://maxpergola.com/sitemap.xml): Canonical indexable URLs and associated images.
 - [Atom feed](https://maxpergola.com/feed.xml): Discoverable guide and product-page updates.

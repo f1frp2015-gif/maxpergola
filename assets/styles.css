@@ -2929,6 +2929,25 @@ a {
   }
 }
 
+.content-meta {
+  margin: 18px 0 0;
+  color: #6f6a61;
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.section-dark .content-meta,
+.partner-hero .content-meta {
+  color: #d7ddd4;
+}
+
+.content-meta a {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 @media (max-width: 1040px) {
   .desktop-nav,
   .nav-cta {
