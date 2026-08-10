@@ -104,6 +104,24 @@ for (const required of ['robots.txt', 'sitemap.xml', 'maxpergola-icon.svg', 'ver
   if (!existsSync(join(root, required))) errors.push(`Missing required file: ${required}`);
 }
 
+const styles = readFileSync(join(root, 'assets/styles.css'), 'utf8');
+if (!/\.faq-list\s*\{[^}]*display:\s*grid;[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/s.test(styles)) {
+  errors.push('assets/styles.css: FAQ lists must use the shared two-column desktop grid');
+}
+if (!/@media\s*\(max-width:\s*760px\)[\s\S]*?\.faq-list\s*\{[^}]*grid-template-columns:\s*1fr;/s.test(styles)) {
+  errors.push('assets/styles.css: FAQ lists must collapse to one column on small screens');
+}
+for (const file of allHtml) {
+  const relative = file.slice(root.length + 1);
+  const html = readFileSync(file, 'utf8');
+  if (!html.includes('class="faq-list')) continue;
+  const faqItems = [...html.matchAll(/<details\b[^>]*class="[^"]*faq-item[^"]*"[^>]*>/g)];
+  if (!faqItems.length) errors.push(`${relative}: FAQ list has no collapsible questions`);
+  if (faqItems.some((match) => /\bopen(?:\s|=|>)/.test(match[0]))) {
+    errors.push(`${relative}: FAQ answers must be collapsed by default`);
+  }
+}
+
 const packagingImage = 'assets/images/maxpergola-export-packaging.png';
 const legacyPackagingImage = 'assets/images/export-packaging.jpg';
 if (!existsSync(join(root, packagingImage))) errors.push(`Missing required packaging image: ${packagingImage}`);
