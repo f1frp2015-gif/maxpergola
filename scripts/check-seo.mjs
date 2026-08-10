@@ -42,6 +42,19 @@ function read(relative) {
   return readFileSync(resolve(root, relative), 'utf8');
 }
 
+function collectTypedNodes(value, type, found = []) {
+  if (Array.isArray(value)) {
+    for (const entry of value) collectTypedNodes(entry, type, found);
+    return found;
+  }
+  if (!value || typeof value !== 'object') return found;
+
+  const types = Array.isArray(value['@type']) ? value['@type'] : [value['@type']];
+  if (types.includes(type)) found.push(value);
+  for (const entry of Object.values(value)) collectTypedNodes(entry, type, found);
+  return found;
+}
+
 for (const page of pages) {
   const html = read(page.file);
   const keywordPattern = new RegExp(page.keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
@@ -84,18 +97,42 @@ for (const page of pages) {
   const ids = nodes.map((node) => node['@id']).filter(Boolean);
   if (ids.length !== new Set(ids).size) errors.push(`${page.file}: duplicate JSON-LD @id values`);
 
+  const products = scripts.flatMap((data) => collectTypedNodes(data, 'Product'));
+  for (const product of products) {
+    const productLabel = product.name || product['@id'] || 'unnamed Product';
+    if (!product.offers && !product.review && !product.aggregateRating) {
+      errors.push(`${page.file}: ${productLabel} needs offers, review, or aggregateRating for a Product snippet`);
+    }
+    const offers = product.offers ? (Array.isArray(product.offers) ? product.offers : [product.offers]) : [];
+    for (const offer of offers) {
+      if (offer['@type'] !== 'Offer') continue;
+      const price = offer.price ?? offer.priceSpecification?.price;
+      const priceCurrency = offer.priceCurrency ?? offer.priceSpecification?.priceCurrency;
+      if (price === undefined || price === null || price === '') errors.push(`${page.file}: ${productLabel} Offer price missing`);
+      if (!priceCurrency) errors.push(`${page.file}: ${productLabel} Offer priceCurrency missing`);
+      if (!offer.url) errors.push(`${page.file}: ${productLabel} Offer URL missing`);
+      if (!offer.availability) errors.push(`${page.file}: ${productLabel} Offer availability missing`);
+      if (!offer.itemCondition) errors.push(`${page.file}: ${productLabel} Offer itemCondition missing`);
+    }
+  }
+
   if (page.file === 'pergola-kits/index.html') {
     const catalog = nodes.find((node) => node['@id'] === `${siteOrigin}/pergola-kits/#catalog`);
     if (catalog?.numberOfItems !== 4) errors.push('pergola-kits/index.html: catalog must declare four package paths');
-    const productIds = catalog?.itemListElement?.map((entry) => entry.item?.['@id']) || [];
-    const expectedProducts = {
-      standard: `${siteOrigin}/pergola-kits/standard/#product`,
-      pro: `${siteOrigin}/pergola-kits/pro/#product`,
-      max: `${siteOrigin}/pergola-kits/max/#product`,
-      custom: `${siteOrigin}/pergola-kits/#product-custom`
-    };
-    for (const [tier, id] of Object.entries(expectedProducts)) {
-      if (!productIds.includes(id)) errors.push(`pergola-kits/index.html: ${tier} Product entity missing from catalog`);
+    const expectedItems = [
+      {position: 1, name: 'Standard Manual Louvered Pergola', url: `${siteOrigin}/pergola-kits/standard/`},
+      {position: 2, name: 'Pro Motorized Louvered Pergola', url: `${siteOrigin}/pergola-kits/pro/`},
+      {position: 3, name: 'Max Premium Louvered Pergola', url: `${siteOrigin}/pergola-kits/max/`},
+      {position: 4, name: 'Custom Pergola Configuration', url: `${siteOrigin}/pergola-kits/#custom`}
+    ];
+    const catalogItems = catalog?.itemListElement || [];
+    if (catalogItems.length !== expectedItems.length) errors.push('pergola-kits/index.html: catalog must contain four ListItem entries');
+    for (const expected of expectedItems) {
+      const item = catalogItems.find((entry) => entry.position === expected.position);
+      if (item?.['@type'] !== 'ListItem' || item.name !== expected.name || item.url !== expected.url) {
+        errors.push(`pergola-kits/index.html: catalog item ${expected.position} is incomplete`);
+      }
+      if (item?.item?.['@type'] === 'Product') errors.push(`pergola-kits/index.html: catalog item ${expected.position} must not embed Product markup`);
     }
   }
 }
