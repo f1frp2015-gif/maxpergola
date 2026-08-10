@@ -49,7 +49,7 @@ Global navigation groups pages by these user tasks. Contextual next-step cards c
 
 - Product selection is organized into Standard, Pro, Max and Custom package paths. The seven standard sizes are 10 × 10 ft, 10 × 13 ft, 10 × 16 ft, 10 × 19 ft, 13 × 13 ft, 13 × 16 ft and 13 × 19 ft; Custom dimensions are planning inputs until approved drawings are issued.
 - Accessories remain optional across all packages and are represented as quote-planning flags, not confirmed compatibility or price.
-- Published 10 × 10 starting / compare-at prices are Standard $4,089 / $5,841, Pro $5,034 / $7,191, and Max $7,239 / $10,341. Both price levels are based on the dated 10%-below-PERGOLUX pricing policy shown on the product pages; final quotes still require configuration and delivery ZIP.
+- Published 10 × 10 starting / compare-at prices are Standard $4,089 / $5,841, Pro $5,034 / $7,191, and Max $7,239 / $10,341. These are dated Max Pergola reference prices for base configurations; final quotes still require configuration and delivery ZIP.
 - Lead intake uses `/api/inquiries`; the private `/crm/` workspace uses `CRM_ADMIN_TOKEN` and Neon Postgres. Pull `.env.local`, run `npm run db:migrate`, then use `npm run dev` for local Function testing.
 - Images are supplied concept/configuration visuals and are labeled accordingly.
 - The 45-minute message is scoped to typical structural frame assembly by an experienced crew. Site preparation, anchoring, roof components and accessories take additional time.
