@@ -1913,6 +1913,38 @@ a {
   font-weight: 700;
 }
 
+.config-calculator-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  padding: 20px;
+  margin-top: 22px;
+  border: 1px solid rgba(190, 153, 91, 0.36);
+  background: #f1eadd;
+}
+
+.config-calculator-cta > div {
+  display: grid;
+  gap: 5px;
+}
+
+.config-calculator-cta strong {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 650;
+}
+
+.config-calculator-cta span {
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.config-calculator-cta .button {
+  flex: 0 0 auto;
+}
+
 .config-choice-grid {
   display: grid;
   gap: 10px;
@@ -3397,6 +3429,15 @@ a {
 
   .config-step {
     padding: 24px 18px;
+  }
+
+  .config-calculator-cta {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .config-calculator-cta .button {
+    width: 100%;
   }
 
   .config-choice-grid-two,

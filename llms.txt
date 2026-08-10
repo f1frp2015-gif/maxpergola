@@ -15,7 +15,7 @@ Current shipping: orders are quoted factory-direct from Chongqing under Delivere
 ## Technical and warranty
 
 - [Aluminum specifications and BOM](https://maxpergola.com/engineering/specifications/): 6063-T6 order design basis, current profile dimensions, wall thicknesses, and package BOM scope.
-- [Wind, snow, and span calculator](https://maxpergola.com/engineering-calculator/): Nationwide U.S. preliminary load screening; not a structural approval or permit package.
+- [Wind, snow, and span calculator](https://maxpergola.com/pergola-calculator/): Nationwide U.S. preliminary load screening; not a structural approval or permit package.
 - [Limited warranty](https://maxpergola.com/warranty/): 10 years for covered frame defects, 5 years for covered powder-coat defects, and 2 years for covered moving and electrical components.
 
 ## Planning guides

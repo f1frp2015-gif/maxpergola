@@ -433,7 +433,7 @@ if (loadCalculator) {
   document.querySelector('[data-send-engineering]')?.addEventListener('click', () => {
     if (result.hidden) calculate();
     const inputs = encodeURIComponent(result.dataset.engineering || '{}');
-    window.location.href = `/request-quote/?source=engineering-calculator&engineering=${inputs}`;
+    window.location.href = `/request-quote/?source=pergola-calculator&engineering=${inputs}`;
   });
 }
 

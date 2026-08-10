@@ -15,7 +15,9 @@
     {"source": "/pergola-kits/pro/index.html", "destination": "/pergola-kits/pro/", "permanent": true},
     {"source": "/pergola-kits/max/index.html", "destination": "/pergola-kits/max/", "permanent": true},
     {"source": "/engineering/specifications/index.html", "destination": "/engineering/specifications/", "permanent": true},
-    {"source": "/engineering-calculator/index.html", "destination": "/engineering-calculator/", "permanent": true},
+    {"source": "/engineering-calculator/", "destination": "/pergola-calculator/", "permanent": true},
+    {"source": "/engineering-calculator/index.html", "destination": "/pergola-calculator/", "permanent": true},
+    {"source": "/pergola-calculator/index.html", "destination": "/pergola-calculator/", "permanent": true},
     {"source": "/warranty/index.html", "destination": "/warranty/", "permanent": true},
     {"source": "/request-quote/index.html", "destination": "/request-quote/", "permanent": true},
     {"source": "/crm/index.html", "destination": "/crm/", "permanent": true},
@@ -96,6 +98,10 @@
     },
     {
       "source": "/shipping-returns/",
+      "headers": [{"key": "X-Robots-Tag", "value": "noindex, follow"}]
+    },
+    {
+      "source": "/warranty/",
       "headers": [{"key": "X-Robots-Tag", "value": "noindex, follow"}]
     },
     {

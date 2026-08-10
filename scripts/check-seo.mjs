@@ -12,10 +12,9 @@ const pages = [
   {file: 'pergola-kits/pro/index.html', canonical: `${siteOrigin}/pergola-kits/pro/`, keyword: 'motorized louvered pergola', keywordOccurrences: 7, types: ['Product', 'BreadcrumbList']},
   {file: 'pergola-kits/max/index.html', canonical: `${siteOrigin}/pergola-kits/max/`, keyword: 'louvered pergola', keywordOccurrences: 6, types: ['Product', 'BreadcrumbList']},
   {file: 'engineering/specifications/index.html', canonical: `${siteOrigin}/engineering/specifications/`, keyword: 'aluminum pergola', keywordOccurrences: 5, types: ['TechArticle']},
-  {file: 'engineering-calculator/index.html', canonical: `${siteOrigin}/engineering-calculator/`, keyword: 'pergola', keywordOccurrences: 41, types: ['WebApplication', 'BreadcrumbList']},
-  {file: 'warranty/index.html', canonical: `${siteOrigin}/warranty/`, keyword: 'warranty', keywordOccurrences: 33, types: ['WebPage']},
+  {file: 'pergola-calculator/index.html', canonical: `${siteOrigin}/pergola-calculator/`, keyword: 'pergola', keywordOccurrences: 51, types: ['WebApplication', 'BreadcrumbList']},
   {file: 'pergola-lighting-ideas/index.html', canonical: `${siteOrigin}/pergola-lighting-ideas/`, keyword: 'pergola lighting', keywordOccurrences: 14, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article', 'FAQPage']},
-  {file: 'pergola-installation/index.html', canonical: `${siteOrigin}/pergola-installation/`, keyword: 'pergola installation', keywordOccurrences: 13, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'HowTo', 'FAQPage']},
+  {file: 'pergola-installation/index.html', canonical: `${siteOrigin}/pergola-installation/`, keyword: 'pergola installation', keywordOccurrences: 15, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'HowTo', 'FAQPage']},
   {file: 'pergola-cost/index.html', canonical: `${siteOrigin}/pergola-cost/`, keyword: 'pergola cost', keywordOccurrences: 16, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article', 'FAQPage']},
   {file: 'diy-pergola/index.html', canonical: `${siteOrigin}/diy-pergola/`, keyword: 'diy pergola', keywordOccurrences: 9, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'HowTo']},
   {file: 'backyard-pergola-ideas/index.html', canonical: `${siteOrigin}/backyard-pergola-ideas/`, keyword: 'backyard pergola ideas', keywordOccurrences: 10, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article']},
@@ -23,11 +22,14 @@ const pages = [
   {file: 'partner-program/index.html', canonical: `${siteOrigin}/partner-program/`, keyword: 'partner program', keywordOccurrences: 14, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'FAQPage']}
 ];
 const noindexPages = [
+  {file: 'warranty/index.html', canonical: `${siteOrigin}/warranty/`},
   {file: 'privacy-policy/index.html', canonical: `${siteOrigin}/privacy-policy/`},
   {file: 'terms-of-use/index.html', canonical: `${siteOrigin}/terms-of-use/`},
   {file: 'shipping-returns/index.html', canonical: `${siteOrigin}/shipping-returns/`}
 ];
-const legalPaths = noindexPages.map((page) => new URL(page.canonical).pathname);
+const legalPaths = noindexPages
+  .filter((page) => page.file !== 'warranty/index.html')
+  .map((page) => new URL(page.canonical).pathname);
 
 const errors = [];
 const canonicalUrls = new Set();
@@ -184,6 +186,10 @@ const redirects = new Map((vercel.redirects || []).map((redirect) => [redirect.s
 const headersBySource = new Map((vercel.headers || []).map((entry) => [entry.source, entry.headers || []]));
 const wwwRedirect = (vercel.redirects || []).find((redirect) => redirect.has?.some((condition) => condition.type === 'host' && condition.value === 'www.maxpergola.com'));
 if (!wwwRedirect || wwwRedirect.destination !== 'https://maxpergola.com/:path*' || wwwRedirect.permanent !== true) errors.push('vercel.json: permanent www-to-apex redirect missing');
+const legacyCalculatorRedirect = redirects.get('/engineering-calculator/');
+if (!legacyCalculatorRedirect || legacyCalculatorRedirect.destination !== '/pergola-calculator/' || legacyCalculatorRedirect.permanent !== true) {
+  errors.push('vercel.json: legacy engineering calculator must permanently redirect to /pergola-calculator/');
+}
 for (const page of pages) {
   const source = page.file === 'index.html' ? '/index.html' : `/${page.file}`;
   const redirect = redirects.get(source);

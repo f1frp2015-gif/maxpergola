@@ -6,6 +6,7 @@ const primaryPages = [
   'index.html',
   'pergola-kits/index.html',
   'pergola-kits/louvered/index.html',
+  'pergola-calculator/index.html',
   'pergola-lighting-ideas/index.html',
   'pergola-installation/index.html',
   'pergola-cost/index.html',
@@ -103,6 +104,24 @@ for (const relative of ['index.html', 'pergola-kits/index.html', 'pergola-instal
 }
 
 const kitsHtml = readFileSync(join(root, 'pergola-kits/index.html'), 'utf8');
+if (!kitsHtml.includes('href="/pergola-calculator/"')) errors.push('pergola-kits/index.html: pergola calculator must be linked from the selection flow');
+if (!kitsHtml.includes('config-calculator-cta')) errors.push('pergola-kits/index.html: calculator callout missing from the footprint step');
+if (existsSync(join(root, 'engineering-calculator'))) errors.push('Legacy engineering-calculator directory must be removed');
+
+const installationHtml = readFileSync(join(root, 'pergola-installation/index.html'), 'utf8');
+const installationMain = installationHtml.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)?.[1] || '';
+const installationWordCount = installationMain
+  .replace(/<[^>]+>/g, ' ')
+  .replace(/&[a-z0-9#]+;/gi, ' ')
+  .trim()
+  .split(/\s+/)
+  .filter(Boolean).length;
+if (!installationHtml.includes('<h1>Pergola Installation: <span>DIY Steps, Tools &amp; Pro Options</span></h1>')) {
+  errors.push('pergola-installation/index.html: required Pergola Installation H1 missing');
+}
+if (installationWordCount < 1200) {
+  errors.push(`pergola-installation/index.html: expected at least 1200 main-content words, found ${installationWordCount}`);
+}
 for (const packageCode of ['ST', 'PR', 'MX', 'CU']) {
   if (!kitsHtml.includes(`name="kit-package" value="${packageCode}"`)) errors.push(`pergola-kits/index.html: package ${packageCode} missing from configurator`);
 }
