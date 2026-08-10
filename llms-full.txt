@@ -97,7 +97,7 @@ Warranty: https://maxpergola.com/warranty/
 
 The online calculator accepts site wind speed, ground snow load, exposure, footprint, and entered span for preliminary routing. It is not a structural approval, component capacity rating, or permit package. Exact site hazard data should come from the ASCE Hazard Tool or local authority, and final design must address the adopted code, pressure coefficients, drift, load combinations, section properties, connections, anchors, and foundations.
 
-Calculator: https://maxpergola.com/engineering-calculator/
+Calculator: https://maxpergola.com/pergola-calculator/
 
 ## Material and ownership context
 
@@ -147,7 +147,7 @@ Do not infer prices, discounts, inventory, certifications, engineering values, w
 - Pro motorized pergola: https://maxpergola.com/pergola-kits/pro/
 - Max premium pergola: https://maxpergola.com/pergola-kits/max/
 - Specifications and BOM: https://maxpergola.com/engineering/specifications/
-- Wind, snow, and span calculator: https://maxpergola.com/engineering-calculator/
+- Wind, snow, and span calculator: https://maxpergola.com/pergola-calculator/
 - Limited warranty: https://maxpergola.com/warranty/
 - Pergola lighting ideas: https://maxpergola.com/pergola-lighting-ideas/
 - Pergola installation: https://maxpergola.com/pergola-installation/
