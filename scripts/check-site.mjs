@@ -33,6 +33,16 @@ const idsByFile = new Map();
 for (const file of allHtml) {
   const relative = file.slice(root.length + 1);
   const html = readFileSync(file, 'utf8');
+  const competitorBrandTerms = [
+    /\bpergolux\b/i,
+    /\bsundream\b/i,
+    /\bskydance\b/i,
+    /\bsnapfit\b/i,
+    /\bseries\s+4\b/i
+  ];
+  for (const term of competitorBrandTerms) {
+    if (term.test(html)) errors.push(`${relative}: competitor brand fingerprint ${term} must not appear in public copy`);
+  }
   const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]);
   idsByFile.set(file, new Set(ids));
   const duplicateIds = ids.filter((id, index) => ids.indexOf(id) !== index);
