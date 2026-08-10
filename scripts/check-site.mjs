@@ -70,7 +70,8 @@ for (const relative of primaryPages) {
   const html = readFileSync(file, 'utf8');
   const h1Count = (html.match(/<h1\b/g) || []).length;
   if (h1Count !== 1) errors.push(`${relative}: expected 1 H1, found ${h1Count}`);
-  if (!/<title>[^<]{15,65}<\/title>/.test(html)) errors.push(`${relative}: title missing or outside 15–65 characters`);
+  const title = html.match(/<title>([^<]+)<\/title>/)?.[1]?.replace(/&(?:[a-z0-9#]+);/gi, '&') || '';
+  if (title.length < 15 || title.length > 60) errors.push(`${relative}: title length is ${title.length}, expected 15–60 characters`);
   const description = html.match(/<meta name="description" content="([^"]+)"/)?.[1] || '';
   if (description.length < 100 || description.length > 170) errors.push(`${relative}: description length is ${description.length}, expected 100–170`);
   if (!/<link rel="canonical" href="https:\/\/maxpergola\.com\//.test(html)) errors.push(`${relative}: canonical URL missing`);
@@ -126,8 +127,8 @@ const installationWordCount = installationMain
   .trim()
   .split(/\s+/)
   .filter(Boolean).length;
-if (!installationHtml.includes('<h1>Pergola Installation: <span>DIY Steps, Tools &amp; Pro Options</span></h1>')) {
-  errors.push('pergola-installation/index.html: required Pergola Installation H1 missing');
+if (!installationHtml.includes('<h1>How to Install a Pergola: <span>From Jobsite to Handoff</span></h1>')) {
+  errors.push('pergola-installation/index.html: required How to Install a Pergola H1 missing');
 }
 if (installationWordCount < 1200) {
   errors.push(`pergola-installation/index.html: expected at least 1200 main-content words, found ${installationWordCount}`);
