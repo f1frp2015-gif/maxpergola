@@ -41,6 +41,24 @@ Standard uses manual adjustable louvers. Pro and Max use motorized louver packag
 
 Louvered pergola guide: https://maxpergola.com/pergola-kits/louvered/
 
+## Layout-specific planning
+
+Freestanding layouts carry the roof on their own posts. Placement, furniture clearance, foundations, anchors, site exposure, drain-post selection, access, and local review must be resolved before production.
+
+Freestanding guide: https://maxpergola.com/pergola-kits/freestanding/
+
+Attached layouts use a project-specific building-side connection. The existing wall structure, exterior finish, openings, flashing, drainage, outer-post foundations, design responsibility, and local approvals must be documented. Surface finish and sealant alone are not assumed to provide a structural or weatherproof connection.
+
+Attached guide: https://maxpergola.com/pergola-kits/attached/
+
+A pergola on a deck requires a verified load path through connections, deck framing, supports, foundations, and soil. Deck boards alone are not a structural foundation. Waterproofing, rails, stairs, doors, drainage, corrosion protection, and access below must be coordinated.
+
+Deck guide: https://maxpergola.com/pergola-kits/deck/
+
+The aluminum pergola kit buyer's guide compares roof behavior, design documents, drainage, finish, installation scope, delivery, warranty, and complete project cost without inventing competitor rankings.
+
+Buyer's guide: https://maxpergola.com/best-aluminum-pergola-kits/
+
 ## Fulfillment model
 
 Current shipping through June 2027: orders are quoted factory-direct from Chongqing under Delivered Duty Paid (DDP) terms to the confirmed U.S. destination ZIP code. The written quote must identify DDP terms, unloading responsibility, jobsite access, and exclusions.
@@ -143,6 +161,10 @@ Do not infer prices, discounts, inventory, certifications, engineering values, w
 - Official site: https://maxpergola.com/
 - Product configurator: https://maxpergola.com/pergola-kits/
 - Louvered pergola kits: https://maxpergola.com/pergola-kits/louvered/
+- Freestanding pergola kits: https://maxpergola.com/pergola-kits/freestanding/
+- Attached pergola kits: https://maxpergola.com/pergola-kits/attached/
+- Pergola on deck guide: https://maxpergola.com/pergola-kits/deck/
+- Best aluminum pergola kits: https://maxpergola.com/best-aluminum-pergola-kits/
 - Standard manual pergola: https://maxpergola.com/pergola-kits/standard/
 - Pro motorized pergola: https://maxpergola.com/pergola-kits/pro/
 - Max premium pergola: https://maxpergola.com/pergola-kits/max/
