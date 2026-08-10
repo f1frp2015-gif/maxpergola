@@ -88,6 +88,44 @@ for (const relative of primaryPages) {
   if (!/<link rel="canonical" href="https:\/\/maxpergola\.com\//.test(html)) errors.push(`${relative}: canonical URL missing`);
 }
 
+const longformPurchasePages = [
+  'best-aluminum-pergola-kits/index.html',
+  'pergola-kits/freestanding/index.html',
+  'pergola-kits/attached/index.html',
+  'pergola-kits/deck/index.html'
+];
+for (const relative of longformPurchasePages) {
+  const html = readFileSync(join(root, relative), 'utf8');
+  const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)?.[1] || '';
+  const wordCount = main
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&[a-z0-9#]+;/gi, ' ')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean).length;
+  if (wordCount < 1200 || wordCount > 1800) {
+    errors.push(`${relative}: expected 1200–1800 main-content words, found ${wordCount}`);
+  }
+
+  const internalLinks = [...main.matchAll(/\shref="(\/[^"#?]*(?:#[^"]*)?)"/g)]
+    .map((match) => match[1].split('#')[0]);
+  const uniqueInternalLinks = new Set(internalLinks);
+  if (uniqueInternalLinks.size < 7) {
+    errors.push(`${relative}: expected at least 7 unique main-content internal destinations, found ${uniqueInternalLinks.size}`);
+  }
+  for (const requiredPath of ['/pergola-kits/', '/pergola-cost/', '/pergola-installation/', '/request-quote/']) {
+    if (!uniqueInternalLinks.has(requiredPath)) errors.push(`${relative}: purchasing journey link missing ${requiredPath}`);
+  }
+  if ((main.match(/class="decision-path-grid"/g) || []).length < 2) {
+    errors.push(`${relative}: expected an opening and closing decision-path navigation`);
+  }
+  if (!html.includes('"@type":["WebPage","Article"]') || !html.includes('"@type":"FAQPage"')) {
+    errors.push(`${relative}: Article or FAQPage structured data missing`);
+  }
+}
+
 for (const file of allHtml) {
   const relative = file.slice(root.length + 1);
   const html = readFileSync(file, 'utf8');
