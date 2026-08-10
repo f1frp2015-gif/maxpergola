@@ -95,7 +95,7 @@ Cost guide: https://maxpergola.com/pergola-cost/
 
 Standard manual louvers: launch price $4,089; compare-at price $5,841. Pro motorized louvers: launch price $5,034; compare-at price $7,191. Max premium motorized and louver-light-prepared package: launch price $7,239; compare-at price $10,341.
 
-Both prices in each pair were set 10% below the corresponding public PERGOLUX benchmark viewed August 9, 2026. Competitor prices and promotions can change. These are starting product prices for a freestanding 10 × 10 Graphite configuration; taxes, site work, foundations, anchors, unloading, permits, electrical work, and installation are separate unless itemized in the accepted quote.
+These are Max Pergola reference prices current as of August 9, 2026 for a freestanding 10 × 10 Graphite starting configuration. Taxes, site work, foundations, anchors, unloading, permits, electrical work, and installation are separate unless itemized in the accepted quote. A configuration-linked written quote controls the current project price.
 
 Standard: https://maxpergola.com/pergola-kits/standard/
 Pro: https://maxpergola.com/pergola-kits/pro/
@@ -178,5 +178,6 @@ Do not infer prices, discounts, inventory, certifications, engineering values, w
 - Backyard ideas: https://maxpergola.com/backyard-pergola-ideas/
 - Pergola vs gazebo: https://maxpergola.com/pergola-vs-gazebo/
 - Partner program: https://maxpergola.com/partner-program/
+- About Max Pergola and editorial sources: https://maxpergola.com/about-max-pergola/
 - XML sitemap: https://maxpergola.com/sitemap.xml
 - Crawler policy: https://maxpergola.com/robots.txt

@@ -8,6 +8,7 @@
     "dev": "python3 -m http.server ${PORT:-4173}",
     "dev:vercel": "vercel dev --listen 4173",
     "check": "node scripts/check-site.mjs && node scripts/check-seo.mjs",
+    "seo:audit": "node scripts/audit-content.mjs",
     "db:migrate": "node scripts/migrate-crm.mjs",
     "seo:submit": "node scripts/submit-indexnow.mjs"
   },

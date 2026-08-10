@@ -5,25 +5,26 @@ const root = resolve(import.meta.dirname, '..');
 const siteOrigin = 'https://maxpergola.com';
 const brandIcon = '/maxpergola-icon.svg';
 const pages = [
-  {file: 'index.html', canonical: `${siteOrigin}/`, keyword: 'aluminum pergola', headingKeyword: 'aluminum pergola kits', keywordMinimum: 10, minWords: 1200, types: ['Organization', 'WebSite', 'WebPage', 'FAQPage']},
-  {file: 'pergola-kits/index.html', canonical: `${siteOrigin}/pergola-kits/`, keyword: 'pergola kits', headingKeyword: 'pergola kits', keywordMinimum: 10, minWords: 1200, maxWords: 2050, types: ['Organization', 'WebSite', 'CollectionPage', 'BreadcrumbList', 'ItemList']},
-  {file: 'pergola-kits/louvered/index.html', canonical: `${siteOrigin}/pergola-kits/louvered/`, keyword: 'louvered pergola', headingKeyword: 'louvered pergola', keywordMinimum: 12, minWords: 1200, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'FAQPage']},
-  {file: 'pergola-kits/freestanding/index.html', canonical: `${siteOrigin}/pergola-kits/freestanding/`, keyword: 'freestanding pergola', headingKeyword: 'freestanding pergola', keywordMinimum: 6, minWords: 1000, types: ['Organization', 'WebSite', 'WebPage', 'Article', 'BreadcrumbList', 'FAQPage']},
-  {file: 'pergola-kits/attached/index.html', canonical: `${siteOrigin}/pergola-kits/attached/`, keyword: 'attached pergola', headingKeyword: 'attached pergola', keywordMinimum: 6, minWords: 900, types: ['Organization', 'WebSite', 'WebPage', 'Article', 'BreadcrumbList', 'FAQPage']},
-  {file: 'pergola-kits/deck/index.html', canonical: `${siteOrigin}/pergola-kits/deck/`, keyword: 'pergola on deck', headingKeyword: 'pergola on deck', keywordMinimum: 5, minWords: 950, types: ['Organization', 'WebSite', 'WebPage', 'Article', 'BreadcrumbList', 'FAQPage']},
-  {file: 'best-aluminum-pergola-kits/index.html', canonical: `${siteOrigin}/best-aluminum-pergola-kits/`, keyword: 'best aluminum pergola kits', headingKeyword: 'best aluminum pergola kits', keywordMinimum: 5, minWords: 1000, types: ['Organization', 'WebSite', 'WebPage', 'Article', 'BreadcrumbList', 'FAQPage']},
-  {file: 'pergola-kits/standard/index.html', canonical: `${siteOrigin}/pergola-kits/standard/`, keyword: 'manual louvered pergola', headingKeyword: 'manual louvered pergola', keywordMinimum: 4, minWords: 1200, types: ['Product', 'BreadcrumbList']},
-  {file: 'pergola-kits/pro/index.html', canonical: `${siteOrigin}/pergola-kits/pro/`, keyword: 'motorized louvered pergola', headingKeyword: 'motorized pergola', keywordMinimum: 4, minWords: 1200, types: ['Product', 'BreadcrumbList']},
-  {file: 'pergola-kits/max/index.html', canonical: `${siteOrigin}/pergola-kits/max/`, keyword: 'motorized louvered pergola', headingKeyword: 'motorized louvered pergola', keywordMinimum: 4, minWords: 1200, types: ['Product', 'BreadcrumbList']},
-  {file: 'engineering/specifications/index.html', canonical: `${siteOrigin}/engineering/specifications/`, keyword: 'aluminum pergola', headingKeyword: 'aluminum pergola specifications', keywordMinimum: 4, minWords: 1200, types: ['TechArticle']},
-  {file: 'pergola-calculator/index.html', canonical: `${siteOrigin}/pergola-calculator/`, keyword: 'pergola', headingKeyword: 'pergola calculator', keywordMinimum: 20, minWords: 1200, types: ['WebApplication', 'BreadcrumbList']},
-  {file: 'pergola-lighting-ideas/index.html', canonical: `${siteOrigin}/pergola-lighting-ideas/`, keyword: 'pergola lighting', headingKeyword: 'pergola lighting ideas', keywordMinimum: 8, minWords: 1200, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article', 'FAQPage']},
-  {file: 'pergola-installation/index.html', canonical: `${siteOrigin}/pergola-installation/`, keyword: 'how to install a pergola', headingKeyword: 'pergola installation', keywordMinimum: 3, minWords: 1200, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'HowTo', 'FAQPage']},
-  {file: 'pergola-cost/index.html', canonical: `${siteOrigin}/pergola-cost/`, keyword: 'pergola cost', headingKeyword: 'pergola cost', keywordMinimum: 8, minWords: 1300, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article', 'FAQPage']},
-  {file: 'diy-pergola/index.html', canonical: `${siteOrigin}/diy-pergola/`, keyword: 'diy pergola', headingKeyword: 'diy pergola', keywordMinimum: 5, minWords: 1200, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'HowTo']},
-  {file: 'backyard-pergola-ideas/index.html', canonical: `${siteOrigin}/backyard-pergola-ideas/`, keyword: 'backyard pergola ideas', headingKeyword: 'backyard pergola ideas', keywordMinimum: 6, minWords: 1200, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article']},
-  {file: 'pergola-vs-gazebo/index.html', canonical: `${siteOrigin}/pergola-vs-gazebo/`, keyword: 'pergola vs gazebo', headingKeyword: 'pergola vs gazebo', keywordMinimum: 8, minWords: 1200, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article']},
-  {file: 'partner-program/index.html', canonical: `${siteOrigin}/partner-program/`, keyword: 'partner program', headingKeyword: 'pergola dealer', keywordMinimum: 6, minWords: 800, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'FAQPage']}
+  {file: 'index.html', canonical: `${siteOrigin}/`, keyword: 'aluminum pergola', headingKeyword: 'aluminum pergola kits', minWords: 1200, types: ['Organization', 'WebSite', 'WebPage', 'FAQPage']},
+  {file: 'pergola-kits/index.html', canonical: `${siteOrigin}/pergola-kits/`, keyword: 'pergola kits', headingKeyword: 'pergola kits', minWords: 1200, maxWords: 2050, types: ['Organization', 'WebSite', 'CollectionPage', 'BreadcrumbList', 'ItemList']},
+  {file: 'pergola-kits/louvered/index.html', canonical: `${siteOrigin}/pergola-kits/louvered/`, keyword: 'louvered pergola', headingKeyword: 'louvered pergola', minWords: 1200, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'FAQPage']},
+  {file: 'pergola-kits/freestanding/index.html', canonical: `${siteOrigin}/pergola-kits/freestanding/`, keyword: 'freestanding pergola', headingKeyword: 'freestanding pergola', minWords: 1000, types: ['Organization', 'WebSite', 'WebPage', 'Article', 'BreadcrumbList', 'FAQPage']},
+  {file: 'pergola-kits/attached/index.html', canonical: `${siteOrigin}/pergola-kits/attached/`, keyword: 'attached pergola', headingKeyword: 'attached pergola', minWords: 900, types: ['Organization', 'WebSite', 'WebPage', 'Article', 'BreadcrumbList', 'FAQPage']},
+  {file: 'pergola-kits/deck/index.html', canonical: `${siteOrigin}/pergola-kits/deck/`, keyword: 'pergola on deck', headingKeyword: 'pergola on deck', minWords: 950, types: ['Organization', 'WebSite', 'WebPage', 'Article', 'BreadcrumbList', 'FAQPage']},
+  {file: 'best-aluminum-pergola-kits/index.html', canonical: `${siteOrigin}/best-aluminum-pergola-kits/`, keyword: 'best aluminum pergola kits', headingKeyword: 'best aluminum pergola kits', minWords: 1000, types: ['Organization', 'WebSite', 'WebPage', 'Article', 'BreadcrumbList', 'FAQPage']},
+  {file: 'pergola-kits/standard/index.html', canonical: `${siteOrigin}/pergola-kits/standard/`, keyword: 'manual louvered pergola', headingKeyword: 'manual louvered pergola', minWords: 1200, types: ['Product', 'BreadcrumbList']},
+  {file: 'pergola-kits/pro/index.html', canonical: `${siteOrigin}/pergola-kits/pro/`, keyword: 'motorized louvered pergola', headingKeyword: 'motorized pergola', minWords: 1200, types: ['Product', 'BreadcrumbList']},
+  {file: 'pergola-kits/max/index.html', canonical: `${siteOrigin}/pergola-kits/max/`, keyword: 'motorized louvered pergola', headingKeyword: 'motorized louvered pergola', minWords: 1200, types: ['Product', 'BreadcrumbList']},
+  {file: 'engineering/specifications/index.html', canonical: `${siteOrigin}/engineering/specifications/`, keyword: 'aluminum pergola', headingKeyword: 'aluminum pergola specifications', minWords: 1200, types: ['TechArticle']},
+  {file: 'pergola-calculator/index.html', canonical: `${siteOrigin}/pergola-calculator/`, keyword: 'pergola', headingKeyword: 'pergola calculator', minWords: 1200, types: ['WebApplication', 'BreadcrumbList']},
+  {file: 'pergola-lighting-ideas/index.html', canonical: `${siteOrigin}/pergola-lighting-ideas/`, keyword: 'pergola lighting', headingKeyword: 'pergola lighting ideas', minWords: 1200, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article', 'FAQPage']},
+  {file: 'pergola-installation/index.html', canonical: `${siteOrigin}/pergola-installation/`, keyword: 'how to install a pergola', headingKeyword: 'pergola installation', minWords: 1200, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'HowTo', 'FAQPage']},
+  {file: 'pergola-cost/index.html', canonical: `${siteOrigin}/pergola-cost/`, keyword: 'pergola cost', headingKeyword: 'pergola cost', minWords: 1300, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article', 'FAQPage']},
+  {file: 'diy-pergola/index.html', canonical: `${siteOrigin}/diy-pergola/`, keyword: 'diy pergola', headingKeyword: 'diy pergola', minWords: 1200, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'HowTo']},
+  {file: 'backyard-pergola-ideas/index.html', canonical: `${siteOrigin}/backyard-pergola-ideas/`, keyword: 'backyard pergola ideas', headingKeyword: 'backyard pergola ideas', minWords: 1200, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article']},
+  {file: 'pergola-vs-gazebo/index.html', canonical: `${siteOrigin}/pergola-vs-gazebo/`, keyword: 'pergola vs gazebo', headingKeyword: 'pergola vs gazebo', minWords: 1200, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Article']},
+  {file: 'partner-program/index.html', canonical: `${siteOrigin}/partner-program/`, keyword: 'partner program', headingKeyword: 'pergola dealer', minWords: 800, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'FAQPage']},
+  {file: 'about-max-pergola/index.html', canonical: `${siteOrigin}/about-max-pergola/`, keyword: 'max pergola', headingKeyword: 'max pergola', minWords: 850, types: ['Organization', 'WebSite', 'AboutPage', 'BreadcrumbList']}
 ];
 const noindexPages = [
   {file: 'warranty/index.html', canonical: `${siteOrigin}/warranty/`},
@@ -37,6 +38,7 @@ const legalPaths = noindexPages
 
 const errors = [];
 const canonicalUrls = new Set();
+const mainParagraphs = new Map();
 
 function requireMatch(value, pattern, message) {
   if (!pattern.test(value)) errors.push(message);
@@ -56,6 +58,10 @@ function plainText(value) {
     .trim();
 }
 
+function normalizeParagraph(value) {
+  return plainText(value).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
 function collectTypedNodes(value, type, found = []) {
   if (Array.isArray(value)) {
     for (const entry of value) collectTypedNodes(entry, type, found);
@@ -71,16 +77,21 @@ function collectTypedNodes(value, type, found = []) {
 
 for (const page of pages) {
   const html = read(page.file);
-  const keywordPattern = new RegExp(page.keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
-  const keywordCount = (html.match(keywordPattern) || []).length;
   const title = html.match(/<title>([^<]+)<\/title>/)?.[1] || '';
   const titleLength = title.replace(/&(?:[a-z0-9#]+);/gi, '&').length;
   const metaDescription = html.match(/<meta name="description" content="([^"]+)"/)?.[1] || '';
   const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)?.[1] || '';
   const mainWordCount = plainText(main).split(/\s+/).filter(Boolean).length;
+  for (const paragraph of main.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)) {
+    const text = plainText(paragraph[1]);
+    if (text.split(/\s+/).length < 12) continue;
+    const key = normalizeParagraph(paragraph[1]);
+    const files = mainParagraphs.get(key) || [];
+    files.push(page.file);
+    mainParagraphs.set(key, files);
+  }
   const h1 = plainText(html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i)?.[1] || '');
   const h2s = [...html.matchAll(/<h2\b[^>]*>([\s\S]*?)<\/h2>/gi)].map((match) => plainText(match[1]));
-  if (keywordCount < page.keywordMinimum) errors.push(`${page.file}: expected at least ${page.keywordMinimum} uses of focus phrase "${page.keyword}", found ${keywordCount}`);
   if (titleLength < 15 || titleLength > 60) errors.push(`${page.file}: title length is ${titleLength}, expected 15–60 characters`);
   if (!title.toLowerCase().includes(page.keyword)) errors.push(`${page.file}: protected keyword "${page.keyword}" missing from title`);
   if (!metaDescription.toLowerCase().includes(page.keyword)) errors.push(`${page.file}: protected keyword "${page.keyword}" missing from meta description`);
@@ -88,6 +99,9 @@ for (const page of pages) {
   if (!h2s.some((heading) => heading.toLowerCase().includes(page.headingKeyword))) errors.push(`${page.file}: no H2 contains heading phrase "${page.headingKeyword}"`);
   if (mainWordCount < page.minWords) errors.push(`${page.file}: expected at least ${page.minWords} main-content words, found ${mainWordCount}`);
   if (page.maxWords && mainWordCount > page.maxWords) errors.push(`${page.file}: expected no more than ${page.maxWords} main-content words, found ${mainWordCount}`);
+  requireMatch(main, /class="content-meta"/, `${page.file}: visible content owner and revision note missing`);
+  const mainInternalLinks = [...main.matchAll(/\shref="(\/[^"#?]*)/g)].map((match) => match[1]);
+  if (new Set(mainInternalLinks).size < 3) errors.push(`${page.file}: expected at least three distinct internal links in main content`);
   requireMatch(html, /<html lang="en-US" dir="ltr">/, `${page.file}: expected en-US language and ltr direction`);
   requireMatch(html, /<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">/, `${page.file}: complete robots directive missing`);
   requireMatch(html, /<meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">/, `${page.file}: Googlebot directive missing`);
@@ -159,6 +173,11 @@ for (const page of pages) {
       if (item?.item?.['@type'] === 'Product') errors.push(`pergola-kits/index.html: catalog item ${expected.position} must not embed Product markup`);
     }
   }
+}
+
+for (const [paragraph, files] of mainParagraphs) {
+  const distinctFiles = [...new Set(files)];
+  if (distinctFiles.length > 1) errors.push(`duplicate main-content paragraph across ${distinctFiles.join(', ')}: "${paragraph.slice(0, 110)}"`);
 }
 
 for (const page of noindexPages) {
