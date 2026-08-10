@@ -33,6 +33,8 @@ walk(root);
 
 const errors = [];
 const idsByFile = new Map();
+const oversizedImages = new Set();
+const maxImageBytes = 1_000_000;
 const ahrefsAnalyticsTag = '<script src="https://analytics.ahrefs.com/analytics.js" data-key="uyE2fwY9SZcf986LJ72IAA" async></script>';
 
 for (const file of allHtml) {
@@ -63,13 +65,21 @@ for (const file of allHtml) {
   for (const image of images) {
     if (!/\salt="[^"]+"/.test(image)) errors.push(`${relative}: image missing a useful alt attribute`);
     const src = image.match(/\ssrc="([^"]+)"/)?.[1];
-    if (src?.startsWith('/') && !existsSync(join(root, src.split('#')[0]))) errors.push(`${relative}: missing image ${src}`);
+    if (src?.startsWith('/')) {
+      const imagePath = join(root, src.split('#')[0]);
+      if (!existsSync(imagePath)) errors.push(`${relative}: missing image ${src}`);
+      else if (statSync(imagePath).size > maxImageBytes) oversizedImages.add(src);
+    }
   }
 
   for (const script of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
     try { JSON.parse(script[1]); }
     catch (error) { errors.push(`${relative}: invalid JSON-LD (${error.message})`); }
   }
+}
+
+for (const image of oversizedImages) {
+  errors.push(`${image}: referenced image exceeds ${maxImageBytes.toLocaleString('en-US')} bytes`);
 }
 
 for (const relative of primaryPages) {
@@ -171,14 +181,21 @@ for (const file of allHtml) {
   }
 }
 
-const packagingImage = 'assets/images/maxpergola-export-packaging.png';
-const legacyPackagingImage = 'assets/images/export-packaging.jpg';
+const packagingImage = 'assets/images/maxpergola-export-packaging.webp';
+const legacyPackagingImages = [
+  'assets/images/maxpergola-export-packaging.png',
+  'assets/images/export-packaging.jpg'
+];
 if (!existsSync(join(root, packagingImage))) errors.push(`Missing required packaging image: ${packagingImage}`);
-if (existsSync(join(root, legacyPackagingImage))) errors.push(`Legacy packaging image must be removed: ${legacyPackagingImage}`);
+for (const legacyPackagingImage of legacyPackagingImages) {
+  if (existsSync(join(root, legacyPackagingImage))) errors.push(`Legacy packaging image must be removed: ${legacyPackagingImage}`);
+}
 for (const relative of ['index.html', 'pergola-kits/index.html', 'pergola-installation/index.html', 'pergola-cost/index.html', 'diy-pergola/index.html', 'sitemap.xml']) {
   const content = readFileSync(join(root, relative), 'utf8');
   if (!content.includes(packagingImage)) errors.push(`${relative}: approved packaging image missing`);
-  if (content.includes(legacyPackagingImage)) errors.push(`${relative}: legacy packaging image still referenced`);
+  for (const legacyPackagingImage of legacyPackagingImages) {
+    if (content.includes(legacyPackagingImage)) errors.push(`${relative}: legacy packaging image still referenced`);
+  }
 }
 
 const kitsHtml = readFileSync(join(root, 'pergola-kits/index.html'), 'utf8');
