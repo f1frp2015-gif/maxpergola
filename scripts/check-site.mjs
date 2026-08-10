@@ -29,10 +29,17 @@ walk(root);
 
 const errors = [];
 const idsByFile = new Map();
+const ahrefsAnalyticsTag = '<script src="https://analytics.ahrefs.com/analytics.js" data-key="uyE2fwY9SZcf986LJ72IAA" async></script>';
 
 for (const file of allHtml) {
   const relative = file.slice(root.length + 1);
   const html = readFileSync(file, 'utf8');
+  if (relative !== 'crm/index.html') {
+    const head = html.match(/<head>([\s\S]*?)<\/head>/i)?.[1] || '';
+    const ahrefsTagCount = html.split(ahrefsAnalyticsTag).length - 1;
+    if (ahrefsTagCount !== 1) errors.push(`${relative}: expected exactly one Ahrefs Analytics tag, found ${ahrefsTagCount}`);
+    if (!head.includes(ahrefsAnalyticsTag)) errors.push(`${relative}: Ahrefs Analytics tag must be inside <head>`);
+  }
   const competitorBrandTerms = [
     /\bpergolux\b/i,
     /\bsundream\b/i,
