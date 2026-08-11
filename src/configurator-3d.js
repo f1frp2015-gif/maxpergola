@@ -66,7 +66,7 @@ if (root && viewport && preview) {
   let firstFramePainted = false;
   let renderFailed = false;
   let blankFrameCount = 0;
-  let healthCheckCountdown = 0;
+  let contextRecoveryTimer;
   let maximumDrawingBufferSize = 4096;
   let pergolaPixelProbePassed = false;
   let pergolaProbeTarget;
@@ -452,6 +452,7 @@ if (root && viewport && preview) {
 
   const buildModel = (configuration) => {
     const hadModel = Boolean(modelGroup);
+    const previousDimensions = { ...dimensions };
     dimensions = {
       width: (Number(configuration.width) || defaultConfiguration.width) * inch,
       length: (Number(configuration.length) || defaultConfiguration.length) * inch,
@@ -479,7 +480,10 @@ if (root && viewport && preview) {
     sideSelections.forEach((side, index) => addSidePanel(modelGroup, side || 'none', index, dimensions.width, dimensions.length, dimensions.height, frameMaterial));
     addSmartAccessories(modelGroup, configuration, dimensions.width, dimensions.length, dimensions.height, frameMaterial);
 
-    updateCameraBounds(!hadModel);
+    const dimensionsChanged = Math.abs(previousDimensions.width - dimensions.width) > 0.001
+      || Math.abs(previousDimensions.length - dimensions.length) > 0.001
+      || Math.abs(previousDimensions.height - dimensions.height) > 0.001;
+    updateCameraBounds(!hadModel || dimensionsChanged);
     updateDiagnostics(configuration);
   };
 
@@ -487,12 +491,15 @@ if (root && viewport && preview) {
     if (!camera || !controls) return;
     const maximumPadWidth = 25 * 12 * inch;
     const radius = Math.max(maximumPadWidth, dimensions.width, dimensions.length, dimensions.height) * 0.82;
+    const structureRadius = Math.hypot(dimensions.width / 2 + 0.4, dimensions.length / 2 + 0.4, dimensions.height * 0.65);
+    const fitDistance = Math.max(radius * 1.96, structureRadius / Math.sin(THREE.MathUtils.degToRad(camera.fov / 2)) * 1.08);
     const target = new THREE.Vector3(0, dimensions.height * 0.35, 0);
     controls.target.copy(target);
-    controls.minDistance = radius * 0.72;
-    controls.maxDistance = radius * 3.2;
+    controls.minDistance = Math.max(radius * 0.9, structureRadius * 1.2);
+    controls.maxDistance = fitDistance * 2;
     if (resetPosition) {
-      camera.position.set(radius * 1.16, dimensions.height * 0.72 + radius * 0.5, radius * 1.45);
+      const viewDirection = new THREE.Vector3(1.16, 0.65, 1.45).normalize();
+      camera.position.copy(target).addScaledVector(viewDirection, fitDistance);
       camera.lookAt(target);
     }
     camera.near = Math.max(0.05, radius / 80);
@@ -539,10 +546,8 @@ if (root && viewport && preview) {
     const bounds = new THREE.Box3().setFromObject(modelGroup);
     if (bounds.isEmpty()) return false;
     const size = bounds.getSize(new THREE.Vector3());
-    const center = bounds.getCenter(new THREE.Vector3()).project(camera);
     return size.x > 1 && size.y > 1 && size.z > 1
-      && Number.isFinite(center.x) && Number.isFinite(center.y) && Number.isFinite(center.z)
-      && Math.abs(center.x) < 1.4 && Math.abs(center.y) < 1.4 && center.z > -1 && center.z < 1;
+      && Number.isFinite(size.x) && Number.isFinite(size.y) && Number.isFinite(size.z);
   };
 
   const updateDiagnostics = (configuration) => {
@@ -580,7 +585,6 @@ if (root && viewport && preview) {
     if (firstFramePainted) return;
     firstFramePainted = true;
     blankFrameCount = 0;
-    healthCheckCountdown = 180;
     preview.classList.remove('is-3d-fallback');
     preview.classList.add('is-3d-ready');
     viewport.removeAttribute('aria-busy');
@@ -599,6 +603,18 @@ if (root && viewport && preview) {
     const previousBackground = scene.background;
     const previousFog = scene.fog;
     const stageWasVisible = stageGroup.visible;
+    const probeCamera = new THREE.PerspectiveCamera(37, 48 / 36, 0.05, 100);
+    const maximumPadWidth = 25 * 12 * inch;
+    const radius = Math.max(maximumPadWidth, dimensions.width, dimensions.length, dimensions.height) * 0.82;
+    const structureRadius = Math.hypot(dimensions.width / 2 + 0.4, dimensions.length / 2 + 0.4, dimensions.height * 0.65);
+    const fitDistance = Math.max(radius * 1.96, structureRadius / Math.sin(THREE.MathUtils.degToRad(probeCamera.fov / 2)) * 1.08);
+    const target = new THREE.Vector3(0, dimensions.height * 0.35, 0);
+    const viewDirection = new THREE.Vector3(1.16, 0.65, 1.45).normalize();
+    probeCamera.position.copy(target).addScaledVector(viewDirection, fitDistance);
+    probeCamera.lookAt(target);
+    probeCamera.near = Math.max(0.05, radius / 80);
+    probeCamera.far = radius * 16;
+    probeCamera.updateProjectionMatrix();
     const pixels = new Uint8Array(48 * 36 * 4);
     try {
       stageGroup.visible = false;
@@ -606,7 +622,7 @@ if (root && viewport && preview) {
       scene.fog = null;
       renderer.setRenderTarget(pergolaProbeTarget);
       renderer.clear(true, true, true);
-      renderer.render(scene, camera);
+      renderer.render(scene, probeCamera);
       renderer.readRenderTargetPixels(pergolaProbeTarget, 0, 0, 48, 36, pixels);
       let pergolaPixels = 0;
       for (let index = 0; index < pixels.length; index += 4) {
@@ -635,27 +651,25 @@ if (root && viewport && preview) {
     controls.update(delta);
     renderer.render(scene, camera);
     if (renderer.getContext().isContextLost()) throw new Error('WebGL context was lost while rendering.');
-    healthCheckCountdown -= 1;
-    if (!firstFramePainted || healthCheckCountdown <= 0) {
+    if (!firstFramePainted) {
       pergolaPixelProbePassed = frameHasPergolaPixels();
       if (pergolaPixelProbePassed) {
         blankFrameCount = 0;
-        healthCheckCountdown = 180;
         markFramePainted();
       } else {
         blankFrameCount += 1;
-        healthCheckCountdown = 0;
         if (blankFrameCount >= 3) fallback(modelGeometryIsReady() ? 'WebGL produced blank frames' : 'Pergola geometry did not initialize');
       }
     }
   };
 
   const fallback = (reason = 'WebGL unavailable') => {
+    window.clearTimeout(contextRecoveryTimer);
+    contextRecoveryTimer = undefined;
     renderFailed = true;
     active = false;
     firstFramePainted = false;
     blankFrameCount = 0;
-    healthCheckCountdown = 0;
     pergolaPixelProbePassed = false;
     preview.classList.remove('is-3d-ready');
     preview.classList.add('is-3d-fallback');
@@ -665,12 +679,31 @@ if (root && viewport && preview) {
     window.__maxPergola3D = { ready: false, renderer: 'SVG fallback', reason };
   };
 
+  const beginContextRecovery = () => {
+    if (contextRecoveryTimer) return;
+    active = false;
+    viewport.dataset.renderer = 'WebGL2 · restoring';
+    viewport.setAttribute('aria-busy', 'true');
+    if (liveLabel) liveLabel.textContent = 'Restoring live 3D';
+    window.__maxPergola3D = {
+      ready: false,
+      renderer: 'WebGL2 restoring',
+      recovering: true,
+      state: { ...(state || defaultConfiguration) }
+    };
+    contextRecoveryTimer = window.setTimeout(() => fallback('WebGL context could not be restored'), 6000);
+  };
+
   const animate = (time) => {
     window.requestAnimationFrame(animate);
     if (!active || document.hidden || renderFailed) return;
     try {
       renderFrame(time);
     } catch (error) {
+      if (renderer?.getContext().isContextLost()) {
+        beginContextRecovery();
+        return;
+      }
       console.warn('Max Pergola 3D preview stopped; using the architectural fallback.', error);
       fallback(error instanceof Error ? error.message : 'Render failed');
     }
@@ -687,14 +720,15 @@ if (root && viewport && preview) {
     renderer.domElement.setAttribute('aria-label', 'Interactive three-dimensional model of the configured Max Pergola. Drag to rotate and scroll or pinch to zoom.');
     renderer.domElement.addEventListener('webglcontextlost', (event) => {
       event.preventDefault();
-      fallback('WebGL context lost');
+      beginContextRecovery();
     }, false);
     renderer.domElement.addEventListener('webglcontextrestored', () => {
+      window.clearTimeout(contextRecoveryTimer);
+      contextRecoveryTimer = undefined;
       renderFailed = false;
       active = true;
       firstFramePainted = false;
       blankFrameCount = 0;
-      healthCheckCountdown = 0;
       viewport.hidden = false;
       viewport.setAttribute('aria-busy', 'true');
       try {
@@ -714,7 +748,7 @@ if (root && viewport && preview) {
     controls.dampingFactor = 0.065;
     controls.enablePan = false;
     controls.minPolarAngle = THREE.MathUtils.degToRad(26);
-    controls.maxPolarAngle = THREE.MathUtils.degToRad(82);
+    controls.maxPolarAngle = THREE.MathUtils.degToRad(76);
     controls.addEventListener('start', () => {
       autoRotate = false;
       orbitButton?.setAttribute('aria-pressed', 'false');

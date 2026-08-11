@@ -6273,6 +6273,11 @@ a {
   display: none;
 }
 
+.builder-preview.is-3d-fallback .pergola-concept-fallback {
+  width: min(68%, 620px);
+  max-height: 74%;
+}
+
 .concept-structure {
   transform: scale(var(--concept-scale-x), var(--concept-scale-y));
   transform-origin: 280px 260px;
