@@ -7,12 +7,17 @@
   "scripts": {
     "dev": "python3 -m http.server ${PORT:-4173}",
     "dev:vercel": "vercel dev --listen 4173",
-    "check": "node scripts/check-site.mjs && node scripts/check-seo.mjs",
+    "build:3d": "node scripts/build-configurator-3d.mjs",
+    "check": "npm run build:3d && node scripts/check-site.mjs && node scripts/check-seo.mjs",
     "seo:audit": "node scripts/audit-content.mjs",
     "db:migrate": "node scripts/migrate-crm.mjs",
     "seo:submit": "node scripts/submit-indexnow.mjs"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^1.1.0"
+    "@neondatabase/serverless": "^1.1.0",
+    "three": "^0.185.1"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
   }
 }

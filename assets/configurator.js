@@ -17,6 +17,7 @@
     width: 168,
     length: 120,
     clearance: 96,
+    louverAngle: 38,
     trim: 'Clean',
     mounting: 'freeStanding',
     postLayout: 'corners',
@@ -123,6 +124,7 @@
     form.elements.namedItem('width').value = safeRange(params.get('width'), 96, 288, 12, defaults.width);
     form.elements.namedItem('length').value = safeRange(params.get('length'), 96, 216, 24, defaults.length);
     form.elements.namedItem('clearance').value = safeRange(params.get('clearance'), 84, 120, 12, defaults.clearance);
+    form.elements.namedItem('louverAngle').value = safeRange(params.get('louverAngle'), 0, 110, 1, defaults.louverAngle);
     setCheckbox('smartHub', params.get('smartHub') === 'true');
     setCheckbox('weatherSensor', params.get('weatherSensor') === 'true');
     setCheckbox('signalRepeater', params.get('signalRepeater') === 'true');
@@ -143,6 +145,7 @@
     width: Number(form.elements.namedItem('width').value),
     length: Number(form.elements.namedItem('length').value),
     clearance: Number(form.elements.namedItem('clearance').value),
+    louverAngle: Number(form.elements.namedItem('louverAngle').value),
     trim: selectedValue('trim'),
     mounting: selectedValue('mounting'),
     postLayout: selectedValue('postLayout'),
@@ -260,6 +263,9 @@
     setText('[data-preview-width]', feet(state.width));
     setText('[data-preview-length]', feet(state.length));
     setText('[data-preview-height]', feet(state.clearance));
+    const configuration = {...state, scene};
+    root.maxPergolaState = configuration;
+    root.dispatchEvent(new CustomEvent('maxpergola:configuration', {detail: configuration}));
   };
 
   const updateUrl = (state) => {
@@ -271,6 +277,7 @@
       width: state.width,
       length: state.length,
       clearance: state.clearance,
+      louverAngle: state.louverAngle,
       trim: state.trim,
       mounting: state.mounting,
       postLayout: state.postLayout,
@@ -296,6 +303,7 @@
       `Configurator reference: ${id}`,
       `Model: ${state.model} — ${modelData[state.model].roof}`,
       `Planning dimensions: ${size} (${meters(state.width)} × ${meters(state.length)} m footprint)`,
+      `Previewed louver angle: ${state.louverAngle}°`,
       `Finish: ${finish}`,
       `Installation: ${layout}`,
       `Roof control: ${state.model === 'Standard' ? 'Manual operation' : labels.controls[state.controls]}`,
@@ -330,12 +338,13 @@
     setText('[data-output="width"]', feet(state.width));
     setText('[data-output="length"]', feet(state.length));
     setText('[data-output="clearance"]', feet(state.clearance));
+    setText('[data-output="louverAngle"]', `${state.louverAngle}°`);
     setText('[data-area]', `${area.toFixed(0)} sq ft / ${areaMetric.toFixed(1)} m²`);
     setText('[data-section-summary="model"]', state.model);
     setText('[data-section-summary="dimensions"]', `${feet(state.width)} × ${feet(state.length)}`);
     setText('[data-section-summary="finish"]', `${state.frameColor} / ${state.topColor}`);
     setText('[data-section-summary="mounting"]', labels.mounting[state.mounting]);
-    setText('[data-section-summary="controls"]', state.model === 'Standard' ? 'Manual operation' : labels.controls[state.controls]);
+    setText('[data-section-summary="controls"]', `${state.model === 'Standard' ? 'Manual' : labels.controls[state.controls]} · ${state.louverAngle}°`);
     setText('[data-section-summary="smart"]', smartCount ? `${smartCount} selected` : (state.model === 'Standard' ? 'Motorized roof required' : 'Not selected'));
     setText('[data-section-summary="comfort"]', comfort.length ? comfort.join(' · ') : 'Not selected');
     setText('[data-section-summary="sides"]', activeSides ? `${activeSides} configured` : (state.mounting === 'wallMount' ? 'Rear at building' : 'All open'));

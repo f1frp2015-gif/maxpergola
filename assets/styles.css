@@ -6115,6 +6115,139 @@ a {
   width: min(88%, 760px);
   height: auto;
   overflow: visible;
+  transition: opacity .3s ease, visibility .3s ease;
+}
+
+.pergola-3d {
+  position: absolute;
+  z-index: 2;
+  inset: -5% -3% -4%;
+  overflow: hidden;
+  touch-action: none;
+  cursor: grab;
+}
+
+.pergola-3d:active {
+  cursor: grabbing;
+}
+
+.pergola-3d canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: 0;
+  filter: drop-shadow(0 24px 23px rgb(0 0 0 / 23%));
+}
+
+.pergola-3d-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 13px;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 999px;
+  background: rgb(15 16 15 / 65%);
+  color: rgb(255 255 255 / 72%);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  transform: translate(-50%, -50%);
+  backdrop-filter: blur(12px);
+}
+
+.pergola-3d-loading span {
+  width: 8px;
+  height: 8px;
+  border: 2px solid rgb(255 255 255 / 28%);
+  border-top-color: #d6e969;
+  border-radius: 50%;
+  animation: pergola-3d-spin .7s linear infinite;
+}
+
+@keyframes pergola-3d-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pergola-3d-loading span {
+    animation: none;
+  }
+}
+
+.builder-preview.is-3d-ready .pergola-concept-fallback {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.builder-preview.is-3d-ready .pergola-3d-loading {
+  display: none;
+}
+
+.pergola-3d-toolbar {
+  position: absolute;
+  z-index: 4;
+  top: 2%;
+  left: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px;
+  border: 1px solid rgb(255 255 255 / 15%);
+  border-radius: 999px;
+  background: rgb(15 16 15 / 58%);
+  box-shadow: 0 14px 34px rgb(0 0 0 / 18%);
+  color: rgb(255 255 255 / 68%);
+  transform: translateX(-50%);
+  backdrop-filter: blur(14px);
+}
+
+.pergola-3d-toolbar span {
+  padding: 0 9px;
+  font-size: 10px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.pergola-3d-toolbar button {
+  min-height: 31px;
+  border: 0;
+  border-radius: 999px;
+  padding: 0 10px;
+  background: rgb(255 255 255 / 8%);
+  color: #fff;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.pergola-3d-toolbar button:hover,
+.pergola-3d-toolbar button:focus-visible,
+.pergola-3d-toolbar button[aria-pressed="true"] {
+  background: #f3efe6;
+  color: #171715;
+}
+
+.pergola-3d-hint {
+  position: absolute;
+  z-index: 4;
+  right: 7%;
+  bottom: 6%;
+  margin: 0;
+  color: rgb(255 255 255 / 62%);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: .02em;
+  pointer-events: none;
+}
+
+.builder-preview.is-3d-fallback .pergola-3d-toolbar,
+.builder-preview.is-3d-fallback .pergola-3d-hint {
+  display: none;
 }
 
 .concept-structure {
@@ -6306,6 +6439,12 @@ a {
   font-size: 10px;
   line-height: 1.45;
   text-align: right;
+}
+
+.builder-louver-range {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid #d5cfc3;
 }
 
 .builder-rail {
@@ -6949,6 +7088,24 @@ a {
 
   .pergola-concept svg {
     width: 100%;
+  }
+
+  .pergola-3d {
+    inset: -3% -8% -1%;
+  }
+
+  .pergola-3d-toolbar {
+    top: 0;
+  }
+
+  .pergola-3d-toolbar span,
+  .pergola-3d-toolbar [data-3d-orbit] {
+    display: none;
+  }
+
+  .pergola-3d-hint {
+    right: 8%;
+    bottom: 5%;
   }
 
   .concept-dimension-length { left: 10%; }
