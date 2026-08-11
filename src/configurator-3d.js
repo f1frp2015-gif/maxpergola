@@ -142,6 +142,57 @@ if (root && viewport && preview) {
     return texture;
   };
 
+  const createDeckTexture = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1024;
+    canvas.height = 512;
+    const context = canvas.getContext('2d');
+    let seed = 29117;
+    const random = () => {
+      seed = (seed * 1664525 + 1013904223) % 4294967296;
+      return seed / 4294967296;
+    };
+    const boardHeight = 64;
+    const boardColors = ['#9a6840', '#a87549', '#8d5d39', '#b17d50', '#96633c', '#a46e43'];
+
+    context.fillStyle = '#4b3526';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    for (let row = 0; row < canvas.height / boardHeight; row += 1) {
+      const y = row * boardHeight + 3;
+      const offset = row % 2 ? -128 : 0;
+      for (let x = offset; x < canvas.width; x += 256) {
+        const color = boardColors[Math.floor(random() * boardColors.length)];
+        const gradient = context.createLinearGradient(x, y, x, y + boardHeight - 6);
+        gradient.addColorStop(0, color);
+        gradient.addColorStop(0.5, color);
+        gradient.addColorStop(1, '#765033');
+        context.fillStyle = gradient;
+        context.fillRect(x + 3, y, 250, boardHeight - 6);
+        context.strokeStyle = 'rgba(62, 36, 20, .24)';
+        context.lineWidth = 1;
+        for (let grain = 0; grain < 13; grain += 1) {
+          const grainY = y + 6 + random() * (boardHeight - 18);
+          context.beginPath();
+          context.moveTo(x + 9, grainY);
+          context.bezierCurveTo(x + 72, grainY + (random() - 0.5) * 7, x + 172, grainY + (random() - 0.5) * 8, x + 245, grainY + (random() - 0.5) * 5);
+          context.stroke();
+        }
+        context.fillStyle = 'rgba(39, 25, 17, .28)';
+        context.beginPath();
+        context.ellipse(x + 36 + random() * 170, y + 14 + random() * 34, 8 + random() * 13, 2 + random() * 3, 0, 0, Math.PI * 2);
+        context.fill();
+      }
+    }
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(2.25, 1.75);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+    return texture;
+  };
+
   const addLandscapeStage = () => {
     stageGroup = new THREE.Group();
     stageGroup.name = 'Maximum-size lawn installation area';
@@ -162,15 +213,17 @@ if (root && viewport && preview) {
     const maximumPadWidth = 25 * 12 * inch;
     const maximumPadLength = 19 * 12 * inch;
     const padMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0xd8d1bd,
+      color: 0xffffff,
+      map: createDeckTexture(),
       metalness: 0,
-      roughness: 0.88,
-      clearcoat: 0.08,
-      clearcoatRoughness: 0.9,
-      envMapIntensity: 0.45
+      roughness: 0.72,
+      clearcoat: 0.12,
+      clearcoatRoughness: 0.76,
+      envMapIntensity: 0.62
     });
-    const pad = new THREE.Mesh(new THREE.BoxGeometry(maximumPadWidth, 0.045, maximumPadLength), padMaterial);
-    pad.position.y = -0.023;
+    const pad = new THREE.Mesh(new THREE.BoxGeometry(maximumPadWidth, 0.075, maximumPadLength), padMaterial);
+    pad.name = 'Maximum-size timber deck';
+    pad.position.y = -0.038;
     pad.receiveShadow = true;
     stageGroup.add(pad);
   };
