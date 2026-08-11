@@ -161,8 +161,21 @@ for (const file of allHtml) {
   }
 }
 
-for (const required of ['robots.txt', 'sitemap.xml', 'maxpergola-icon.svg', 'vercel.json', 'assets/styles.css', 'assets/site.js']) {
+for (const required of ['robots.txt', 'sitemap.xml', 'maxpergola-icon.svg', 'vercel.json', 'assets/styles.css', 'assets/site.js', 'assets/configurator.js', 'assets/configurator-3d.js', 'src/configurator-3d.js', 'scripts/build-configurator-3d.mjs']) {
   if (!existsSync(join(root, required))) errors.push(`Missing required file: ${required}`);
+}
+
+const configuratorHtml = readFileSync(join(root, 'configure/index.html'), 'utf8');
+const configuratorScript = readFileSync(join(root, 'assets/configurator.js'), 'utf8');
+const configurator3dSource = readFileSync(join(root, 'src/configurator-3d.js'), 'utf8');
+for (const marker of ['data-pergola-3d', 'data-3d-reset', 'data-3d-orbit', 'name="louverAngle"', '/assets/configurator-3d.js']) {
+  if (!configuratorHtml.includes(marker)) errors.push(`configure/index.html: real-time 3D marker missing (${marker})`);
+}
+for (const marker of ['maxpergola:configuration', 'louverAngle', 'root.maxPergolaState']) {
+  if (!configuratorScript.includes(marker)) errors.push(`assets/configurator.js: 3D state bridge missing (${marker})`);
+}
+for (const marker of ['WebGLRenderer', 'MeshPhysicalMaterial', 'PMREMGenerator', 'OrbitControls', 'profileMillimeters']) {
+  if (!configurator3dSource.includes(marker)) errors.push(`src/configurator-3d.js: rendering capability missing (${marker})`);
 }
 
 const styles = readFileSync(join(root, 'assets/styles.css'), 'utf8');

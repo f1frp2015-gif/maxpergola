@@ -1,0 +1,503 @@
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const root = document.querySelector('[data-max-configurator]');
+const viewport = root?.querySelector('[data-pergola-3d]');
+const preview = root?.querySelector('[data-builder-preview]');
+
+if (root && viewport && preview) {
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isCompact = window.matchMedia('(max-width: 700px)').matches;
+  const colorValues = {
+    Graphite: 0x202220,
+    White: 0xeee9df,
+    Bronze: 0x6b5747,
+    Sandstone: 0xb9a98d
+  };
+  const inch = 0.0254;
+  const profile = {
+    post: 0.15,
+    postWall: 0.0022,
+    beamHeight: 0.165,
+    beamDepth: 0.04,
+    beamWall: 0.0018,
+    gutterWidth: 0.08375,
+    gutterDepth: 0.065,
+    louverChord: 0.175,
+    louverHeight: 0.035,
+    louverWall: 0.0012
+  };
+
+  let renderer;
+  let controls;
+  let camera;
+  let scene;
+  let modelGroup;
+  let environmentTarget;
+  let state;
+  let sceneMode = 'dusk';
+  let modelSignature = '';
+  let active = true;
+  let autoRotate = !reducedMotion && !isCompact;
+  let targetLouverAngle = 38;
+  let lastTime = performance.now();
+  let dimensions = { width: 4.2672, length: 3.048, height: 2.4384 };
+  const louverMeshes = [];
+  const fanGroups = [];
+
+  const status = root.querySelector('[data-3d-status]');
+  const resetButton = root.querySelector('[data-3d-reset]');
+  const orbitButton = root.querySelector('[data-3d-orbit]');
+
+  const disposeGroup = (group) => {
+    if (!group) return;
+    group.traverse((object) => {
+      object.geometry?.dispose();
+      if (Array.isArray(object.material)) object.material.forEach((material) => material.dispose());
+      else object.material?.dispose();
+    });
+    group.removeFromParent();
+  };
+
+  const createMetal = (color, options = {}) => new THREE.MeshPhysicalMaterial({
+    color,
+    metalness: options.metalness ?? 0.82,
+    roughness: options.roughness ?? 0.24,
+    clearcoat: options.clearcoat ?? 0.34,
+    clearcoatRoughness: options.clearcoatRoughness ?? 0.28,
+    envMapIntensity: options.envMapIntensity ?? 1.3,
+    side: options.side ?? THREE.FrontSide
+  });
+
+  const addBox = (group, size, position, material, options = {}) => {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(...size), material);
+    mesh.position.set(...position);
+    if (options.rotation) mesh.rotation.set(...options.rotation);
+    mesh.castShadow = options.castShadow ?? true;
+    mesh.receiveShadow = options.receiveShadow ?? true;
+    group.add(mesh);
+    return mesh;
+  };
+
+  const addBasePlate = (group, x, z, frameMaterial) => {
+    const plate = addBox(group, [0.23, 0.018, 0.23], [x, 0.009, z], frameMaterial);
+    const boltMaterial = createMetal(0x91958f, { roughness: 0.34 });
+    for (const [dx, dz] of [[-0.075, -0.075], [0.075, -0.075], [-0.075, 0.075], [0.075, 0.075]]) {
+      const bolt = new THREE.Mesh(new THREE.CylinderGeometry(0.009, 0.011, 0.014, 10), boltMaterial);
+      bolt.position.set(x + dx, 0.026, z + dz);
+      bolt.castShadow = true;
+      group.add(bolt);
+    }
+    return plate;
+  };
+
+  const addPost = (group, x, z, clearHeight, frameMaterial) => {
+    addBox(group, [profile.post, clearHeight, profile.post], [x, clearHeight / 2, z], frameMaterial);
+    addBasePlate(group, x, z, frameMaterial);
+    const capMaterial = createMetal(0x111311, { roughness: 0.3 });
+    addBox(group, [0.126, 0.014, 0.126], [x, clearHeight - 0.04, z], capMaterial);
+  };
+
+  const postPositions = (configuration, width, length) => {
+    const outerX = width / 2 - profile.post / 2;
+    const outerZ = length / 2 - profile.post / 2;
+    const insetX = Math.max(profile.post, Math.min(width * 0.13, 0.52));
+    const insetZ = Math.max(profile.post, Math.min(length * 0.13, 0.52));
+    if (configuration.mounting === 'wallMount') {
+      return [[-outerX, outerZ], [outerX, outerZ]];
+    }
+    if (configuration.postLayout === 'singleLong') {
+      return [[-outerX, -outerZ + insetZ], [outerX, -outerZ + insetZ], [-outerX, outerZ], [outerX, outerZ]];
+    }
+    if (configuration.postLayout === 'singleShort') {
+      return [[-outerX, -outerZ], [outerX - insetX, -outerZ], [-outerX, outerZ], [outerX - insetX, outerZ]];
+    }
+    if (configuration.postLayout === 'doubleShort') {
+      return [[-outerX + insetX, -outerZ], [outerX - insetX, -outerZ], [-outerX + insetX, outerZ], [outerX - insetX, outerZ]];
+    }
+    return [[-outerX, -outerZ], [outerX, -outerZ], [-outerX, outerZ], [outerX, outerZ]];
+  };
+
+  const addWall = (group, width, clearHeight) => {
+    const wallMaterial = new THREE.MeshStandardMaterial({ color: 0xd9d1c2, roughness: 0.92, metalness: 0 });
+    const wall = addBox(
+      group,
+      [width + 1.5, clearHeight + 1.3, 0.12],
+      [0, (clearHeight + 1.3) / 2 - 0.05, -dimensions.length / 2 - 0.105],
+      wallMaterial,
+      { castShadow: false }
+    );
+    wall.receiveShadow = true;
+    const seamMaterial = new THREE.MeshStandardMaterial({ color: 0xbab2a5, roughness: 0.9 });
+    for (let y = 0.36; y < clearHeight + 0.9; y += 0.34) {
+      addBox(group, [width + 1.51, 0.008, 0.126], [0, y, -dimensions.length / 2 - 0.038], seamMaterial, { castShadow: false });
+    }
+  };
+
+  const addRoof = (group, configuration, width, length, clearHeight, frameMaterial, louverMaterial) => {
+    const beamY = clearHeight + profile.beamHeight / 2;
+    addBox(group, [width, profile.beamHeight, profile.beamDepth], [0, beamY, -length / 2 + profile.beamDepth / 2], frameMaterial);
+    addBox(group, [width, profile.beamHeight, profile.beamDepth], [0, beamY, length / 2 - profile.beamDepth / 2], frameMaterial);
+    addBox(group, [profile.beamDepth, profile.beamHeight, length], [-width / 2 + profile.beamDepth / 2, beamY, 0], frameMaterial);
+    addBox(group, [profile.beamDepth, profile.beamHeight, length], [width / 2 - profile.beamDepth / 2, beamY, 0], frameMaterial);
+
+    const gutterMaterial = createMetal(colorValues[configuration.frameColor] ?? colorValues.Graphite, { roughness: 0.31 });
+    const gutterY = clearHeight + profile.gutterDepth / 2;
+    addBox(group, [width - profile.beamDepth * 2, profile.gutterDepth, profile.gutterWidth], [0, gutterY, -length / 2 + profile.beamDepth + profile.gutterWidth / 2], gutterMaterial);
+    addBox(group, [width - profile.beamDepth * 2, profile.gutterDepth, profile.gutterWidth], [0, gutterY, length / 2 - profile.beamDepth - profile.gutterWidth / 2], gutterMaterial);
+
+    if (configuration.trim === 'Architectural') {
+      const trimMaterial = createMetal(colorValues[configuration.frameColor] ?? colorValues.Graphite, { roughness: 0.2 });
+      const trimY = clearHeight + profile.beamHeight * 0.62;
+      addBox(group, [width + 0.025, 0.026, 0.018], [0, trimY, length / 2 + 0.008], trimMaterial);
+      addBox(group, [width + 0.025, 0.026, 0.018], [0, trimY, -length / 2 - 0.008], trimMaterial);
+      addBox(group, [0.018, 0.026, length], [width / 2 + 0.008, trimY, 0], trimMaterial);
+      addBox(group, [0.018, 0.026, length], [-width / 2 - 0.008, trimY, 0], trimMaterial);
+    }
+
+    const innerWidth = Math.max(profile.louverChord, width - profile.beamDepth * 2 - 0.11);
+    const louverSpan = Math.max(0.5, length - profile.beamDepth * 2 - 0.18);
+    const louverCount = Math.max(6, Math.floor(innerWidth / profile.louverChord));
+    const spacing = innerWidth / louverCount;
+    const louverY = clearHeight + profile.beamHeight * 0.7;
+    const louverGeometry = new THREE.BoxGeometry(profile.louverChord * 0.94, profile.louverHeight, louverSpan);
+    for (let index = 0; index < louverCount; index += 1) {
+      const louver = new THREE.Mesh(louverGeometry, louverMaterial);
+      louver.position.set(-innerWidth / 2 + spacing * (index + 0.5), louverY, 0);
+      louver.castShadow = true;
+      louver.receiveShadow = true;
+      louver.rotation.z = THREE.MathUtils.degToRad(targetLouverAngle);
+      group.add(louver);
+      louverMeshes.push(louver);
+    }
+  };
+
+  const addLed = (group, configuration, width, length, clearHeight) => {
+    if (configuration.lighting === 'none') return;
+    const emissiveMaterial = new THREE.MeshStandardMaterial({
+      color: 0xffe7a1,
+      emissive: 0xffc85a,
+      emissiveIntensity: sceneMode === 'dusk' ? 7 : 2.6,
+      toneMapped: false
+    });
+    const y = clearHeight - 0.015;
+    if (configuration.lighting === 'perimeter') {
+      addBox(group, [width - 0.2, 0.012, 0.018], [0, y, length / 2 - 0.075], emissiveMaterial, { castShadow: false });
+      addBox(group, [width - 0.2, 0.012, 0.018], [0, y, -length / 2 + 0.075], emissiveMaterial, { castShadow: false });
+      addBox(group, [0.018, 0.012, length - 0.2], [width / 2 - 0.075, y, 0], emissiveMaterial, { castShadow: false });
+      addBox(group, [0.018, 0.012, length - 0.2], [-width / 2 + 0.075, y, 0], emissiveMaterial, { castShadow: false });
+    } else {
+      for (let x = -width * 0.36; x <= width * 0.36; x += Math.max(0.52, width / 5)) {
+        addBox(group, [0.012, 0.012, length - 0.24], [x, y + 0.08, 0], emissiveMaterial, { castShadow: false });
+      }
+    }
+    if (sceneMode === 'dusk') {
+      const light = new THREE.PointLight(0xffd991, 3.2, Math.max(width, length) * 1.4, 2);
+      light.position.set(0, clearHeight - 0.25, 0);
+      group.add(light);
+    }
+  };
+
+  const addFan = (group, x, clearHeight, frameMaterial) => {
+    const fan = new THREE.Group();
+    fan.position.set(x, clearHeight - 0.34, 0);
+    addBox(fan, [0.035, 0.34, 0.035], [0, 0.17, 0], frameMaterial);
+    const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.12, 0.13, 24), frameMaterial);
+    hub.position.y = -0.02;
+    hub.castShadow = true;
+    fan.add(hub);
+    for (let index = 0; index < 3; index += 1) {
+      const arm = new THREE.Group();
+      arm.rotation.y = index * Math.PI * 2 / 3;
+      addBox(arm, [0.62, 0.025, 0.12], [0.29, 0, 0], frameMaterial);
+      fan.add(arm);
+    }
+    fanGroups.push(fan);
+    group.add(fan);
+  };
+
+  const addComfort = (group, configuration, width, length, clearHeight, frameMaterial) => {
+    if (configuration.fan === 'single') addFan(group, 0, clearHeight, frameMaterial);
+    if (configuration.fan === 'double') {
+      addFan(group, -width * 0.22, clearHeight, frameMaterial);
+      addFan(group, width * 0.22, clearHeight, frameMaterial);
+    }
+    if (configuration.heater !== 'none') {
+      const heaterMaterial = createMetal(0x272927, { roughness: 0.33 });
+      const elementMaterial = new THREE.MeshStandardMaterial({
+        color: 0x632515,
+        emissive: 0xff5a20,
+        emissiveIntensity: sceneMode === 'dusk' ? 3.8 : 1.2,
+        toneMapped: false
+      });
+      const heaterPositions = configuration.heater === 'dual' ? [-width * 0.23, width * 0.23] : [0];
+      for (const x of heaterPositions) {
+        addBox(group, [Math.min(0.84, width * 0.26), 0.075, 0.115], [x, clearHeight - 0.18, -length / 2 + 0.14], heaterMaterial);
+        addBox(group, [Math.min(0.7, width * 0.22), 0.012, 0.12], [x, clearHeight - 0.225, -length / 2 + 0.14], elementMaterial, { castShadow: false });
+      }
+    }
+  };
+
+  const addSidePanel = (group, type, index, width, length, clearHeight, frameMaterial) => {
+    if (type === 'none') return;
+    const isLong = index === 0 || index === 2;
+    const span = (isLong ? width : length) - profile.post * 1.1;
+    const height = Math.max(0.7, clearHeight - 0.2);
+    const x = index === 1 ? width / 2 - 0.015 : index === 3 ? -width / 2 + 0.015 : 0;
+    const z = index === 0 ? length / 2 - 0.015 : index === 2 ? -length / 2 + 0.015 : 0;
+    const size = isLong ? [span, height, 0.026] : [0.026, height, span];
+    const position = [x, height / 2 + 0.09, z];
+
+    if (type === 'slatWall') {
+      const slatMaterial = createMetal(0x755d47, { roughness: 0.42 });
+      const slatCount = Math.max(8, Math.floor(span / 0.13));
+      const step = span / slatCount;
+      for (let index2 = 0; index2 < slatCount; index2 += 1) {
+        const offset = -span / 2 + step * (index2 + 0.5);
+        const slatSize = isLong ? [step * 0.62, height, 0.04] : [0.04, height, step * 0.62];
+        const slatPosition = isLong ? [offset, position[1], z] : [x, position[1], offset];
+        addBox(group, slatSize, slatPosition, slatMaterial);
+      }
+      return;
+    }
+
+    let panelMaterial;
+    if (type === 'glassWall') {
+      panelMaterial = new THREE.MeshPhysicalMaterial({
+        color: 0xd6f2f5,
+        metalness: 0,
+        roughness: 0.08,
+        transmission: 0.62,
+        thickness: 0.035,
+        transparent: true,
+        opacity: 0.48,
+        envMapIntensity: 1.7,
+        side: THREE.DoubleSide
+      });
+    } else if (type === 'motorizedShade') {
+      panelMaterial = new THREE.MeshStandardMaterial({ color: 0xb9ad99, roughness: 0.88, transparent: true, opacity: 0.84, side: THREE.DoubleSide });
+    } else {
+      panelMaterial = new THREE.MeshStandardMaterial({ color: 0x343735, roughness: 0.74, transparent: true, opacity: 0.9, side: THREE.DoubleSide });
+    }
+    addBox(group, size, position, panelMaterial, { castShadow: type !== 'glassWall' });
+    if (type === 'motorizedShade') {
+      const cassetteSize = isLong ? [span, 0.095, 0.11] : [0.11, 0.095, span];
+      addBox(group, cassetteSize, [x, clearHeight - 0.055, z], frameMaterial);
+      const hemSize = isLong ? [span, 0.045, 0.04] : [0.04, 0.045, span];
+      addBox(group, hemSize, [x, 0.17, z], frameMaterial);
+    }
+  };
+
+  const addSmartAccessories = (group, configuration, width, length, clearHeight, frameMaterial) => {
+    const accentMaterial = new THREE.MeshPhysicalMaterial({ color: 0xe4e5dd, roughness: 0.28, metalness: 0.28, clearcoat: 0.5 });
+    if (configuration.weatherSensor) {
+      addBox(group, [0.1, 0.075, 0.16], [width / 2 - 0.11, clearHeight + 0.19, -length / 2 + 0.19], accentMaterial);
+      const vane = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.1, 3), accentMaterial);
+      vane.rotation.z = Math.PI / 2;
+      vane.position.set(width / 2 - 0.11, clearHeight + 0.27, -length / 2 + 0.19);
+      group.add(vane);
+    }
+    if (configuration.signalRepeater) {
+      addBox(group, [0.075, 0.18, 0.055], [-width / 2 + 0.11, clearHeight - 0.28, length / 2 - 0.11], accentMaterial);
+      addBox(group, [0.008, 0.18, 0.008], [-width / 2 + 0.11, clearHeight - 0.1, length / 2 - 0.11], frameMaterial);
+    }
+    if (configuration.outlet) {
+      addBox(group, [0.09, 0.13, 0.03], [width / 2 - 0.075, 0.7, length / 2 - 0.162], accentMaterial);
+    }
+  };
+
+  const buildModel = (configuration) => {
+    dimensions = {
+      width: configuration.width * inch,
+      length: configuration.length * inch,
+      height: configuration.clearance * inch
+    };
+    targetLouverAngle = Number(configuration.louverAngle ?? 38);
+    louverMeshes.length = 0;
+    fanGroups.length = 0;
+    disposeGroup(modelGroup);
+    modelGroup = new THREE.Group();
+    modelGroup.name = 'Max Pergola parametric assembly';
+    scene.add(modelGroup);
+
+    const frameMaterial = createMetal(colorValues[configuration.frameColor] ?? colorValues.Graphite);
+    const louverMaterial = createMetal(colorValues[configuration.topColor] ?? colorValues.White, { metalness: 0.74, roughness: 0.2, envMapIntensity: 1.45 });
+    for (const [x, z] of postPositions(configuration, dimensions.width, dimensions.length)) {
+      addPost(modelGroup, x, z, dimensions.height, frameMaterial);
+    }
+    if (configuration.mounting === 'wallMount') addWall(modelGroup, dimensions.width, dimensions.height);
+    addRoof(modelGroup, configuration, dimensions.width, dimensions.length, dimensions.height, frameMaterial, louverMaterial);
+    addLed(modelGroup, configuration, dimensions.width, dimensions.length, dimensions.height);
+    addComfort(modelGroup, configuration, dimensions.width, dimensions.length, dimensions.height, frameMaterial);
+    configuration.sides.forEach((side, index) => addSidePanel(modelGroup, side, index, dimensions.width, dimensions.length, dimensions.height, frameMaterial));
+    addSmartAccessories(modelGroup, configuration, dimensions.width, dimensions.length, dimensions.height, frameMaterial);
+
+    const groundRadius = Math.max(dimensions.width, dimensions.length) * 1.35;
+    const groundMaterial = new THREE.ShadowMaterial({ color: 0x07100c, opacity: sceneMode === 'dusk' ? 0.34 : 0.2 });
+    const ground = new THREE.Mesh(new THREE.CircleGeometry(groundRadius, 64), groundMaterial);
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.y = -0.012;
+    ground.receiveShadow = true;
+    modelGroup.add(ground);
+    updateCameraBounds(false);
+    updateDiagnostics(configuration);
+  };
+
+  const updateCameraBounds = (resetPosition = true) => {
+    if (!camera || !controls) return;
+    const radius = Math.max(dimensions.width, dimensions.length, dimensions.height) * 0.78;
+    const target = new THREE.Vector3(0, dimensions.height * 0.52, 0);
+    controls.target.copy(target);
+    controls.minDistance = radius * 0.72;
+    controls.maxDistance = radius * 3.2;
+    if (resetPosition) {
+      camera.position.set(radius * 1.22, dimensions.height * 0.9 + radius * 0.44, radius * 1.48);
+      camera.lookAt(target);
+    }
+    camera.near = Math.max(0.05, radius / 80);
+    camera.far = radius * 16;
+    camera.updateProjectionMatrix();
+    controls.update();
+  };
+
+  const updateLighting = () => {
+    if (!scene || !renderer) return;
+    const dusk = sceneMode === 'dusk';
+    scene.children.filter((child) => child.userData.globalLight).forEach((child) => child.removeFromParent());
+    const hemisphere = new THREE.HemisphereLight(dusk ? 0x8fa7c7 : 0xe7f2ff, dusk ? 0x2c261e : 0x746c5c, dusk ? 1.6 : 2.4);
+    hemisphere.userData.globalLight = true;
+    scene.add(hemisphere);
+    const key = new THREE.DirectionalLight(dusk ? 0xffd1a2 : 0xfff5db, dusk ? 3.7 : 4.8);
+    key.position.set(dimensions.width * 0.8, dimensions.height * 2.5, dimensions.length * 1.2);
+    key.castShadow = true;
+    key.shadow.mapSize.set(isCompact ? 1024 : 2048, isCompact ? 1024 : 2048);
+    key.shadow.camera.near = 0.1;
+    key.shadow.camera.far = 30;
+    key.shadow.camera.left = -8;
+    key.shadow.camera.right = 8;
+    key.shadow.camera.top = 8;
+    key.shadow.camera.bottom = -8;
+    key.shadow.bias = -0.0004;
+    key.userData.globalLight = true;
+    scene.add(key);
+    const rim = new THREE.DirectionalLight(dusk ? 0x7898d2 : 0xbcd7ff, dusk ? 1.3 : 0.75);
+    rim.position.set(-dimensions.width, dimensions.height * 1.4, -dimensions.length);
+    rim.userData.globalLight = true;
+    scene.add(rim);
+    renderer.toneMappingExposure = dusk ? 0.9 : 1.08;
+  };
+
+  const updateDiagnostics = (configuration) => {
+    viewport.dataset.renderer = 'WebGL2 · PBR';
+    if (status) status.textContent = `${configuration.width / 12}' × ${configuration.length / 12}' · ${Math.round(targetLouverAngle)}° roof`;
+    window.__maxPergola3D = {
+      ready: true,
+      renderer: 'WebGL2',
+      pbr: true,
+      profileMillimeters: { post: 150, beam: [165, 40], gutter: [83.75, 65], louver: [175, 35] },
+      state: { ...configuration }
+    };
+  };
+
+  const resize = () => {
+    const width = Math.max(1, viewport.clientWidth);
+    const height = Math.max(1, viewport.clientHeight);
+    if (renderer.domElement.width !== Math.round(width * renderer.getPixelRatio()) || renderer.domElement.height !== Math.round(height * renderer.getPixelRatio())) {
+      renderer.setSize(width, height, false);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    }
+  };
+
+  const animate = (time) => {
+    window.requestAnimationFrame(animate);
+    if (!active || document.hidden) return;
+    resize();
+    const delta = Math.min(0.05, (time - lastTime) / 1000);
+    lastTime = time;
+    const targetRotation = THREE.MathUtils.degToRad(targetLouverAngle);
+    for (const louver of louverMeshes) louver.rotation.z = THREE.MathUtils.damp(louver.rotation.z, targetRotation, 8, delta);
+    if (!reducedMotion) fanGroups.forEach((fan) => { fan.rotation.y -= delta * 2.3; });
+    controls.autoRotate = autoRotate;
+    controls.autoRotateSpeed = 0.42;
+    controls.update(delta);
+    renderer.render(scene, camera);
+  };
+
+  const fallback = () => {
+    preview.classList.remove('is-3d-ready');
+    preview.classList.add('is-3d-fallback');
+    viewport.setAttribute('hidden', '');
+    window.__maxPergola3D = { ready: false, renderer: 'SVG fallback' };
+  };
+
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isCompact ? 1.5 : 2));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.domElement.setAttribute('role', 'img');
+    renderer.domElement.setAttribute('aria-label', 'Interactive three-dimensional model of the configured Max Pergola. Drag to rotate and scroll or pinch to zoom.');
+    renderer.domElement.addEventListener('webglcontextlost', (event) => {
+      event.preventDefault();
+      fallback();
+    }, false);
+    viewport.append(renderer.domElement);
+
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(37, 1, 0.05, 100);
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.065;
+    controls.enablePan = false;
+    controls.minPolarAngle = THREE.MathUtils.degToRad(26);
+    controls.maxPolarAngle = THREE.MathUtils.degToRad(82);
+    controls.addEventListener('start', () => {
+      autoRotate = false;
+      orbitButton?.setAttribute('aria-pressed', 'false');
+    });
+    orbitButton?.setAttribute('aria-pressed', String(autoRotate));
+
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    environmentTarget = pmrem.fromScene(new RoomEnvironment(), 0.04);
+    scene.environment = environmentTarget.texture;
+    pmrem.dispose();
+    updateLighting();
+    updateCameraBounds(true);
+    preview.classList.add('is-3d-ready');
+    viewport.removeAttribute('aria-busy');
+
+    root.addEventListener('maxpergola:configuration', (event) => {
+      state = event.detail;
+      sceneMode = state.scene || root.querySelector('.builder-scene')?.dataset.scene || 'dusk';
+      targetLouverAngle = Number(state.louverAngle ?? 38);
+      const nextSignature = JSON.stringify({...state, louverAngle: undefined});
+      if (nextSignature === modelSignature) {
+        updateDiagnostics(state);
+        return;
+      }
+      modelSignature = nextSignature;
+      updateLighting();
+      buildModel(state);
+    });
+
+    resetButton?.addEventListener('click', () => updateCameraBounds(true));
+    orbitButton?.addEventListener('click', () => {
+      autoRotate = !autoRotate;
+      orbitButton.setAttribute('aria-pressed', String(autoRotate));
+    });
+    renderer.domElement.addEventListener('dblclick', () => updateCameraBounds(true));
+    new ResizeObserver(resize).observe(viewport);
+    new IntersectionObserver((entries) => { active = entries[0]?.isIntersecting ?? true; }, { threshold: 0.01 }).observe(viewport);
+    if (root.maxPergolaState) buildModel(root.maxPergolaState);
+    window.requestAnimationFrame(animate);
+  } catch (error) {
+    console.warn('Max Pergola 3D preview could not start; using the architectural fallback.', error);
+    environmentTarget?.dispose();
+    renderer?.dispose();
+    fallback();
+  }
+}
