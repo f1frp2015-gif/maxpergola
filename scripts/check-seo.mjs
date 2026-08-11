@@ -3,7 +3,10 @@ import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const siteOrigin = 'https://maxpergola.com';
-const brandIcon = '/maxpergola-icon.svg';
+const brandIcon = '/favicon.ico';
+const brandPngIcon = '/favicon-96x96.png';
+const brandSvgIcon = '/maxpergola-icon.svg';
+const brandAppleIcon = '/apple-touch-icon.png';
 const pages = [
   {file: 'index.html', canonical: `${siteOrigin}/`, keyword: 'aluminum pergola', headingKeyword: 'aluminum pergola kits', minWords: 1200, types: ['Organization', 'WebSite', 'WebPage', 'FAQPage']},
   {file: 'pergola-kits/index.html', canonical: `${siteOrigin}/pergola-kits/`, keyword: 'pergola kits', headingKeyword: 'pergola kits', minWords: 1200, maxWords: 2050, types: ['Organization', 'WebSite', 'CollectionPage', 'BreadcrumbList', 'ItemList']},
@@ -42,6 +45,13 @@ const mainParagraphs = new Map();
 
 function requireMatch(value, pattern, message) {
   if (!pattern.test(value)) errors.push(message);
+}
+
+function requireFaviconSuite(html, file) {
+  requireMatch(html, /<link rel="icon" href="\/favicon\.ico" sizes="48x48 96x96">/, `${file}: root favicon.ico declaration missing`);
+  requireMatch(html, /<link rel="icon" href="\/favicon-96x96\.png" type="image\/png" sizes="96x96">/, `${file}: 96px PNG favicon declaration missing`);
+  requireMatch(html, /<link rel="icon" href="\/maxpergola-icon\.svg" type="image\/svg\+xml" sizes="any">/, `${file}: scalable brand icon declaration missing`);
+  requireMatch(html, /<link rel="apple-touch-icon" href="\/apple-touch-icon\.png" sizes="180x180">/, `${file}: Apple touch icon declaration missing`);
 }
 
 function read(relative) {
@@ -112,7 +122,7 @@ for (const page of pages) {
   requireMatch(html, /<link rel="sitemap" type="application\/xml" href="https:\/\/maxpergola\.com\/sitemap\.xml">/, `${page.file}: sitemap discovery link missing`);
   requireMatch(html, /<link rel="alternate" type="application\/atom\+xml"[^>]+href="https:\/\/maxpergola\.com\/feed\.xml">/, `${page.file}: Atom discovery link missing`);
   requireMatch(html, /<link rel="manifest" href="\/site\.webmanifest">/, `${page.file}: web manifest link missing`);
-  requireMatch(html, new RegExp(`<link rel="icon" href="${brandIcon.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}" type="image/svg\\+xml">`), `${page.file}: official brand icon missing`);
+  requireFaviconSuite(html, page.file);
 
   for (const property of ['og:type', 'og:title', 'og:description', 'og:url', 'og:site_name', 'og:locale', 'og:image', 'og:image:width', 'og:image:height', 'og:image:alt']) {
     requireMatch(html, new RegExp(`<meta property="${property.replace(':', '\\:')}" content="[^"]+">`), `${page.file}: ${property} missing`);
@@ -186,7 +196,7 @@ for (const page of noindexPages) {
   requireMatch(html, /<meta name="robots" content="noindex, follow">/, `${page.file}: noindex, follow robots directive missing`);
   requireMatch(html, /<meta name="googlebot" content="noindex, follow">/, `${page.file}: noindex, follow Googlebot directive missing`);
   requireMatch(html, new RegExp(`<link rel="canonical" href="${page.canonical.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}">`), `${page.file}: canonical does not match ${page.canonical}`);
-  requireMatch(html, new RegExp(`<link rel="icon" href="${brandIcon.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}" type="image/svg\\+xml">`), `${page.file}: official brand icon missing`);
+  requireFaviconSuite(html, page.file);
 }
 
 const contactFiles = [...pages.map((page) => page.file), ...noindexPages.map((page) => page.file)];
@@ -204,7 +214,7 @@ for (const file of contactFiles) {
 const notFound = read('404.html');
 requireMatch(notFound, /<html lang="en-US" dir="ltr">/, '404.html: expected en-US language and ltr direction');
 requireMatch(notFound, /<meta name="robots" content="noindex, follow">/, '404.html: noindex, follow missing');
-requireMatch(notFound, new RegExp(`<link rel="icon" href="${brandIcon.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}" type="image/svg\\+xml">`), '404.html: official brand icon missing');
+requireFaviconSuite(notFound, '404.html');
 if (/rel="canonical"/.test(notFound)) errors.push('404.html: should not declare a canonical URL');
 
 const sitemap = read('sitemap.xml');
@@ -276,7 +286,18 @@ for (const page of pages.slice(1)) {
 
 const manifest = JSON.parse(read('site.webmanifest'));
 if (manifest.name !== 'Max Pergola' || manifest.lang !== 'en-US' || manifest.start_url !== '/') errors.push('site.webmanifest: brand, language or start URL is invalid');
-if (!manifest.icons?.some((icon) => icon.src === brandIcon)) errors.push('site.webmanifest: official brand icon missing');
+for (const expected of [
+  {src: '/maxpergola-icon-192.png', sizes: '192x192', type: 'image/png'},
+  {src: '/maxpergola-icon-512.png', sizes: '512x512', type: 'image/png'},
+  {src: brandSvgIcon, sizes: 'any', type: 'image/svg+xml'}
+]) {
+  if (!manifest.icons?.some((icon) => icon.src === expected.src && icon.sizes === expected.sizes && icon.type === expected.type)) {
+    errors.push(`site.webmanifest: ${expected.src} entry is missing or incomplete`);
+  }
+}
+for (const icon of [brandIcon, '/favicon-48x48.png', brandPngIcon, brandAppleIcon, '/maxpergola-icon-192.png', '/maxpergola-icon-512.png', brandSvgIcon]) {
+  if (!existsSync(resolve(root, icon.slice(1)))) errors.push(`favicon asset missing: ${icon}`);
+}
 
 const indexNowKey = read('7728d1e43c48ba5d3a9c7d6411fb24fc.txt').trim();
 if (indexNowKey !== '7728d1e43c48ba5d3a9c7d6411fb24fc') errors.push('IndexNow key file content does not match its filename');
