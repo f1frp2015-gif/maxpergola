@@ -10,6 +10,7 @@ const brandAppleIcon = '/apple-touch-icon.png';
 const pages = [
   {file: 'index.html', canonical: `${siteOrigin}/`, keyword: 'aluminum pergola', headingKeyword: 'aluminum pergola kits', minWords: 1200, types: ['Organization', 'WebSite', 'WebPage', 'FAQPage']},
   {file: 'pergola-kits/index.html', canonical: `${siteOrigin}/pergola-kits/`, keyword: 'pergola kits', headingKeyword: 'pergola kits', minWords: 1200, maxWords: 2050, types: ['Organization', 'WebSite', 'CollectionPage', 'BreadcrumbList', 'ItemList']},
+  {file: 'configure/index.html', canonical: `${siteOrigin}/configure/`, keyword: 'pergola configurator', headingKeyword: 'pergola configurator', minWords: 800, types: ['WebApplication', 'BreadcrumbList']},
   {file: 'pergola-kits/louvered/index.html', canonical: `${siteOrigin}/pergola-kits/louvered/`, keyword: 'louvered pergola', headingKeyword: 'louvered pergola', minWords: 1200, types: ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'FAQPage']},
   {file: 'pergola-kits/freestanding/index.html', canonical: `${siteOrigin}/pergola-kits/freestanding/`, keyword: 'freestanding pergola', headingKeyword: 'freestanding pergola', minWords: 1000, types: ['Organization', 'WebSite', 'WebPage', 'Article', 'BreadcrumbList', 'FAQPage']},
   {file: 'pergola-kits/attached/index.html', canonical: `${siteOrigin}/pergola-kits/attached/`, keyword: 'attached pergola', headingKeyword: 'attached pergola', minWords: 900, types: ['Organization', 'WebSite', 'WebPage', 'Article', 'BreadcrumbList', 'FAQPage']},

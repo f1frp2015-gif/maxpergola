@@ -357,7 +357,7 @@ if (inquiryForm) {
   const params = new URLSearchParams(window.location.search);
   let engineeringInputs = {};
   try { engineeringInputs = JSON.parse(params.get('engineering') || '{}'); } catch {}
-  const fieldMap = {package: 'packageCode', sku: 'sku', size: 'sizeLabel', layout: 'layout', finish: 'finish', zip: 'zipCode'};
+  const fieldMap = {package: 'packageCode', sku: 'sku', size: 'sizeLabel', layout: 'layout', finish: 'finish', zip: 'zipCode', message: 'message'};
   Object.entries(fieldMap).forEach(([param, name]) => {
     const field = inquiryForm.elements.namedItem(name);
     if (field && params.get(param)) field.value = params.get(param);

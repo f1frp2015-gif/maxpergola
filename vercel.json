@@ -10,6 +10,7 @@
     },
     {"source": "/index.html", "destination": "/", "permanent": true},
     {"source": "/pergola-kits/index.html", "destination": "/pergola-kits/", "permanent": true},
+    {"source": "/configure/index.html", "destination": "/configure/", "permanent": true},
     {"source": "/pergola-kits/louvered/index.html", "destination": "/pergola-kits/louvered/", "permanent": true},
     {"source": "/pergola-kits/freestanding/index.html", "destination": "/pergola-kits/freestanding/", "permanent": true},
     {"source": "/pergola-kits/attached/index.html", "destination": "/pergola-kits/attached/", "permanent": true},

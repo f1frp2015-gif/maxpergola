@@ -5,6 +5,7 @@ const root = resolve(import.meta.dirname, '..');
 const primaryPages = [
   'index.html',
   'pergola-kits/index.html',
+  'configure/index.html',
   'pergola-kits/louvered/index.html',
   'pergola-kits/freestanding/index.html',
   'pergola-kits/attached/index.html',

@@ -27,7 +27,11 @@ The seven published nominal starting footprints for Standard, Pro and Max are:
 - Max 13 × 16 ft: 3.96 × 4.88 m nominal, approximately 208 sq ft / 19.3 m². Base size code 1316.
 - Max 13 × 19 ft: 3.96 × 5.79 m nominal, approximately 247 sq ft / 22.9 m². Base size code 1319.
 
-The online configurator combines the roof package, standard or custom dimensions, freestanding or attached layout, finish, and optional accessories. The six accessory categories are additional LED lighting, retractable screens, glass wall systems, privacy slat walls, radiant-heater preparation, and outlet preparation. Attached layouts, motors, electrical work, lighting, screens, walls, heaters, and custom finishes require compatibility or jobsite review. A generated SKU identifies the requested configuration; it does not prove price, inventory, structural suitability, or order acceptance.
+The advanced online configurator supports widths from 8 to 24 feet in one-foot steps, louver spans from 8 to 18 feet in two-foot steps, and clear heights from 7 to 10 feet in one-foot steps. It combines the roof package, freestanding or attached layout, frame and louver finish, control method, smart hub, weather sensor, signal extender, lighting, fans, heater preparation, outlet preparation, and an independently selected system for each of four sides. Its shareable URL and generated SKU preserve the selection set and can populate the written-quote form. The visual is a planning concept, not an approved drawing.
+
+Advanced configurator: https://maxpergola.com/configure/
+
+The product-page configurator combines the roof package, seven published nominal starting footprints or project-specific custom dimensions, freestanding or attached layout, finish, and optional accessories. The six accessory categories are additional LED lighting, retractable screens, glass wall systems, privacy slat walls, radiant-heater preparation, and outlet preparation. Attached layouts, motors, electrical work, lighting, screens, walls, heaters, and custom finishes require compatibility or jobsite review. A generated SKU identifies the requested configuration; it does not prove price, inventory, structural suitability, or order acceptance.
 
 Configuration SKUs use this structure: MP–package–layout–size–finish plus optional accessory suffixes. Package codes are ST, PR, MX and CU. Layout codes are FS and WM. Standard size codes are 1010, 1013, 1016, 1019, 1313, 1316 and 1319; Custom uses CUSTOM. Finish request codes are GR, WH and CX. Optional accessory suffixes are LED, SCR, GLS, SLT, HTR and OUT.
 
@@ -159,7 +163,8 @@ Do not infer prices, discounts, inventory, certifications, engineering values, w
 ## Canonical resources
 
 - Official site: https://maxpergola.com/
-- Product configurator: https://maxpergola.com/pergola-kits/
+- Advanced pergola configurator: https://maxpergola.com/configure/
+- Product package configurator: https://maxpergola.com/pergola-kits/
 - Louvered pergola kits: https://maxpergola.com/pergola-kits/louvered/
 - Freestanding pergola kits: https://maxpergola.com/pergola-kits/freestanding/
 - Attached pergola kits: https://maxpergola.com/pergola-kits/attached/
