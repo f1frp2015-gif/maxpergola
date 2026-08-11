@@ -6009,10 +6009,6 @@ a {
   isolation: isolate;
 }
 
-.builder-scene[data-scene="dusk"] {
-  background: linear-gradient(180deg, #4f6562 0%, #718079 39%, #476b39 40%, #25452b 100%);
-}
-
 .builder-scene-image,
 .builder-scene-wash {
   position: absolute;
@@ -6029,12 +6025,8 @@ a {
   transition: opacity .35s ease, filter .35s ease, transform .8s ease;
 }
 
-.builder-scene[data-scene="day"] .builder-scene-image {
+.builder-scene-image {
   filter: saturate(.78) brightness(1.06);
-}
-
-.builder-scene[data-scene="dusk"] .builder-scene-image {
-  filter: saturate(.84) brightness(.76) contrast(1.05);
 }
 
 .builder-scene-wash {
@@ -6277,7 +6269,7 @@ a {
   display: none;
 }
 
-.builder-preview.is-3d-fallback .pergola-3d-toolbar > :not([data-3d-compat]) {
+.builder-preview.is-3d-fallback .pergola-3d-toolbar {
   display: none;
 }
 
