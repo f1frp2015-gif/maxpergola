@@ -34,6 +34,7 @@ if (root && viewport && preview) {
   let camera;
   let scene;
   let modelGroup;
+  let stageGroup;
   let environmentTarget;
   let state;
   let sceneMode = 'dusk';
@@ -78,6 +79,74 @@ if (root && viewport && preview) {
     mesh.receiveShadow = options.receiveShadow ?? true;
     group.add(mesh);
     return mesh;
+  };
+
+  const createGrassTexture = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 256;
+    const context = canvas.getContext('2d');
+    context.fillStyle = '#477238';
+    context.fillRect(0, 0, 256, 256);
+    let seed = 74291;
+    const random = () => {
+      seed = (seed * 1664525 + 1013904223) % 4294967296;
+      return seed / 4294967296;
+    };
+    const colors = ['#315f2d', '#5f8743', '#78984e', '#244e28', '#8aa95b'];
+    for (let index = 0; index < 5200; index += 1) {
+      const x = random() * 256;
+      const y = random() * 256;
+      const bladeHeight = 1 + random() * 3.5;
+      context.globalAlpha = 0.18 + random() * 0.42;
+      context.strokeStyle = colors[Math.floor(random() * colors.length)];
+      context.lineWidth = 0.45 + random() * 0.7;
+      context.beginPath();
+      context.moveTo(x, y);
+      context.lineTo(x + (random() - 0.5) * 1.8, y - bladeHeight);
+      context.stroke();
+    }
+    context.globalAlpha = 1;
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(22, 22);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+    return texture;
+  };
+
+  const addLandscapeStage = () => {
+    stageGroup = new THREE.Group();
+    stageGroup.name = 'Maximum-size lawn installation area';
+    scene.add(stageGroup);
+
+    const grassMaterial = new THREE.MeshStandardMaterial({
+      color: 0x6f914a,
+      map: createGrassTexture(),
+      roughness: 0.98,
+      metalness: 0
+    });
+    const lawn = new THREE.Mesh(new THREE.PlaneGeometry(34, 34), grassMaterial);
+    lawn.rotation.x = -Math.PI / 2;
+    lawn.position.y = -0.047;
+    lawn.receiveShadow = true;
+    stageGroup.add(lawn);
+
+    const maximumPadWidth = 25 * 12 * inch;
+    const maximumPadLength = 19 * 12 * inch;
+    const padMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0xd8d1bd,
+      metalness: 0,
+      roughness: 0.88,
+      clearcoat: 0.08,
+      clearcoatRoughness: 0.9,
+      envMapIntensity: 0.45
+    });
+    const pad = new THREE.Mesh(new THREE.BoxGeometry(maximumPadWidth, 0.045, maximumPadLength), padMaterial);
+    pad.position.y = -0.023;
+    pad.receiveShadow = true;
+    stageGroup.add(pad);
   };
 
   const addBasePlate = (group, x, z, frameMaterial) => {
@@ -333,26 +402,20 @@ if (root && viewport && preview) {
     configuration.sides.forEach((side, index) => addSidePanel(modelGroup, side, index, dimensions.width, dimensions.length, dimensions.height, frameMaterial));
     addSmartAccessories(modelGroup, configuration, dimensions.width, dimensions.length, dimensions.height, frameMaterial);
 
-    const groundRadius = Math.max(dimensions.width, dimensions.length) * 1.35;
-    const groundMaterial = new THREE.ShadowMaterial({ color: 0x07100c, opacity: sceneMode === 'dusk' ? 0.34 : 0.2 });
-    const ground = new THREE.Mesh(new THREE.CircleGeometry(groundRadius, 64), groundMaterial);
-    ground.rotation.x = -Math.PI / 2;
-    ground.position.y = -0.012;
-    ground.receiveShadow = true;
-    modelGroup.add(ground);
     updateCameraBounds(false);
     updateDiagnostics(configuration);
   };
 
   const updateCameraBounds = (resetPosition = true) => {
     if (!camera || !controls) return;
-    const radius = Math.max(dimensions.width, dimensions.length, dimensions.height) * 0.78;
-    const target = new THREE.Vector3(0, dimensions.height * 0.52, 0);
+    const maximumPadWidth = 25 * 12 * inch;
+    const radius = Math.max(maximumPadWidth, dimensions.width, dimensions.length, dimensions.height) * 0.82;
+    const target = new THREE.Vector3(0, dimensions.height * 0.35, 0);
     controls.target.copy(target);
     controls.minDistance = radius * 0.72;
     controls.maxDistance = radius * 3.2;
     if (resetPosition) {
-      camera.position.set(radius * 1.22, dimensions.height * 0.9 + radius * 0.44, radius * 1.48);
+      camera.position.set(radius * 1.16, dimensions.height * 0.72 + radius * 0.5, radius * 1.45);
       camera.lookAt(target);
     }
     camera.near = Math.max(0.05, radius / 80);
@@ -364,6 +427,8 @@ if (root && viewport && preview) {
   const updateLighting = () => {
     if (!scene || !renderer) return;
     const dusk = sceneMode === 'dusk';
+    scene.background = new THREE.Color(dusk ? 0x51665f : 0xb8d6d3);
+    scene.fog = new THREE.Fog(dusk ? 0x51665f : 0xb8d6d3, 17, 36);
     scene.children.filter((child) => child.userData.globalLight).forEach((child) => child.removeFromParent());
     const hemisphere = new THREE.HemisphereLight(dusk ? 0x8fa7c7 : 0xe7f2ff, dusk ? 0x2c261e : 0x746c5c, dusk ? 1.6 : 2.4);
     hemisphere.userData.globalLight = true;
@@ -396,6 +461,7 @@ if (root && viewport && preview) {
       renderer: 'WebGL2',
       pbr: true,
       profileMillimeters: { post: 150, beam: [165, 40], gutter: [83.75, 65], louver: [175, 35] },
+      installationPadFeet: { width: 25, length: 19, fitsMaximumPergola: true },
       state: { ...configuration }
     };
   };
@@ -438,7 +504,7 @@ if (root && viewport && preview) {
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.domElement.setAttribute('role', 'img');
     renderer.domElement.setAttribute('aria-label', 'Interactive three-dimensional model of the configured Max Pergola. Drag to rotate and scroll or pinch to zoom.');
     renderer.domElement.addEventListener('webglcontextlost', (event) => {
@@ -448,6 +514,7 @@ if (root && viewport && preview) {
     viewport.append(renderer.domElement);
 
     scene = new THREE.Scene();
+    addLandscapeStage();
     camera = new THREE.PerspectiveCamera(37, 1, 0.05, 100);
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
