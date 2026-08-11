@@ -45,6 +45,8 @@ if (root && viewport && preview) {
   let lastTime = performance.now();
   let firstFramePainted = false;
   let renderFailed = false;
+  let blankFrameCount = 0;
+  let healthCheckCountdown = 0;
   let maximumDrawingBufferSize = 4096;
   let dimensions = { width: 4.2672, length: 3.048, height: 2.4384 };
   const louverMeshes = [];
@@ -53,6 +55,7 @@ if (root && viewport && preview) {
   const status = root.querySelector('[data-3d-status]');
   const resetButton = root.querySelector('[data-3d-reset]');
   const orbitButton = root.querySelector('[data-3d-orbit]');
+  const compatibilityButton = root.querySelector('[data-3d-compat]');
   const liveLabel = root.querySelector('[data-3d-live-label]');
 
   const disposeGroup = (group) => {
@@ -458,12 +461,13 @@ if (root && viewport && preview) {
   };
 
   const updateDiagnostics = (configuration) => {
-    viewport.dataset.renderer = 'WebGL2 · PBR';
+    const webglReady = firstFramePainted && !renderFailed;
+    viewport.dataset.renderer = webglReady ? 'WebGL2 · PBR' : 'Compatibility preview';
     if (status) status.textContent = `${configuration.width / 12}' × ${configuration.length / 12}' · ${Math.round(targetLouverAngle)}° roof`;
     window.__maxPergola3D = {
-      ready: true,
-      renderer: 'WebGL2',
-      pbr: true,
+      ready: webglReady,
+      renderer: webglReady ? 'WebGL2' : (renderFailed ? 'SVG fallback' : 'WebGL2 pending'),
+      pbr: webglReady,
       profileMillimeters: { post: 150, beam: [165, 40], gutter: [83.75, 65], louver: [175, 35] },
       installationPadFeet: { width: 25, length: 19, fitsMaximumPergola: true },
       state: { ...configuration }
@@ -487,12 +491,42 @@ if (root && viewport && preview) {
   const markFramePainted = () => {
     if (firstFramePainted) return;
     firstFramePainted = true;
+    blankFrameCount = 0;
+    healthCheckCountdown = 180;
     preview.classList.remove('is-3d-fallback');
     preview.classList.add('is-3d-ready');
     viewport.removeAttribute('aria-busy');
     if (liveLabel) liveLabel.textContent = 'Live parametric 3D';
+    if (compatibilityButton) {
+      compatibilityButton.disabled = false;
+      compatibilityButton.textContent = 'Safe view';
+      compatibilityButton.setAttribute('aria-pressed', 'false');
+    }
     const currentConfiguration = state || root.maxPergolaState;
     if (currentConfiguration) updateDiagnostics(currentConfiguration);
+  };
+
+  const frameHasVisiblePixels = () => {
+    const context = renderer.getContext();
+    const width = context.drawingBufferWidth;
+    const height = context.drawingBufferHeight;
+    if (width < 4 || height < 4) return false;
+    const pixel = new Uint8Array(4);
+    const samples = [
+      [0.5, 0.5],
+      [0.22, 0.25],
+      [0.78, 0.25],
+      [0.22, 0.75],
+      [0.78, 0.75]
+    ];
+    let visibleSamples = 0;
+    for (const [xRatio, yRatio] of samples) {
+      const x = Math.min(width - 1, Math.max(0, Math.floor(width * xRatio)));
+      const y = Math.min(height - 1, Math.max(0, Math.floor(height * yRatio)));
+      context.readPixels(x, y, 1, 1, context.RGBA, context.UNSIGNED_BYTE, pixel);
+      if (pixel[3] > 15 && pixel[0] + pixel[1] + pixel[2] > 24) visibleSamples += 1;
+    }
+    return visibleSamples >= 2;
   };
 
   const renderFrame = (time) => {
@@ -507,19 +541,62 @@ if (root && viewport && preview) {
     controls.update(delta);
     renderer.render(scene, camera);
     if (renderer.getContext().isContextLost()) throw new Error('WebGL context was lost while rendering.');
-    markFramePainted();
+    healthCheckCountdown -= 1;
+    if (!firstFramePainted || healthCheckCountdown <= 0) {
+      if (frameHasVisiblePixels()) {
+        blankFrameCount = 0;
+        healthCheckCountdown = 180;
+        markFramePainted();
+      } else {
+        blankFrameCount += 1;
+        healthCheckCountdown = 0;
+        if (blankFrameCount >= 3) fallback('WebGL produced blank frames');
+      }
+    }
   };
 
   const fallback = (reason = 'WebGL unavailable') => {
     renderFailed = true;
     active = false;
     firstFramePainted = false;
+    blankFrameCount = 0;
+    healthCheckCountdown = 0;
     preview.classList.remove('is-3d-ready');
     preview.classList.add('is-3d-fallback');
     viewport.setAttribute('hidden', '');
     viewport.removeAttribute('aria-busy');
     if (liveLabel) liveLabel.textContent = 'Configuration preview';
+    if (compatibilityButton) {
+      let retryable = false;
+      try {
+        retryable = Boolean(renderer && scene && camera && controls && !renderer.getContext().isContextLost());
+      } catch {
+        retryable = false;
+      }
+      compatibilityButton.disabled = !retryable;
+      compatibilityButton.textContent = retryable ? 'Try 3D' : 'Safe view active';
+      compatibilityButton.setAttribute('aria-pressed', 'true');
+    }
     window.__maxPergola3D = { ready: false, renderer: 'SVG fallback', reason };
+  };
+
+  const retry3D = () => {
+    if (!renderer || !scene || !camera || !controls || renderer.getContext().isContextLost()) return;
+    renderFailed = false;
+    active = true;
+    firstFramePainted = false;
+    blankFrameCount = 0;
+    healthCheckCountdown = 0;
+    viewport.hidden = false;
+    viewport.setAttribute('aria-busy', 'true');
+    preview.classList.remove('is-3d-fallback');
+    window.requestAnimationFrame((time) => {
+      try {
+        renderFrame(time);
+      } catch (error) {
+        fallback(error instanceof Error ? error.message : '3D retry failed');
+      }
+    });
   };
 
   const animate = (time) => {
@@ -550,6 +627,8 @@ if (root && viewport && preview) {
       renderFailed = false;
       active = true;
       firstFramePainted = false;
+      blankFrameCount = 0;
+      healthCheckCountdown = 0;
       viewport.hidden = false;
       viewport.setAttribute('aria-busy', 'true');
       try {
@@ -601,6 +680,10 @@ if (root && viewport && preview) {
     orbitButton?.addEventListener('click', () => {
       autoRotate = !autoRotate;
       orbitButton.setAttribute('aria-pressed', String(autoRotate));
+    });
+    compatibilityButton?.addEventListener('click', () => {
+      if (preview.classList.contains('is-3d-fallback')) retry3D();
+      else fallback('Compatibility view selected');
     });
     renderer.domElement.addEventListener('dblclick', () => updateCameraBounds(true));
     new ResizeObserver(resize).observe(viewport);

@@ -37,9 +37,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/styles.css?v=20260811-three2">
+  <link rel="stylesheet" href="/assets/styles.css?v=20260811-three3">
   <script src="/assets/site.js?v=20260811-configurator1" defer></script>
-  <script src="/assets/configurator-3d.js?v=20260811-three2" defer></script>
+  <script src="/assets/configurator-3d.js?v=20260811-three3" defer></script>
   <script src="/assets/configurator.js?v=20260811-three1" defer></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","@id":"https://maxpergola.com/configure/#application","name":"Max Pergola 3D Configurator","url":"https://maxpergola.com/configure/","applicationCategory":"DesignApplication","operatingSystem":"Web","description":"A shareable real-time 3D configuration tool for selecting Max Pergola dimensions, finishes, mounting, controls, accessories and side systems.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://maxpergola.com/"},{"@type":"ListItem","position":2,"name":"Pergola Kits","item":"https://maxpergola.com/pergola-kits/"},{"@type":"ListItem","position":3,"name":"Configurator","item":"https://maxpergola.com/configure/"}]}]}</script>
   <script src="https://analytics.ahrefs.com/analytics.js" data-key="uyE2fwY9SZcf986LJ72IAA" async></script>
@@ -117,6 +117,7 @@
               <span data-3d-status>14' × 10' · 38° roof</span>
               <button type="button" data-3d-reset>Reset view</button>
               <button type="button" data-3d-orbit aria-pressed="true">Auto orbit</button>
+              <button type="button" data-3d-compat aria-pressed="false">Safe view</button>
             </div>
             <p class="pergola-3d-hint">Drag to rotate · pinch or scroll to zoom</p>
             <span class="concept-dimension concept-dimension-width" data-preview-width>14'</span>
@@ -141,7 +142,7 @@
         </div>
 
         <form class="builder-form" aria-label="Max Pergola configuration selections">
-          <details class="builder-section" open>
+          <details class="builder-section builder-section-structure" open>
             <summary><span>01</span><span><strong>Structure</strong><small>Choose the roof and lighting platform.</small></span><b data-section-summary="model">Pro</b></summary>
             <div class="builder-section-body builder-option-grid builder-option-grid-three">
               <label class="builder-option"><input type="radio" name="model" value="Standard"><span><i>Standard</i><strong>Manual</strong><small>Adjustable manual louvers for essential shade control.</small></span></label>
@@ -150,7 +151,7 @@
             </div>
           </details>
 
-          <details class="builder-section" open>
+          <details class="builder-section builder-section-dimensions" open>
             <summary><span>02</span><span><strong>Dimensions</strong><small>Planning dimensions in the same selectable ranges.</small></span><b data-section-summary="dimensions">14' × 10'</b></summary>
             <div class="builder-section-body builder-dimensions">
               <label class="builder-range"><span><strong>Structure width</strong><output data-output="width">14'</output></span><input type="range" name="width" min="96" max="288" step="12" value="168" list="width-marks"><small>8–24 ft · one-foot increments</small></label>
@@ -163,7 +164,7 @@
             </div>
           </details>
 
-          <details class="builder-section" open>
+          <details class="builder-section builder-section-finish" open>
             <summary><span>03</span><span><strong>Finish</strong><small>Coordinate or contrast the frame and louvers.</small></span><b data-section-summary="finish">Graphite / White</b></summary>
             <div class="builder-section-body">
               <fieldset class="builder-subfield"><legend>Frame color</legend><div class="builder-color-grid">
@@ -184,7 +185,7 @@
             </div>
           </details>
 
-          <details class="builder-section" open>
+          <details class="builder-section builder-section-installation" open>
             <summary><span>04</span><span><strong>Installation</strong><small>Set the support relationship to the building.</small></span><b data-section-summary="mounting">Freestanding</b></summary>
             <div class="builder-section-body">
               <div class="builder-option-grid builder-option-grid-two">
@@ -200,7 +201,7 @@
             </div>
           </details>
 
-          <details class="builder-section" open>
+          <details class="builder-section builder-section-control" open>
             <summary><span>05</span><span><strong>Roof control</strong><small>Choose direct control or a smart-ready controller.</small></span><b data-section-summary="controls">Standard remote</b></summary>
             <div class="builder-section-body">
               <div class="builder-option-grid builder-option-grid-two">
@@ -211,7 +212,7 @@
             </div>
           </details>
 
-          <details class="builder-section" open>
+          <details class="builder-section builder-section-smart" open>
             <summary><span>06</span><span><strong>Smart living</strong><small>Add app, voice and automatic weather response.</small></span><b data-section-summary="smart">Not selected</b></summary>
             <div class="builder-section-body builder-check-list">
               <label class="builder-check"><input type="checkbox" name="smartHub"><span class="builder-check-mark"></span><span><strong>Max Smart Hub</strong><small>Control compatible roof, lighting and shades from an app or voice assistant.</small></span><em>Optional</em></label>
@@ -220,7 +221,7 @@
             </div>
           </details>
 
-          <details class="builder-section" open>
+          <details class="builder-section builder-section-comfort" open>
             <summary><span>07</span><span><strong>Light &amp; comfort</strong><small>Coordinate lighting, air movement, heat and power.</small></span><b data-section-summary="comfort">Perimeter LED</b></summary>
             <div class="builder-section-body">
               <fieldset class="builder-subfield"><legend>Lighting</legend><div class="builder-segmented">
@@ -236,7 +237,7 @@
             </div>
           </details>
 
-          <details class="builder-section" open>
+          <details class="builder-section builder-section-sides" open>
             <summary><span>08</span><span><strong>Four sides</strong><small>Plan each elevation independently.</small></span><b data-section-summary="sides">All open</b></summary>
             <div class="builder-section-body builder-side-grid">
               <label><span>Front <small>long side</small></span><select name="side0"><option value="none">Open</option><option value="motorizedShade">Motorized shade</option><option value="privacyScreen">Privacy screen</option><option value="slatWall">Aluminum slat wall</option><option value="glassWall">Glass wall</option></select></label>
