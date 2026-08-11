@@ -5,7 +5,7 @@
   const form = root.querySelector('.builder-form');
   const preview = root.querySelector('[data-builder-preview]');
   const concept = root.querySelector('[data-pergola-concept]');
-  const sceneImage = root.querySelector('[data-scene-image]');
+  const rail = root.querySelector('.builder-rail');
   const quoteLink = root.querySelector('[data-builder-quote]');
   const copyButton = root.querySelector('[data-copy-config]');
   const resetButton = root.querySelector('[data-reset-config]');
@@ -67,19 +67,6 @@
     fan: {none: 'No fan', single: 'Single fan', double: 'Dual fans'},
     heater: {none: 'No heater', single: 'Single-zone heat prep', dual: 'Dual-zone heat prep'},
     sides: {none: 'Open', motorizedShade: 'Motorized shade', privacyScreen: 'Privacy screen', slatWall: 'Aluminum slat wall', glassWall: 'Glass wall'}
-  };
-
-  const sceneImages = {
-    day: {
-      Standard: '/assets/images/poolside-glass-aluminum-pergola-dining-1024.webp',
-      Pro: '/assets/images/garden-aluminum-louvered-pergola-privacy-screen-1280.webp',
-      Max: '/assets/images/backyard-office-lounge-aluminum-louvered-pergola-1024.webp'
-    },
-    dusk: {
-      Standard: '/assets/images/sunset-coastal-aluminum-louvered-pergola-lounge-1024.webp',
-      Pro: '/assets/images/sunset-coastal-aluminum-louvered-pergola-lounge-1024.webp',
-      Max: '/assets/images/led-aluminum-louvered-pergola-night-lounge-1280.webp'
-    }
   };
 
   const selectedValue = (name) => form.elements.namedItem(name)?.value;
@@ -255,8 +242,6 @@
     });
 
     const scene = root.querySelector('.builder-scene').dataset.scene;
-    const imagePath = sceneImages[scene][state.model];
-    if (sceneImage.getAttribute('src') !== imagePath) sceneImage.setAttribute('src', imagePath);
     setText('[data-preview-model]', state.model);
     setText('[data-preview-size]', `${feet(state.width)} × ${feet(state.length)}`);
     setText('[data-preview-mounting]', labels.mounting[state.mounting]);
@@ -356,8 +341,56 @@
     updateQuoteLink(state, id, accessories);
   };
 
-  form.addEventListener('input', update);
-  form.addEventListener('change', update);
+  let interactionScroll = null;
+  const captureInteractionScroll = (event) => {
+    if (!event.target.closest('label, summary, select, input')) return;
+    interactionScroll = {
+      pageY: window.scrollY,
+      railTop: rail.scrollTop,
+      expires: performance.now() + 650
+    };
+  };
+  const restoreInteractionScroll = () => {
+    if (!interactionScroll || performance.now() > interactionScroll.expires) return;
+    const snapshot = interactionScroll;
+    const apply = () => {
+      rail.scrollTop = snapshot.railTop;
+      if (window.scrollY !== snapshot.pageY) window.scrollTo(0, snapshot.pageY);
+    };
+    apply();
+    window.requestAnimationFrame(() => {
+      apply();
+      window.requestAnimationFrame(apply);
+    });
+    window.setTimeout(apply, 80);
+  };
+  const updateWithoutJump = () => {
+    update();
+    restoreInteractionScroll();
+  };
+
+  form.addEventListener('pointerdown', captureInteractionScroll, true);
+  form.addEventListener('click', (event) => {
+    const label = event.target.closest('label');
+    const control = label?.querySelector('input');
+    if (!control || event.target === control || control.disabled || control.type === 'range') return;
+    event.preventDefault();
+    control.click();
+    control.focus({preventScroll: true});
+    restoreInteractionScroll();
+  }, true);
+  form.addEventListener('input', (event) => {
+    if (event.target.matches('input[type="range"]')) updateWithoutJump();
+  });
+  form.addEventListener('change', (event) => {
+    if (!event.target.matches('input[type="range"]')) updateWithoutJump();
+  });
+  form.querySelectorAll('.builder-section').forEach((section) => {
+    section.addEventListener('toggle', restoreInteractionScroll);
+  });
+  window.addEventListener('pointerup', () => {
+    window.setTimeout(() => { interactionScroll = null; }, 250);
+  }, true);
 
   root.querySelectorAll('[data-set-scene]').forEach((button) => {
     button.addEventListener('click', () => {
@@ -380,7 +413,7 @@
   resetButton.addEventListener('click', () => {
     form.reset();
     update();
-    root.querySelector('.builder-rail').scrollTo({top: 0, behavior: 'smooth'});
+    rail.scrollTo({top: 0, behavior: 'smooth'});
   });
 
   restoreFromUrl();

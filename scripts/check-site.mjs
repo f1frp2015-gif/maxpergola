@@ -171,10 +171,10 @@ const configurator3dSource = readFileSync(join(root, 'src/configurator-3d.js'), 
 for (const marker of ['data-pergola-3d', 'data-3d-reset', 'data-3d-orbit', 'name="louverAngle"', '/assets/configurator-3d.js']) {
   if (!configuratorHtml.includes(marker)) errors.push(`configure/index.html: real-time 3D marker missing (${marker})`);
 }
-for (const marker of ['maxpergola:configuration', 'louverAngle', 'root.maxPergolaState']) {
+for (const marker of ['maxpergola:configuration', 'louverAngle', 'root.maxPergolaState', 'updateWithoutJump', 'restoreInteractionScroll']) {
   if (!configuratorScript.includes(marker)) errors.push(`assets/configurator.js: 3D state bridge missing (${marker})`);
 }
-for (const marker of ['WebGLRenderer', 'MeshPhysicalMaterial', 'PMREMGenerator', 'OrbitControls', 'profileMillimeters']) {
+for (const marker of ['WebGLRenderer', 'MeshPhysicalMaterial', 'PMREMGenerator', 'OrbitControls', 'profileMillimeters', 'Maximum-size lawn installation area', 'installationPadFeet']) {
   if (!configurator3dSource.includes(marker)) errors.push(`src/configurator-3d.js: rendering capability missing (${marker})`);
 }
 
