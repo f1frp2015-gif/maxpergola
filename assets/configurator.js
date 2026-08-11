@@ -241,14 +241,13 @@
       if (panel) panel.dataset.type = side;
     });
 
-    const scene = root.querySelector('.builder-scene').dataset.scene;
     setText('[data-preview-model]', state.model);
     setText('[data-preview-size]', `${feet(state.width)} × ${feet(state.length)}`);
     setText('[data-preview-mounting]', labels.mounting[state.mounting]);
     setText('[data-preview-width]', feet(state.width));
     setText('[data-preview-length]', feet(state.length));
     setText('[data-preview-height]', feet(state.clearance));
-    const configuration = {...state, scene};
+    const configuration = {...state};
     root.maxPergolaState = configuration;
     root.dispatchEvent(new CustomEvent('maxpergola:configuration', {detail: configuration}));
   };
@@ -391,14 +390,6 @@
   window.addEventListener('pointerup', () => {
     window.setTimeout(() => { interactionScroll = null; }, 250);
   }, true);
-
-  root.querySelectorAll('[data-set-scene]').forEach((button) => {
-    button.addEventListener('click', () => {
-      root.querySelector('.builder-scene').dataset.scene = button.dataset.setScene;
-      root.querySelectorAll('[data-set-scene]').forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
-      updatePreview(getState());
-    });
-  });
 
   copyButton.addEventListener('click', async () => {
     try {

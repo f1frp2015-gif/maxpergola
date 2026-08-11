@@ -28,6 +28,27 @@ if (root && viewport && preview) {
     louverHeight: 0.035,
     louverWall: 0.0012
   };
+  const defaultConfiguration = {
+    model: 'Pro',
+    frameColor: 'Graphite',
+    topColor: 'White',
+    width: 168,
+    length: 120,
+    clearance: 96,
+    louverAngle: 38,
+    trim: 'Clean',
+    mounting: 'freeStanding',
+    postLayout: 'corners',
+    controls: 'standard',
+    smartHub: false,
+    weatherSensor: false,
+    signalRepeater: false,
+    lighting: 'perimeter',
+    fan: 'none',
+    heater: 'none',
+    outlet: false,
+    sides: ['none', 'none', 'none', 'none']
+  };
 
   let renderer;
   let controls;
@@ -37,7 +58,6 @@ if (root && viewport && preview) {
   let stageGroup;
   let environmentTarget;
   let state;
-  let sceneMode = 'dusk';
   let modelSignature = '';
   let active = true;
   let autoRotate = !reducedMotion && !isCompact;
@@ -48,6 +68,8 @@ if (root && viewport && preview) {
   let blankFrameCount = 0;
   let healthCheckCountdown = 0;
   let maximumDrawingBufferSize = 4096;
+  let pergolaPixelProbePassed = false;
+  let pergolaProbeTarget;
   let dimensions = { width: 4.2672, length: 3.048, height: 2.4384 };
   const louverMeshes = [];
   const fanGroups = [];
@@ -55,7 +77,6 @@ if (root && viewport && preview) {
   const status = root.querySelector('[data-3d-status]');
   const resetButton = root.querySelector('[data-3d-reset]');
   const orbitButton = root.querySelector('[data-3d-orbit]');
-  const compatibilityButton = root.querySelector('[data-3d-compat]');
   const liveLabel = root.querySelector('[data-3d-live-label]');
 
   const disposeGroup = (group) => {
@@ -68,14 +89,12 @@ if (root && viewport && preview) {
     group.removeFromParent();
   };
 
-  const createMetal = (color, options = {}) => new THREE.MeshPhysicalMaterial({
+  const createMetal = (color, options = {}) => new THREE.MeshStandardMaterial({
     color,
-    metalness: options.metalness ?? 0.82,
-    roughness: options.roughness ?? 0.24,
-    clearcoat: options.clearcoat ?? 0.34,
-    clearcoatRoughness: options.clearcoatRoughness ?? 0.28,
+    metalness: options.metalness ?? 0.72,
+    roughness: options.roughness ?? 0.28,
     envMapIntensity: options.envMapIntensity ?? 1.3,
-    side: options.side ?? THREE.FrontSide
+    side: options.side ?? THREE.DoubleSide
   });
 
   const addBox = (group, size, position, material, options = {}) => {
@@ -254,7 +273,7 @@ if (root && viewport && preview) {
     const emissiveMaterial = new THREE.MeshStandardMaterial({
       color: 0xffe7a1,
       emissive: 0xffc85a,
-      emissiveIntensity: sceneMode === 'dusk' ? 7 : 2.6,
+      emissiveIntensity: 2.6,
       toneMapped: false
     });
     const y = clearHeight - 0.015;
@@ -267,11 +286,6 @@ if (root && viewport && preview) {
       for (let x = -width * 0.36; x <= width * 0.36; x += Math.max(0.52, width / 5)) {
         addBox(group, [0.012, 0.012, length - 0.24], [x, y + 0.08, 0], emissiveMaterial, { castShadow: false });
       }
-    }
-    if (sceneMode === 'dusk') {
-      const light = new THREE.PointLight(0xffd991, 3.2, Math.max(width, length) * 1.4, 2);
-      light.position.set(0, clearHeight - 0.25, 0);
-      group.add(light);
     }
   };
 
@@ -304,7 +318,7 @@ if (root && viewport && preview) {
       const elementMaterial = new THREE.MeshStandardMaterial({
         color: 0x632515,
         emissive: 0xff5a20,
-        emissiveIntensity: sceneMode === 'dusk' ? 3.8 : 1.2,
+        emissiveIntensity: 1.2,
         toneMapped: false
       });
       const heaterPositions = configuration.heater === 'dual' ? [-width * 0.23, width * 0.23] : [0];
@@ -384,10 +398,11 @@ if (root && viewport && preview) {
   };
 
   const buildModel = (configuration) => {
+    const hadModel = Boolean(modelGroup);
     dimensions = {
-      width: configuration.width * inch,
-      length: configuration.length * inch,
-      height: configuration.clearance * inch
+      width: (Number(configuration.width) || defaultConfiguration.width) * inch,
+      length: (Number(configuration.length) || defaultConfiguration.length) * inch,
+      height: (Number(configuration.clearance) || defaultConfiguration.clearance) * inch
     };
     targetLouverAngle = Number(configuration.louverAngle ?? 38);
     louverMeshes.length = 0;
@@ -395,6 +410,7 @@ if (root && viewport && preview) {
     disposeGroup(modelGroup);
     modelGroup = new THREE.Group();
     modelGroup.name = 'Max Pergola parametric assembly';
+    modelGroup.userData.isPergolaCore = true;
     scene.add(modelGroup);
 
     const frameMaterial = createMetal(colorValues[configuration.frameColor] ?? colorValues.Graphite);
@@ -406,10 +422,11 @@ if (root && viewport && preview) {
     addRoof(modelGroup, configuration, dimensions.width, dimensions.length, dimensions.height, frameMaterial, louverMaterial);
     addLed(modelGroup, configuration, dimensions.width, dimensions.length, dimensions.height);
     addComfort(modelGroup, configuration, dimensions.width, dimensions.length, dimensions.height, frameMaterial);
-    configuration.sides.forEach((side, index) => addSidePanel(modelGroup, side, index, dimensions.width, dimensions.length, dimensions.height, frameMaterial));
+    const sideSelections = Array.isArray(configuration.sides) ? configuration.sides : defaultConfiguration.sides;
+    sideSelections.forEach((side, index) => addSidePanel(modelGroup, side || 'none', index, dimensions.width, dimensions.length, dimensions.height, frameMaterial));
     addSmartAccessories(modelGroup, configuration, dimensions.width, dimensions.length, dimensions.height, frameMaterial);
 
-    updateCameraBounds(false);
+    updateCameraBounds(!hadModel);
     updateDiagnostics(configuration);
   };
 
@@ -433,14 +450,13 @@ if (root && viewport && preview) {
 
   const updateLighting = () => {
     if (!scene || !renderer) return;
-    const dusk = sceneMode === 'dusk';
-    scene.background = new THREE.Color(dusk ? 0x51665f : 0xb8d6d3);
-    scene.fog = new THREE.Fog(dusk ? 0x51665f : 0xb8d6d3, 17, 36);
+    scene.background = new THREE.Color(0xb8d6d3);
+    scene.fog = new THREE.Fog(0xb8d6d3, 17, 36);
     scene.children.filter((child) => child.userData.globalLight).forEach((child) => child.removeFromParent());
-    const hemisphere = new THREE.HemisphereLight(dusk ? 0x8fa7c7 : 0xe7f2ff, dusk ? 0x2c261e : 0x746c5c, dusk ? 1.6 : 2.4);
+    const hemisphere = new THREE.HemisphereLight(0xe7f2ff, 0x746c5c, 2.4);
     hemisphere.userData.globalLight = true;
     scene.add(hemisphere);
-    const key = new THREE.DirectionalLight(dusk ? 0xffd1a2 : 0xfff5db, dusk ? 3.7 : 4.8);
+    const key = new THREE.DirectionalLight(0xfff5db, 4.8);
     key.position.set(dimensions.width * 0.8, dimensions.height * 2.5, dimensions.length * 1.2);
     key.castShadow = true;
     key.shadow.mapSize.set(isCompact ? 1024 : 2048, isCompact ? 1024 : 2048);
@@ -453,11 +469,27 @@ if (root && viewport && preview) {
     key.shadow.bias = -0.0004;
     key.userData.globalLight = true;
     scene.add(key);
-    const rim = new THREE.DirectionalLight(dusk ? 0x7898d2 : 0xbcd7ff, dusk ? 1.3 : 0.75);
+    const rim = new THREE.DirectionalLight(0xbcd7ff, 0.75);
     rim.position.set(-dimensions.width, dimensions.height * 1.4, -dimensions.length);
     rim.userData.globalLight = true;
     scene.add(rim);
-    renderer.toneMappingExposure = dusk ? 0.9 : 1.08;
+    renderer.toneMappingExposure = 1.08;
+  };
+
+  const modelGeometryIsReady = () => {
+    if (!modelGroup || modelGroup.parent !== scene) return false;
+    let meshCount = 0;
+    modelGroup.traverse((object) => {
+      if (object.isMesh && object.visible && object.geometry?.attributes?.position?.count > 0) meshCount += 1;
+    });
+    if (meshCount < 12) return false;
+    const bounds = new THREE.Box3().setFromObject(modelGroup);
+    if (bounds.isEmpty()) return false;
+    const size = bounds.getSize(new THREE.Vector3());
+    const center = bounds.getCenter(new THREE.Vector3()).project(camera);
+    return size.x > 1 && size.y > 1 && size.z > 1
+      && Number.isFinite(center.x) && Number.isFinite(center.y) && Number.isFinite(center.z)
+      && Math.abs(center.x) < 1.4 && Math.abs(center.y) < 1.4 && center.z > -1 && center.z < 1;
   };
 
   const updateDiagnostics = (configuration) => {
@@ -470,6 +502,9 @@ if (root && viewport && preview) {
       pbr: webglReady,
       profileMillimeters: { post: 150, beam: [165, 40], gutter: [83.75, 65], louver: [175, 35] },
       installationPadFeet: { width: 25, length: 19, fitsMaximumPergola: true },
+      pergolaGeometryReady: modelGeometryIsReady(),
+      pergolaPixelProbePassed,
+      pergolaMeshCount: modelGroup ? modelGroup.children.filter((child) => child.isMesh || child.isGroup).length : 0,
       state: { ...configuration }
     };
   };
@@ -497,36 +532,42 @@ if (root && viewport && preview) {
     preview.classList.add('is-3d-ready');
     viewport.removeAttribute('aria-busy');
     if (liveLabel) liveLabel.textContent = 'Live parametric 3D';
-    if (compatibilityButton) {
-      compatibilityButton.disabled = false;
-      compatibilityButton.textContent = 'Safe view';
-      compatibilityButton.setAttribute('aria-pressed', 'false');
-    }
     const currentConfiguration = state || root.maxPergolaState;
     if (currentConfiguration) updateDiagnostics(currentConfiguration);
   };
 
-  const frameHasVisiblePixels = () => {
-    const context = renderer.getContext();
-    const width = context.drawingBufferWidth;
-    const height = context.drawingBufferHeight;
-    if (width < 4 || height < 4) return false;
-    const pixel = new Uint8Array(4);
-    const samples = [
-      [0.5, 0.5],
-      [0.22, 0.25],
-      [0.78, 0.25],
-      [0.22, 0.75],
-      [0.78, 0.75]
-    ];
-    let visibleSamples = 0;
-    for (const [xRatio, yRatio] of samples) {
-      const x = Math.min(width - 1, Math.max(0, Math.floor(width * xRatio)));
-      const y = Math.min(height - 1, Math.max(0, Math.floor(height * yRatio)));
-      context.readPixels(x, y, 1, 1, context.RGBA, context.UNSIGNED_BYTE, pixel);
-      if (pixel[3] > 15 && pixel[0] + pixel[1] + pixel[2] > 24) visibleSamples += 1;
+  const frameHasPergolaPixels = () => {
+    if (!modelGeometryIsReady()) return false;
+    pergolaProbeTarget ||= new THREE.WebGLRenderTarget(48, 36, {
+      depthBuffer: true,
+      stencilBuffer: false
+    });
+    const previousTarget = renderer.getRenderTarget();
+    const previousBackground = scene.background;
+    const previousFog = scene.fog;
+    const stageWasVisible = stageGroup.visible;
+    const pixels = new Uint8Array(48 * 36 * 4);
+    try {
+      stageGroup.visible = false;
+      scene.background = new THREE.Color(0x000000);
+      scene.fog = null;
+      renderer.setRenderTarget(pergolaProbeTarget);
+      renderer.clear(true, true, true);
+      renderer.render(scene, camera);
+      renderer.readRenderTargetPixels(pergolaProbeTarget, 0, 0, 48, 36, pixels);
+      let pergolaPixels = 0;
+      for (let index = 0; index < pixels.length; index += 4) {
+        if (pixels[index] + pixels[index + 1] + pixels[index + 2] > 24) pergolaPixels += 1;
+      }
+      return pergolaPixels >= 8;
+    } catch {
+      return false;
+    } finally {
+      stageGroup.visible = stageWasVisible;
+      scene.background = previousBackground;
+      scene.fog = previousFog;
+      renderer.setRenderTarget(previousTarget);
     }
-    return visibleSamples >= 2;
   };
 
   const renderFrame = (time) => {
@@ -543,14 +584,15 @@ if (root && viewport && preview) {
     if (renderer.getContext().isContextLost()) throw new Error('WebGL context was lost while rendering.');
     healthCheckCountdown -= 1;
     if (!firstFramePainted || healthCheckCountdown <= 0) {
-      if (frameHasVisiblePixels()) {
+      pergolaPixelProbePassed = frameHasPergolaPixels();
+      if (pergolaPixelProbePassed) {
         blankFrameCount = 0;
         healthCheckCountdown = 180;
         markFramePainted();
       } else {
         blankFrameCount += 1;
         healthCheckCountdown = 0;
-        if (blankFrameCount >= 3) fallback('WebGL produced blank frames');
+        if (blankFrameCount >= 3) fallback(modelGeometryIsReady() ? 'WebGL produced blank frames' : 'Pergola geometry did not initialize');
       }
     }
   };
@@ -561,42 +603,13 @@ if (root && viewport && preview) {
     firstFramePainted = false;
     blankFrameCount = 0;
     healthCheckCountdown = 0;
+    pergolaPixelProbePassed = false;
     preview.classList.remove('is-3d-ready');
     preview.classList.add('is-3d-fallback');
     viewport.setAttribute('hidden', '');
     viewport.removeAttribute('aria-busy');
     if (liveLabel) liveLabel.textContent = 'Configuration preview';
-    if (compatibilityButton) {
-      let retryable = false;
-      try {
-        retryable = Boolean(renderer && scene && camera && controls && !renderer.getContext().isContextLost());
-      } catch {
-        retryable = false;
-      }
-      compatibilityButton.disabled = !retryable;
-      compatibilityButton.textContent = retryable ? 'Try 3D' : 'Safe view active';
-      compatibilityButton.setAttribute('aria-pressed', 'true');
-    }
     window.__maxPergola3D = { ready: false, renderer: 'SVG fallback', reason };
-  };
-
-  const retry3D = () => {
-    if (!renderer || !scene || !camera || !controls || renderer.getContext().isContextLost()) return;
-    renderFailed = false;
-    active = true;
-    firstFramePainted = false;
-    blankFrameCount = 0;
-    healthCheckCountdown = 0;
-    viewport.hidden = false;
-    viewport.setAttribute('aria-busy', 'true');
-    preview.classList.remove('is-3d-fallback');
-    window.requestAnimationFrame((time) => {
-      try {
-        renderFrame(time);
-      } catch (error) {
-        fallback(error instanceof Error ? error.message : '3D retry failed');
-      }
-    });
   };
 
   const animate = (time) => {
@@ -659,12 +672,14 @@ if (root && viewport && preview) {
     environmentTarget = pmrem.fromScene(new RoomEnvironment(), 0.04);
     scene.environment = environmentTarget.texture;
     pmrem.dispose();
+    state = {...defaultConfiguration, ...(root.maxPergolaState || {})};
+    modelSignature = JSON.stringify({...state, louverAngle: undefined});
+    buildModel(state);
     updateLighting();
     updateCameraBounds(true);
 
     root.addEventListener('maxpergola:configuration', (event) => {
-      state = event.detail;
-      sceneMode = state.scene || root.querySelector('.builder-scene')?.dataset.scene || 'dusk';
+      state = {...defaultConfiguration, ...event.detail};
       targetLouverAngle = Number(state.louverAngle ?? 38);
       const nextSignature = JSON.stringify({...state, louverAngle: undefined});
       if (nextSignature === modelSignature) {
@@ -681,10 +696,6 @@ if (root && viewport && preview) {
       autoRotate = !autoRotate;
       orbitButton.setAttribute('aria-pressed', String(autoRotate));
     });
-    compatibilityButton?.addEventListener('click', () => {
-      if (preview.classList.contains('is-3d-fallback')) retry3D();
-      else fallback('Compatibility view selected');
-    });
     renderer.domElement.addEventListener('dblclick', () => updateCameraBounds(true));
     new ResizeObserver(resize).observe(viewport);
     new IntersectionObserver((entries) => { active = entries[0]?.isIntersecting ?? true; }, { threshold: 0.01 }).observe(preview);
@@ -700,7 +711,6 @@ if (root && viewport && preview) {
         });
       }
     });
-    if (root.maxPergolaState) buildModel(root.maxPergolaState);
     renderFrame(performance.now());
     window.requestAnimationFrame(animate);
   } catch (error) {
