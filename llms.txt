@@ -1,8 +1,8 @@
 # Max Pergola
 
-> Max Pergola supplies factory-direct aluminum louvered pergola kits for residential projects in the United States. Product pages lead with U.S. customary dimensions and include metric references for drawings and production.
+> Max Pergola supplies factory-direct aluminum louvered pergola kits for residential and trade projects worldwide. Product pages lead with feet-and-inch dimensions and include metric references for drawings and production.
 
-Current shipping: orders are quoted factory-direct from Chongqing under Delivered Duty Paid (DDP) terms to a confirmed U.S. destination. Max Pergola plans to begin Los Angeles fulfillment for select in-stock standard SKUs in July 2027. The written project quote controls pricing, design criteria, availability, shipping terms, and ship-from location.
+Current shipping: Max Pergola can quote factory-direct Delivered Duty Paid (DDP) delivery from Chongqing to supported destinations worldwide. The written project quote confirms the destination, included duties and taxes, unloading responsibility, route restrictions, pricing, design criteria, availability, and ship-from location. Regional inventory may supplement the factory route only when confirmed for the approved configuration.
 
 ## Products
 
@@ -19,7 +19,7 @@ Current shipping: orders are quoted factory-direct from Chongqing under Delivere
 ## Technical and warranty
 
 - [Aluminum specifications and BOM](https://maxpergola.com/engineering/specifications/): 6063-T6 order design basis, current profile dimensions, wall thicknesses, and package BOM scope.
-- [Wind, snow, and span calculator](https://maxpergola.com/pergola-calculator/): Nationwide U.S. preliminary load screening; not a structural approval or permit package.
+- [Wind, snow, and span calculator](https://maxpergola.com/pergola-calculator/): Location-specific preliminary load screening; not a structural approval or permit package.
 - [Limited warranty](https://maxpergola.com/warranty/): 10 years for covered frame defects, 5 years for covered powder-coat defects, and 2 years for covered moving and electrical components.
 
 ## Planning guides
@@ -46,4 +46,4 @@ Current shipping: orders are quoted factory-direct from Chongqing under Delivere
 ## Optional
 
 - [Robots policy](https://maxpergola.com/robots.txt): Crawler access policy.
-- [Contact Max Pergola](mailto:inquiry@maxpergola.com): Product configuration and U.S. delivery inquiries.
+- [Contact Max Pergola](mailto:inquiry@maxpergola.com): Product configuration and worldwide DDP delivery inquiries.

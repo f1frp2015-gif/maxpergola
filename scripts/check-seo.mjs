@@ -246,6 +246,27 @@ for (const page of pages) {
 
 const publicFiles = [...pages.map((page) => read(page.file)), ...noindexPages.map((page) => read(page.file)), llms, llmsFull, read('feed.xml')].join('\n');
 if (/ori@f1composite\.com|doris\.li@f1composite\.com/i.test(publicFiles)) errors.push('Public SEO/GEO resources expose an internal forwarding address');
+if (/U\.S\. DDP shipping now|Los Angeles fulfillment|Partner Program · United States|Factory-direct U\.S\. delivery/i.test(publicFiles)) {
+  errors.push('Public SEO/GEO resources contain legacy U.S.-first fulfillment positioning');
+}
+
+for (const file of ['index.html', 'pergola-kits/index.html', 'about-max-pergola/index.html', 'partner-program/index.html']) {
+  const html = read(file);
+  requireMatch(html, /worldwide/i, `${file}: worldwide service positioning missing`);
+  requireMatch(html, /DDP/i, `${file}: DDP delivery positioning missing`);
+}
+requireMatch(read('index.html'), /"areaServed": "Worldwide"/, 'index.html: Organization areaServed must be Worldwide');
+requireMatch(read('about-max-pergola/index.html'), /"areaServed":"Worldwide"/, 'about-max-pergola/index.html: Organization areaServed must be Worldwide');
+
+for (const file of ['request-quote/index.html', 'partner-program/index.html', 'pergola-calculator/index.html', 'pergola-kits/index.html']) {
+  const html = read(file);
+  if (/pattern="\[0-9\]\{5\}/.test(html) || /inputmode="numeric"[^>]+(?:zipCode|data-config-zip)/i.test(html)) {
+    errors.push(`${file}: delivery location input still enforces a U.S.-only ZIP format`);
+  }
+}
+const crmSource = read('lib/crm.js');
+requireMatch(crmSource, /delivery country and postal code or city/i, 'lib/crm.js: international delivery-location validation message missing');
+if (/\\d\{5\}/.test(crmSource)) errors.push('lib/crm.js: CRM validation still contains a U.S.-only five-digit ZIP rule');
 
 const feed = read('feed.xml');
 requireMatch(feed, /<feed xmlns="http:\/\/www\.w3\.org\/2005\/Atom" xml:lang="en-US">/, 'feed.xml: valid Atom root missing');

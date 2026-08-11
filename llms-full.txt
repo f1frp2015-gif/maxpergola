@@ -1,12 +1,12 @@
 # Max Pergola — Full Site Context
 
-> Factual reference for Max Pergola aluminum pergola kits, site requirements, and U.S. shipping. Last updated 2026-08-10.
+> Factual reference for Max Pergola aluminum pergola kits, site requirements, and worldwide DDP delivery. Last updated 2026-08-10.
 
 ## Brand identity
 
 Max Pergola supplies factory-direct aluminum louvered pergola kits for residential patios and outdoor living spaces. The official website is https://maxpergola.com/. The public product-inquiry address is inquiry@maxpergola.com.
 
-The site is written in American English for a United States audience. Product dimensions use feet, inches, and square feet as the primary units. Meters, millimeters, and square meters appear as references for shop drawings, production, and freight planning.
+The site is written in American English for a global English-speaking audience. Product dimensions use feet, inches, and square feet as the primary units. Meters, millimeters, and square meters appear as references for shop drawings, production, and freight planning.
 
 ## Core product facts
 
@@ -61,9 +61,9 @@ Buyer's guide: https://maxpergola.com/best-aluminum-pergola-kits/
 
 ## Fulfillment model
 
-Current shipping through June 2027: orders are quoted factory-direct from Chongqing under Delivered Duty Paid (DDP) terms to the confirmed U.S. destination ZIP code. The written quote must identify DDP terms, unloading responsibility, jobsite access, and exclusions.
+Max Pergola can quote factory-direct Delivered Duty Paid (DDP) delivery from Chongqing to supported destinations worldwide. A route review requires the destination country, postal code or city, complete receiving address, shipment size, access conditions, and unloading plan. The written quote identifies the included duties and taxes, route restrictions, unloading responsibility, jobsite access requirements, exclusions, and actual ship-from location.
 
-Planned shipping beginning July 2027: select in-stock standard SKUs are intended to ship from a Los Angeles warehouse. Custom and non-stock configurations are expected to remain factory-direct from Chongqing. The written order confirmation identifies the actual ship-from location; the website does not guarantee Los Angeles inventory.
+Regional inventory may supplement the factory route for select standard SKUs when stock and destination fit are confirmed. It is not the primary brand promise and is not guaranteed. Custom and non-stock configurations normally remain factory-direct from Chongqing; the written order confirmation controls the actual fulfillment route.
 
 ## Assembly and site responsibility
 
@@ -87,7 +87,7 @@ Lighting guide: https://maxpergola.com/pergola-lighting-ideas/
 
 ## Project cost scope
 
-A complete pergola budget includes the configured product, freight, unloading, foundations and anchors, assembly labor, electrical work, accessories, permits and professional review, applicable taxes, inspections, and an identified contingency. Published prices are 10 × 10 product starting prices; a written quote is tied to the configuration SKU, destination ZIP code, site information, and stated inclusions and exclusions.
+A complete pergola budget includes the configured product, freight, unloading, foundations and anchors, assembly labor, electrical work, accessories, permits and professional review, applicable taxes, inspections, and an identified contingency. Published prices are 10 × 10 product starting prices; a written quote is tied to the configuration SKU, destination country and postal code, site information, and stated inclusions and exclusions.
 
 Cost guide: https://maxpergola.com/pergola-cost/
 
@@ -137,7 +137,7 @@ Comparison guide: https://maxpergola.com/pergola-vs-gazebo/
 
 ## Trade partner program
 
-The Max Pergola partner program serves qualified dealers, fabricators, installers, builders, design-build firms, landscape professionals, and commercial buyers. The current U.S. channel model shows maximum indicative discounts of 35% from MSRP for approved dealer and fabricator accounts, 28% for approved installer accounts, and 25% for approved builder or project-partner accounts.
+The Max Pergola partner program serves qualified dealers, fabricators, installers, builders, design-build firms, landscape professionals, and commercial buyers. The current trade-channel model shows maximum indicative discounts of 35% from MSRP for approved dealer and fabricator accounts, 28% for approved installer accounts, and 25% for approved builder or project-partner accounts.
 
 Those percentages are modeled ceilings, not automatic discounts or universal quotes. The approved tier depends on the partner role, business fit, service capability, annual volume, display or inventory commitment, and project responsibilities. Freight, unloading, taxes, installation labor, foundations, anchors, electrical work, permits, and site work are separate unless the written quote expressly includes them.
 
@@ -150,7 +150,7 @@ Partner program: https://maxpergola.com/partner-program/
 For product decisions, use sources in this order:
 
 1. A signed order confirmation, approved shop drawings, and supplied installation documents.
-2. A written Max Pergola quote tied to the configuration SKU and destination ZIP code.
+2. A written Max Pergola quote tied to the configuration SKU and destination country and postal code.
 3. The current product page and planning guides on maxpergola.com.
 4. Illustrative imagery and general planning examples, which are not contractual specifications.
 
