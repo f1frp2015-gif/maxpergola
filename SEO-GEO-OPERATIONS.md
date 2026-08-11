@@ -70,4 +70,4 @@ The stable entity IDs are:
 
 Use `inquiry@maxpergola.com` as the only public email. Internal mailbox-forwarding recipients must never appear in HTML, XML, JSON-LD, manifests, crawler files or repository documentation intended for public deployment.
 
-Current fulfillment language must distinguish present operation from future plans: Chongqing factory-direct DDP is current; Los Angeles fulfillment for qualifying in-stock standard SKUs is planned from July 2027. Do not convert the planned route into a current availability claim before operations confirms launch.
+Current fulfillment language must state that factory-direct DDP delivery from Chongqing can be quoted to supported destinations worldwide. Every public claim must remain destination- and route-specific: the written quote controls included duties and taxes, unloading, access, exclusions, and ship-from location. Regional inventory is a secondary option for confirmed standard stock and must never replace the worldwide factory-direct positioning or be presented as guaranteed availability.
