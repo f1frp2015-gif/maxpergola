@@ -43,6 +43,9 @@ if (root && viewport && preview) {
   let autoRotate = !reducedMotion && !isCompact;
   let targetLouverAngle = 38;
   let lastTime = performance.now();
+  let firstFramePainted = false;
+  let renderFailed = false;
+  let maximumDrawingBufferSize = 4096;
   let dimensions = { width: 4.2672, length: 3.048, height: 2.4384 };
   const louverMeshes = [];
   const fanGroups = [];
@@ -50,6 +53,7 @@ if (root && viewport && preview) {
   const status = root.querySelector('[data-3d-status]');
   const resetButton = root.querySelector('[data-3d-reset]');
   const orbitButton = root.querySelector('[data-3d-orbit]');
+  const liveLabel = root.querySelector('[data-3d-live-label]');
 
   const disposeGroup = (group) => {
     if (!group) return;
@@ -469,6 +473,10 @@ if (root && viewport && preview) {
   const resize = () => {
     const width = Math.max(1, viewport.clientWidth);
     const height = Math.max(1, viewport.clientHeight);
+    const preferredRatio = Math.min(window.devicePixelRatio || 1, isCompact ? 1.4 : 1.75);
+    const safeBufferSize = maximumDrawingBufferSize * 0.9;
+    const safeRatio = Math.max(0.5, Math.min(preferredRatio, safeBufferSize / width, safeBufferSize / height));
+    if (Math.abs(renderer.getPixelRatio() - safeRatio) > 0.01) renderer.setPixelRatio(safeRatio);
     if (renderer.domElement.width !== Math.round(width * renderer.getPixelRatio()) || renderer.domElement.height !== Math.round(height * renderer.getPixelRatio())) {
       renderer.setSize(width, height, false);
       camera.aspect = width / height;
@@ -476,9 +484,18 @@ if (root && viewport && preview) {
     }
   };
 
-  const animate = (time) => {
-    window.requestAnimationFrame(animate);
-    if (!active || document.hidden) return;
+  const markFramePainted = () => {
+    if (firstFramePainted) return;
+    firstFramePainted = true;
+    preview.classList.remove('is-3d-fallback');
+    preview.classList.add('is-3d-ready');
+    viewport.removeAttribute('aria-busy');
+    if (liveLabel) liveLabel.textContent = 'Live parametric 3D';
+    const currentConfiguration = state || root.maxPergolaState;
+    if (currentConfiguration) updateDiagnostics(currentConfiguration);
+  };
+
+  const renderFrame = (time) => {
     resize();
     const delta = Math.min(0.05, (time - lastTime) / 1000);
     lastTime = time;
@@ -489,18 +506,36 @@ if (root && viewport && preview) {
     controls.autoRotateSpeed = 0.42;
     controls.update(delta);
     renderer.render(scene, camera);
+    if (renderer.getContext().isContextLost()) throw new Error('WebGL context was lost while rendering.');
+    markFramePainted();
   };
 
-  const fallback = () => {
+  const fallback = (reason = 'WebGL unavailable') => {
+    renderFailed = true;
+    active = false;
+    firstFramePainted = false;
     preview.classList.remove('is-3d-ready');
     preview.classList.add('is-3d-fallback');
     viewport.setAttribute('hidden', '');
-    window.__maxPergola3D = { ready: false, renderer: 'SVG fallback' };
+    viewport.removeAttribute('aria-busy');
+    if (liveLabel) liveLabel.textContent = 'Configuration preview';
+    window.__maxPergola3D = { ready: false, renderer: 'SVG fallback', reason };
+  };
+
+  const animate = (time) => {
+    window.requestAnimationFrame(animate);
+    if (!active || document.hidden || renderFailed) return;
+    try {
+      renderFrame(time);
+    } catch (error) {
+      console.warn('Max Pergola 3D preview stopped; using the architectural fallback.', error);
+      fallback(error instanceof Error ? error.message : 'Render failed');
+    }
   };
 
   try {
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isCompact ? 1.5 : 2));
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'default', failIfMajorPerformanceCaveat: false });
+    maximumDrawingBufferSize = renderer.getContext().getParameter(renderer.getContext().MAX_RENDERBUFFER_SIZE) || maximumDrawingBufferSize;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.shadowMap.enabled = true;
@@ -509,7 +544,20 @@ if (root && viewport && preview) {
     renderer.domElement.setAttribute('aria-label', 'Interactive three-dimensional model of the configured Max Pergola. Drag to rotate and scroll or pinch to zoom.');
     renderer.domElement.addEventListener('webglcontextlost', (event) => {
       event.preventDefault();
-      fallback();
+      fallback('WebGL context lost');
+    }, false);
+    renderer.domElement.addEventListener('webglcontextrestored', () => {
+      renderFailed = false;
+      active = true;
+      firstFramePainted = false;
+      viewport.hidden = false;
+      viewport.setAttribute('aria-busy', 'true');
+      try {
+        updateLighting();
+        renderFrame(performance.now());
+      } catch (error) {
+        fallback(error instanceof Error ? error.message : 'WebGL restore failed');
+      }
     }, false);
     viewport.append(renderer.domElement);
 
@@ -534,8 +582,6 @@ if (root && viewport && preview) {
     pmrem.dispose();
     updateLighting();
     updateCameraBounds(true);
-    preview.classList.add('is-3d-ready');
-    viewport.removeAttribute('aria-busy');
 
     root.addEventListener('maxpergola:configuration', (event) => {
       state = event.detail;
@@ -558,13 +604,26 @@ if (root && viewport && preview) {
     });
     renderer.domElement.addEventListener('dblclick', () => updateCameraBounds(true));
     new ResizeObserver(resize).observe(viewport);
-    new IntersectionObserver((entries) => { active = entries[0]?.isIntersecting ?? true; }, { threshold: 0.01 }).observe(viewport);
+    new IntersectionObserver((entries) => { active = entries[0]?.isIntersecting ?? true; }, { threshold: 0.01 }).observe(preview);
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && !renderFailed) {
+        active = true;
+        window.requestAnimationFrame((time) => {
+          try {
+            renderFrame(time);
+          } catch (error) {
+            fallback(error instanceof Error ? error.message : 'Resume render failed');
+          }
+        });
+      }
+    });
     if (root.maxPergolaState) buildModel(root.maxPergolaState);
+    renderFrame(performance.now());
     window.requestAnimationFrame(animate);
   } catch (error) {
     console.warn('Max Pergola 3D preview could not start; using the architectural fallback.', error);
     environmentTarget?.dispose();
     renderer?.dispose();
-    fallback();
+    fallback(error instanceof Error ? error.message : 'WebGL initialization failed');
   }
 }
