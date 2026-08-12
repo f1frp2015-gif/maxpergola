@@ -142,7 +142,7 @@ if (root && viewport && preview) {
     return texture;
   };
 
-  const createDeckTexture = () => {
+  const createProceduralDeckTexture = () => {
     const canvas = document.createElement('canvas');
     canvas.width = 1024;
     canvas.height = 512;
@@ -193,6 +193,31 @@ if (root && viewport && preview) {
     return texture;
   };
 
+  const configureDeckTexture = (texture) => {
+    texture.wrapS = THREE.ClampToEdgeWrapping;
+    texture.wrapT = THREE.ClampToEdgeWrapping;
+    texture.repeat.set(1, 1);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+    texture.needsUpdate = true;
+    return texture;
+  };
+
+  const createDeckTexture = () => {
+    const fallbackTexture = createProceduralDeckTexture();
+    const texture = new THREE.TextureLoader().load(
+      '/assets/images/timber-deck-floor-texture.webp',
+      (loadedTexture) => configureDeckTexture(loadedTexture),
+      undefined,
+      () => {
+        texture.image = fallbackTexture.image;
+        configureDeckTexture(texture);
+        console.warn('The supplied timber deck texture could not be loaded; using the generated wood fallback.');
+      }
+    );
+    return configureDeckTexture(texture);
+  };
+
   const addLandscapeStage = () => {
     stageGroup = new THREE.Group();
     stageGroup.name = 'Maximum-size lawn installation area';
@@ -213,13 +238,13 @@ if (root && viewport && preview) {
     const maximumPadWidth = 25 * 12 * inch;
     const maximumPadLength = 19 * 12 * inch;
     const padMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0xffffff,
+      color: 0xb08a70,
       map: createDeckTexture(),
       metalness: 0,
-      roughness: 0.72,
-      clearcoat: 0.12,
-      clearcoatRoughness: 0.76,
-      envMapIntensity: 0.62
+      roughness: 0.82,
+      clearcoat: 0.05,
+      clearcoatRoughness: 0.84,
+      envMapIntensity: 0.35
     });
     const pad = new THREE.Mesh(new THREE.BoxGeometry(maximumPadWidth, 0.075, maximumPadLength), padMaterial);
     pad.name = 'Maximum-size timber deck';

@@ -6953,9 +6953,9 @@ a {
 }
 
 .builder-buybox {
-  position: sticky;
+  position: relative;
   z-index: 15;
-  bottom: 0;
+  bottom: auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 18px;
@@ -7105,7 +7105,27 @@ a {
 }
 
 @media (min-width: 981px) {
+  .builder-rail {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .builder-form {
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-color: #bbb5aa transparent;
+    scrollbar-width: thin;
+  }
+
+  .builder-buybox {
+    flex: 0 0 auto;
+  }
+
   .builder-intro {
+    flex: 0 0 auto;
     padding: 24px 30px 20px;
   }
 
@@ -7382,7 +7402,7 @@ a {
     display: flex;
     max-height: calc(100svh - 120px);
     flex-direction: column;
-    overflow-y: auto;
+    overflow: hidden;
   }
 
   .builder-intro {
@@ -7759,7 +7779,7 @@ a {
   }
 
   .builder-buybox {
-    position: sticky;
+    position: relative;
   }
 }
 
