@@ -161,7 +161,7 @@ for (const file of allHtml) {
   }
 }
 
-for (const required of ['robots.txt', 'sitemap.xml', 'maxpergola-icon.svg', 'vercel.json', 'assets/styles.css', 'assets/site.js', 'assets/configurator.js', 'assets/configurator-3d.js', 'src/configurator-3d.js', 'scripts/build-configurator-3d.mjs']) {
+for (const required of ['robots.txt', 'sitemap.xml', 'maxpergola-icon.svg', 'vercel.json', 'assets/styles.css', 'assets/site.js', 'assets/configurator.js', 'assets/configurator-3d.js', 'assets/images/timber-deck-floor-texture.webp', 'src/configurator-3d.js', 'scripts/build-configurator-3d.mjs']) {
   if (!existsSync(join(root, required))) errors.push(`Missing required file: ${required}`);
 }
 
@@ -174,11 +174,17 @@ for (const marker of ['data-pergola-3d', 'data-3d-reset', 'data-3d-orbit', 'name
 for (const marker of ['maxpergola:configuration', 'louverAngle', 'root.maxPergolaState', 'updateWithoutJump', 'restoreInteractionScroll']) {
   if (!configuratorScript.includes(marker)) errors.push(`assets/configurator.js: 3D state bridge missing (${marker})`);
 }
-for (const marker of ['WebGLRenderer', 'MeshPhysicalMaterial', 'PMREMGenerator', 'OrbitControls', 'profileMillimeters', 'Maximum-size lawn installation area', 'installationPadFeet']) {
+for (const marker of ['WebGLRenderer', 'MeshPhysicalMaterial', 'PMREMGenerator', 'OrbitControls', 'profileMillimeters', 'Maximum-size lawn installation area', 'installationPadFeet', '/assets/images/timber-deck-floor-texture.webp']) {
   if (!configurator3dSource.includes(marker)) errors.push(`src/configurator-3d.js: rendering capability missing (${marker})`);
 }
 
 const styles = readFileSync(join(root, 'assets/styles.css'), 'utf8');
+if (!/\.builder-buybox\s*\{[^}]*position:\s*relative;[^}]*bottom:\s*auto;/s.test(styles)) {
+  errors.push('assets/styles.css: configuration action bar must occupy layout space instead of covering options');
+}
+if (!/@media\s*\(min-width:\s*981px\)[\s\S]*?\.builder-form\s*\{[^}]*overflow-y:\s*auto;/s.test(styles)) {
+  errors.push('assets/styles.css: desktop configuration options need an independent scroll region');
+}
 if (!/\.faq-list\s*\{[^}]*display:\s*grid;[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/s.test(styles)) {
   errors.push('assets/styles.css: FAQ lists must use the shared two-column desktop grid');
 }
