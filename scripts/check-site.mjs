@@ -174,7 +174,7 @@ for (const marker of ['data-pergola-3d', 'data-3d-reset', 'data-3d-orbit', 'name
 for (const marker of ['maxpergola:configuration', 'louverAngle', 'root.maxPergolaState', 'updateWithoutJump', 'restoreInteractionScroll']) {
   if (!configuratorScript.includes(marker)) errors.push(`assets/configurator.js: 3D state bridge missing (${marker})`);
 }
-for (const marker of ['WebGLRenderer', 'MeshPhysicalMaterial', 'PMREMGenerator', 'OrbitControls', 'profileMillimeters', 'Maximum-size lawn installation area', 'installationPadFeet', '/assets/images/timber-deck-floor-texture.webp']) {
+for (const marker of ['WebGLRenderer', 'MeshPhysicalMaterial', 'PMREMGenerator', 'OrbitControls', 'profileMillimeters', 'Maximum-size lawn installation area', 'installationPadFeet', 'boardWidthInches: 5.5', 'gapInches: 0.125', "direction: 'parallel to the 19-foot span'", '/assets/images/timber-deck-floor-texture.webp']) {
   if (!configurator3dSource.includes(marker)) errors.push(`src/configurator-3d.js: rendering capability missing (${marker})`);
 }
 
