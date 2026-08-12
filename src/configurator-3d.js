@@ -28,6 +28,23 @@ if (root && viewport && preview) {
     louverHeight: 0.035,
     louverWall: 0.0012
   };
+  const deckingProfile = Object.freeze({
+    boardWidthInches: 5.5,
+    gapInches: 0.125,
+    stockLengthFeet: 20,
+    installationWidthFeet: 25,
+    installationLengthFeet: 19,
+    direction: 'parallel to the 19-foot span'
+  });
+  const deckingBoardCount = Math.ceil(
+    ((deckingProfile.installationWidthFeet * 12) + deckingProfile.gapInches)
+      / (deckingProfile.boardWidthInches + deckingProfile.gapInches)
+  );
+  const deckingEdgeBoardWidthInches = (
+    (deckingProfile.installationWidthFeet * 12)
+      - ((deckingBoardCount - 2) * deckingProfile.boardWidthInches)
+      - ((deckingBoardCount - 1) * deckingProfile.gapInches)
+  ) / 2;
   const defaultConfiguration = {
     model: 'Pro',
     frameColor: 'Graphite',
@@ -142,55 +159,94 @@ if (root && viewport && preview) {
     return texture;
   };
 
-  const createProceduralDeckTexture = () => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 1024;
-    canvas.height = 512;
-    const context = canvas.getContext('2d');
+  const drawProceduralDeckSurface = (context, canvas) => {
     let seed = 29117;
     const random = () => {
       seed = (seed * 1664525 + 1013904223) % 4294967296;
       return seed / 4294967296;
     };
-    const boardHeight = 64;
-    const boardColors = ['#9a6840', '#a87549', '#8d5d39', '#b17d50', '#96633c', '#a46e43'];
+    const boardColors = ['#8d6b56', '#98735b', '#86644f', '#a07a60', '#906c55', '#9b755c'];
+    const pixelsPerInch = canvas.width / (deckingProfile.installationWidthFeet * 12);
+    let cursorInches = 0;
 
-    context.fillStyle = '#4b3526';
+    context.fillStyle = '#302620';
     context.fillRect(0, 0, canvas.width, canvas.height);
-    for (let row = 0; row < canvas.height / boardHeight; row += 1) {
-      const y = row * boardHeight + 3;
-      const offset = row % 2 ? -128 : 0;
-      for (let x = offset; x < canvas.width; x += 256) {
-        const color = boardColors[Math.floor(random() * boardColors.length)];
-        const gradient = context.createLinearGradient(x, y, x, y + boardHeight - 6);
-        gradient.addColorStop(0, color);
-        gradient.addColorStop(0.5, color);
-        gradient.addColorStop(1, '#765033');
-        context.fillStyle = gradient;
-        context.fillRect(x + 3, y, 250, boardHeight - 6);
-        context.strokeStyle = 'rgba(62, 36, 20, .24)';
-        context.lineWidth = 1;
-        for (let grain = 0; grain < 13; grain += 1) {
-          const grainY = y + 6 + random() * (boardHeight - 18);
-          context.beginPath();
-          context.moveTo(x + 9, grainY);
-          context.bezierCurveTo(x + 72, grainY + (random() - 0.5) * 7, x + 172, grainY + (random() - 0.5) * 8, x + 245, grainY + (random() - 0.5) * 5);
-          context.stroke();
-        }
-        context.fillStyle = 'rgba(39, 25, 17, .28)';
+    for (let boardIndex = 0; boardIndex < deckingBoardCount; boardIndex += 1) {
+      const boardWidthInches = boardIndex === 0 || boardIndex === deckingBoardCount - 1
+        ? deckingEdgeBoardWidthInches
+        : deckingProfile.boardWidthInches;
+      const x = cursorInches * pixelsPerInch;
+      const boardWidth = boardWidthInches * pixelsPerInch;
+      const color = boardColors[boardIndex % boardColors.length];
+      const gradient = context.createLinearGradient(x, 0, x + boardWidth, 0);
+      gradient.addColorStop(0, '#765946');
+      gradient.addColorStop(0.18, color);
+      gradient.addColorStop(0.78, color);
+      gradient.addColorStop(1, '#6f5341');
+      context.fillStyle = gradient;
+      context.fillRect(x, 0, boardWidth, canvas.height);
+      context.strokeStyle = 'rgba(58, 40, 30, .24)';
+      context.lineWidth = Math.max(0.6, canvas.width / 2600);
+      for (let grain = 0; grain < 8; grain += 1) {
+        const grainX = x + 3 + random() * Math.max(1, boardWidth - 6);
         context.beginPath();
-        context.ellipse(x + 36 + random() * 170, y + 14 + random() * 34, 8 + random() * 13, 2 + random() * 3, 0, 0, Math.PI * 2);
-        context.fill();
+        context.moveTo(grainX, 0);
+        context.bezierCurveTo(
+          grainX + (random() - 0.5) * 6,
+          canvas.height * 0.3,
+          grainX + (random() - 0.5) * 8,
+          canvas.height * 0.7,
+          grainX + (random() - 0.5) * 5,
+          canvas.height
+        );
+        context.stroke();
       }
+      cursorInches += boardWidthInches + deckingProfile.gapInches;
     }
+  };
 
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(2.25, 1.75);
-    texture.colorSpace = THREE.SRGBColorSpace;
-    texture.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
-    return texture;
+  const drawSuppliedDeckSurface = (context, canvas, image) => {
+    const pixelsPerInch = canvas.width / (deckingProfile.installationWidthFeet * 12);
+    const sourceBoards = [
+      { x: 158, y: 14, width: 578, height: 278 },
+      { x: 158, y: 316, width: 578, height: 226 },
+      { x: 174, y: 36, width: 550, height: 234 },
+      { x: 174, y: 332, width: 550, height: 194 }
+    ];
+    let cursorInches = 0;
+
+    context.fillStyle = '#302722';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    for (let boardIndex = 0; boardIndex < deckingBoardCount; boardIndex += 1) {
+      const boardWidthInches = boardIndex === 0 || boardIndex === deckingBoardCount - 1
+        ? deckingEdgeBoardWidthInches
+        : deckingProfile.boardWidthInches;
+      const x = cursorInches * pixelsPerInch;
+      const boardWidth = boardWidthInches * pixelsPerInch;
+      const source = sourceBoards[boardIndex % sourceBoards.length];
+
+      context.save();
+      context.beginPath();
+      context.rect(x, 0, boardWidth, canvas.height);
+      context.clip();
+      context.translate(x + boardWidth, 0);
+      context.rotate(Math.PI / 2);
+      context.drawImage(
+        image,
+        source.x,
+        source.y,
+        source.width,
+        source.height,
+        0,
+        0,
+        canvas.height,
+        boardWidth
+      );
+      context.fillStyle = boardIndex % 3 === 0 ? 'rgba(255, 242, 226, .035)' : 'rgba(40, 27, 20, .025)';
+      context.fillRect(0, 0, canvas.height, boardWidth);
+      context.restore();
+      cursorInches += boardWidthInches + deckingProfile.gapInches;
+    }
   };
 
   const configureDeckTexture = (texture) => {
@@ -204,18 +260,27 @@ if (root && viewport && preview) {
   };
 
   const createDeckTexture = () => {
-    const fallbackTexture = createProceduralDeckTexture();
-    const texture = new THREE.TextureLoader().load(
+    const canvas = document.createElement('canvas');
+    canvas.width = 2048;
+    canvas.height = Math.round(canvas.width * (
+      deckingProfile.installationLengthFeet / deckingProfile.installationWidthFeet
+    ));
+    const context = canvas.getContext('2d');
+    drawProceduralDeckSurface(context, canvas);
+    const texture = configureDeckTexture(new THREE.CanvasTexture(canvas));
+    new THREE.TextureLoader().load(
       '/assets/images/timber-deck-floor-texture.webp',
-      (loadedTexture) => configureDeckTexture(loadedTexture),
+      (loadedTexture) => {
+        drawSuppliedDeckSurface(context, canvas, loadedTexture.image);
+        texture.needsUpdate = true;
+        loadedTexture.dispose();
+      },
       undefined,
       () => {
-        texture.image = fallbackTexture.image;
-        configureDeckTexture(texture);
         console.warn('The supplied timber deck texture could not be loaded; using the generated wood fallback.');
       }
     );
-    return configureDeckTexture(texture);
+    return texture;
   };
 
   const addLandscapeStage = () => {
@@ -235,8 +300,8 @@ if (root && viewport && preview) {
     lawn.receiveShadow = true;
     stageGroup.add(lawn);
 
-    const maximumPadWidth = 25 * 12 * inch;
-    const maximumPadLength = 19 * 12 * inch;
+    const maximumPadWidth = deckingProfile.installationWidthFeet * 12 * inch;
+    const maximumPadLength = deckingProfile.installationLengthFeet * 12 * inch;
     const padMaterial = new THREE.MeshPhysicalMaterial({
       color: 0xb08a70,
       map: createDeckTexture(),
@@ -585,6 +650,14 @@ if (root && viewport && preview) {
       pbr: webglReady,
       profileMillimeters: { post: 150, beam: [165, 40], gutter: [83.75, 65], louver: [175, 35] },
       installationPadFeet: { width: 25, length: 19, fitsMaximumPergola: true },
+      decking: {
+        boardWidthInches: deckingProfile.boardWidthInches,
+        gapInches: deckingProfile.gapInches,
+        stockLengthFeet: deckingProfile.stockLengthFeet,
+        boardCount: deckingBoardCount,
+        edgeBoardWidthInches: deckingEdgeBoardWidthInches,
+        direction: deckingProfile.direction
+      },
       pergolaGeometryReady: modelGeometryIsReady(),
       pergolaPixelProbePassed,
       pergolaMeshCount: modelGroup ? modelGroup.children.filter((child) => child.isMesh || child.isGroup).length : 0,
