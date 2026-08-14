@@ -207,9 +207,23 @@ const legacyPackagingImages = [
   'assets/images/maxpergola-export-packaging.png',
   'assets/images/export-packaging.jpg'
 ];
-if (!existsSync(join(root, packagingImage))) errors.push(`Missing required packaging image: ${packagingImage}`);
+if (!existsSync(join(root, packagingImage))) {
+  errors.push(`Missing required packaging image: ${packagingImage}`);
+} else {
+  const packagingImageBytes = statSync(join(root, packagingImage)).size;
+  if (packagingImageBytes > maxImageBytes) {
+    errors.push(`${packagingImage}: optimized packaging image exceeds ${maxImageBytes.toLocaleString('en-US')} bytes`);
+  }
+}
 for (const legacyPackagingImage of legacyPackagingImages) {
   if (existsSync(join(root, legacyPackagingImage))) errors.push(`Legacy packaging image must be removed: ${legacyPackagingImage}`);
+}
+const vercelConfig = JSON.parse(readFileSync(join(root, 'vercel.json'), 'utf8'));
+const legacyPackagingRedirect = vercelConfig.redirects?.find(
+  (redirect) => redirect.source === '/assets/images/maxpergola-export-packaging.png'
+);
+if (legacyPackagingRedirect?.destination !== '/assets/images/maxpergola-export-packaging.webp' || legacyPackagingRedirect?.permanent !== true) {
+  errors.push('vercel.json: legacy packaging PNG must permanently redirect to the optimized WebP');
 }
 for (const relative of ['index.html', 'pergola-kits/index.html', 'pergola-installation/index.html', 'pergola-cost/index.html', 'diy-pergola/index.html', 'sitemap.xml']) {
   const content = readFileSync(join(root, relative), 'utf8');
