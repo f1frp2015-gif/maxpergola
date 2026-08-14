@@ -37,7 +37,7 @@ const errors = [];
 const idsByFile = new Map();
 const oversizedImages = new Set();
 const maxImageBytes = 1_000_000;
-const ahrefsAnalyticsTag = '<script src="https://analytics.ahrefs.com/analytics.js" data-key="uyE2fwY9SZcf986LJ72IAA" async></script>';
+const ahrefsAnalyticsTag = '<script src="https://analytics.ahrefs.com/analytics.js" data-key="uyE2fwY9SZcf986LJ72lAA" async></script>';
 
 for (const file of allHtml) {
   const relative = file.slice(root.length + 1);
