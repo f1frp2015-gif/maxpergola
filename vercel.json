@@ -8,6 +8,7 @@
       "destination": "https://maxpergola.com/:path*",
       "permanent": true
     },
+    {"source": "/assets/images/maxpergola-export-packaging.png", "destination": "/assets/images/maxpergola-export-packaging.webp", "permanent": true},
     {"source": "/index.html", "destination": "/", "permanent": true},
     {"source": "/pergola-kits/index.html", "destination": "/pergola-kits/", "permanent": true},
     {"source": "/configure/index.html", "destination": "/configure/", "permanent": true},
