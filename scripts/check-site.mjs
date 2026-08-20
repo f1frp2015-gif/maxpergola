@@ -165,6 +165,12 @@ for (const required of ['robots.txt', 'sitemap.xml', 'maxpergola-icon.svg', 'ver
   if (!existsSync(join(root, required))) errors.push(`Missing required file: ${required}`);
 }
 
+const analyticsSiteScript = readFileSync(join(root, 'assets/site.js'), 'utf8');
+const ga4MeasurementIds = [...new Set(analyticsSiteScript.match(/\bG-[A-Z0-9]+\b/g) || [])];
+if (ga4MeasurementIds.length !== 1 || ga4MeasurementIds[0] !== 'G-TQV5E2KGGK') {
+  errors.push(`assets/site.js: expected only GA4 measurement ID G-TQV5E2KGGK, found ${ga4MeasurementIds.join(', ') || 'none'}`);
+}
+
 const configuratorHtml = readFileSync(join(root, 'configure/index.html'), 'utf8');
 const configuratorScript = readFileSync(join(root, 'assets/configurator.js'), 'utf8');
 const configurator3dSource = readFileSync(join(root, 'src/configurator-3d.js'), 'utf8');
