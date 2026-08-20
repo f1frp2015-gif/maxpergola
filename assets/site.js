@@ -1,5 +1,22 @@
 document.documentElement.classList.add('js');
 
+const GA4_MEASUREMENT_ID = 'G-TQV5E2KGGK';
+const isProductionSite = ['maxpergola.com', 'www.maxpergola.com'].includes(window.location.hostname);
+
+if (isProductionSite && !window.location.pathname.startsWith('/crm/')) {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = window.gtag || function gtag() {
+    window.dataLayer.push(arguments);
+  };
+  window.gtag('js', new Date());
+  window.gtag('config', GA4_MEASUREMENT_ID, {anonymize_ip: true});
+
+  const googleTag = document.createElement('script');
+  googleTag.async = true;
+  googleTag.src = `https://www.googletagmanager.com/gtag/js?id=${GA4_MEASUREMENT_ID}`;
+  document.head.appendChild(googleTag);
+}
+
 const menuButton = document.querySelector('[data-menu-button]');
 const menu = document.querySelector('[data-menu]');
 
