@@ -38,6 +38,7 @@ const idsByFile = new Map();
 const oversizedImages = new Set();
 const maxImageBytes = 1_000_000;
 const ahrefsAnalyticsTag = '<script src="https://analytics.ahrefs.com/analytics.js" data-key="uyE2fwY9SZcf986LJ72lAA" async></script>';
+const vercelAnalyticsTag = '<script defer src="/_vercel/insights/script.js"></script>';
 
 for (const file of allHtml) {
   const relative = file.slice(root.length + 1);
@@ -45,8 +46,11 @@ for (const file of allHtml) {
   if (relative !== 'crm/index.html') {
     const head = html.match(/<head>([\s\S]*?)<\/head>/i)?.[1] || '';
     const ahrefsTagCount = html.split(ahrefsAnalyticsTag).length - 1;
+    const vercelTagCount = html.split(vercelAnalyticsTag).length - 1;
     if (ahrefsTagCount !== 1) errors.push(`${relative}: expected exactly one Ahrefs Analytics tag, found ${ahrefsTagCount}`);
     if (!head.includes(ahrefsAnalyticsTag)) errors.push(`${relative}: Ahrefs Analytics tag must be inside <head>`);
+    if (vercelTagCount !== 1) errors.push(`${relative}: expected exactly one Vercel Web Analytics tag, found ${vercelTagCount}`);
+    if (!head.includes(vercelAnalyticsTag)) errors.push(`${relative}: Vercel Web Analytics tag must be inside <head>`);
   }
   const competitorBrandTerms = [
     /\bpergolux\b/i,
