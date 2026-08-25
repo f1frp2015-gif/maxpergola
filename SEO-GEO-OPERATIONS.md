@@ -35,7 +35,7 @@ For every new or materially updated indexable page:
 1. Give the page one search intent, one canonical URL and one H1.
 2. Add or update its description, robots directives, self-referencing `en-US` and `x-default` hreflang, Open Graph and Twitter fields.
 3. Connect the page to the stable `Organization` and `WebSite` JSON-LD IDs and add only schema claims visible on the page.
-4. Add the canonical URL and accurate `lastmod` to `sitemap.xml`.
+4. Add the canonical URL and accurate `lastmod` to `sitemap.xml` only when the page is an indexable search landing page. Keep conversion and thin-support routes such as `/configure/`, `/request-quote/`, warranty, and legal pages on `noindex, follow` and out of the sitemap.
 5. Add the page to `llms.txt` when it is a primary resource, and update `llms-full.txt` when it changes a product, fulfillment or safety fact.
 6. Add an Atom entry when the page is a product or planning resource whose update should be discoverable.
 7. Never add invented prices, availability, reviews, ratings, engineering values, certifications, addresses, warranties or social profiles.

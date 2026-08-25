@@ -262,6 +262,114 @@ for (const sizeCode of expectedSizeCodes) {
   if (!siteScript.includes(`    ${sizeCode}: {`)) errors.push(`assets/site.js: size data ${sizeCode} missing`);
 }
 
+const architectureFiles = allHtml
+  .map((file) => ({file, relative: file.slice(root.length + 1), html: readFileSync(file, 'utf8')}))
+  .filter(({html}) => /class="[^"]*\bsite-header\b/.test(html) && /class="[^"]*\bsite-footer\b/.test(html));
+const desktopLabels = ['Shop Pergola Kits', 'Ideas &amp; Guides', 'Engineering', 'Partners', 'About'];
+const headerRoutes = [
+  '/pergola-kits/',
+  '/pergola-kits/louvered/',
+  '/pergola-kits/freestanding/',
+  '/pergola-kits/attached/',
+  '/pergola-kits/deck/',
+  '/best-aluminum-pergola-kits/',
+  '/pergola-kits/standard/',
+  '/pergola-kits/pro/',
+  '/pergola-kits/max/',
+  '/backyard-pergola-ideas/',
+  '/pergola-lighting-ideas/',
+  '/diy-pergola/',
+  '/pergola-installation/',
+  '/pergola-vs-gazebo/',
+  '/pergola-cost/',
+  '/engineering/specifications/',
+  '/pergola-calculator/',
+  '/partner-program/',
+  '/about-max-pergola/'
+];
+
+for (const {relative, html} of architectureFiles) {
+  const header = html.match(/<header class="[^"]*\bsite-header\b[^"]*">([\s\S]*?)<\/header>/)?.[1] || '';
+  const desktopNav = header.match(/<nav class="desktop-nav"[\s\S]*?<\/nav>/)?.[0] || '';
+  const mobileNav = header.match(/<nav class="mobile-menu"[\s\S]*?<\/nav>/)?.[0] || '';
+  const footer = html.match(/<footer class="[^"]*\bsite-footer\b[^"]*"[\s\S]*?<\/footer>/)?.[0] || '';
+
+  for (const label of desktopLabels) {
+    if (!desktopNav.includes(label)) errors.push(`${relative}: intent-led desktop navigation is missing ${label}`);
+  }
+  if ((desktopNav.match(/class="nav-group"/g) || []).length !== 3) {
+    errors.push(`${relative}: desktop navigation must contain three grouped intent menus`);
+  }
+  for (const route of headerRoutes) {
+    if (!header.includes(`href="${route}"`)) errors.push(`${relative}: global navigation route missing ${route}`);
+  }
+  if (!header.includes('<a class="nav-cta" href="/configure/"')) errors.push(`${relative}: Build Your Kit CTA must point to /configure/`);
+  if ((mobileNav.match(/<details class="mobile-nav-section"/g) || []).length !== 3) {
+    errors.push(`${relative}: mobile navigation must use three native details groups`);
+  }
+  if (!mobileNav.includes('class="mobile-menu-close" href="#"')) errors.push(`${relative}: CSS fallback close link missing from mobile navigation`);
+  if (!footer.includes('itemscope itemtype="https://schema.org/Organization"')) errors.push(`${relative}: footer Organization schema missing`);
+  for (const marker of ['Chongqing', 'China', 'inquiry@maxpergola.com', '+86 138 8333 8993', 'country &amp; postal code']) {
+    if (!footer.includes(marker)) errors.push(`${relative}: trust footer is missing ${marker}`);
+  }
+  const footerRoutes = new Set([...footer.matchAll(/href="(\/[^"#?]*)/g)].map((match) => match[1]));
+  if (footerRoutes.size >= 21) errors.push(`${relative}: footer exposes ${footerRoutes.size} internal routes and has become a flat site map`);
+
+  if (relative !== 'index.html') {
+    const breadcrumb = html.match(/<nav class="[^"]*\bbreadcrumbs\b[^"]*"[\s\S]*?<\/nav>/)?.[0] || '';
+    if (!breadcrumb.includes('itemscope itemtype="https://schema.org/BreadcrumbList"')) errors.push(`${relative}: visible BreadcrumbList microdata missing`);
+    if (!breadcrumb.includes('aria-current="page"')) errors.push(`${relative}: breadcrumb current-page label missing`);
+  }
+  if (html.includes('/pergola-kits/#configure')) errors.push(`${relative}: legacy embedded-configurator CTA must point to /configure/`);
+}
+
+if (!styles.includes('.mobile-menu:target')) errors.push('assets/styles.css: CSS :target mobile-menu fallback missing');
+if (!styles.includes('.mobile-nav-section summary')) errors.push('assets/styles.css: native mobile details styling missing');
+if (!siteScript.includes("event.key !== 'Escape'") || !siteScript.includes('event.preventDefault()')) {
+  errors.push('assets/site.js: progressive mobile navigation keyboard behavior missing');
+}
+
+const commercialFiles = [
+  'pergola-kits/index.html',
+  'pergola-kits/louvered/index.html',
+  'pergola-kits/freestanding/index.html',
+  'pergola-kits/attached/index.html',
+  'pergola-kits/deck/index.html',
+  'best-aluminum-pergola-kits/index.html',
+  'pergola-kits/standard/index.html',
+  'pergola-kits/pro/index.html',
+  'pergola-kits/max/index.html'
+];
+for (const relative of commercialFiles) {
+  const main = readFileSync(join(root, relative), 'utf8').match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)?.[1] || '';
+  if (!main.includes('href="/configure/')) errors.push(`${relative}: commercial page needs a main-content configurator CTA`);
+}
+
+const guideFiles = [
+  'pergola-lighting-ideas/index.html',
+  'pergola-installation/index.html',
+  'pergola-cost/index.html',
+  'diy-pergola/index.html',
+  'backyard-pergola-ideas/index.html',
+  'pergola-vs-gazebo/index.html'
+];
+for (const relative of guideFiles) {
+  const main = readFileSync(join(root, relative), 'utf8').match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)?.[1] || '';
+  if (!main.includes('href="/pergola-kits/')) errors.push(`${relative}: informational page needs a main-content route into the kit funnel`);
+}
+
+for (const relative of ['engineering/specifications/index.html', 'pergola-calculator/index.html']) {
+  const main = readFileSync(join(root, relative), 'utf8').match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)?.[1] || '';
+  for (const route of ['/pergola-kits/', '/configure/']) {
+    if (!main.includes(`href="${route}`)) errors.push(`${relative}: engineering path needs a main-content CTA to ${route}`);
+  }
+}
+
+const kitsMain = kitsHtml.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)?.[1] || '';
+for (const route of ['/pergola-kits/louvered/', '/pergola-kits/freestanding/', '/pergola-kits/attached/', '/pergola-kits/deck/']) {
+  if (!kitsMain.includes(`href="${route}"`)) errors.push(`pergola-kits/index.html: natural category link missing ${route}`);
+}
+
 if (errors.length) {
   console.error(`Site check failed with ${errors.length} issue(s):`);
   for (const error of errors) console.error(`- ${error}`);
