@@ -63,5 +63,6 @@ Every child page has a visible, crawlable breadcrumb marked as `BreadcrumbList`.
 - Published 10 × 10 starting prices (MSRP) are Standard $7,490, Pro $8,990, and Max $9,990, set from the internal cost model as of September 24, 2026. Public promotions must stay at or above the internal MAP floor and are not a permanent compare-at display. These are dated Max Pergola reference prices for base configurations; final quotes still require configuration and delivery location.
 - Lead intake uses `/api/inquiries`; the private `/crm/` workspace uses `CRM_ADMIN_TOKEN` and Neon Postgres. Pull `.env.local`, run `npm run db:migrate`, then use `npm run dev` for local Function testing.
 - Images are supplied concept/configuration visuals and are labeled accordingly.
+- `maxpergola-export-packaging.webp` is an AI-generated illustration, not a photo of a real shipment. Every placement keeps the visible `.illustration-tag` label and illustration alt/caption text until genuine packaging photos replace it.
 - The 45-minute message is scoped to typical structural frame assembly by an experienced crew. Site preparation, anchoring, roof components and accessories take additional time.
 - Wind, snow, permit, foundation and delivery claims must be updated only from approved engineering and commercial documentation.
