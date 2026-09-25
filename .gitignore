@@ -9,3 +9,7 @@ node_modules/
 assets/images/poolside-glass-pergola.png
 assets/images/export-packaging.png
 .vercel
+
+# Internal pricing research and generated reports; never deploy or commit.
+research/
+outputs/
