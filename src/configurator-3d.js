@@ -78,6 +78,7 @@ if (root && viewport && preview) {
   let modelSignature = '';
   let active = true;
   let autoRotate = !reducedMotion && !isCompact;
+  let sceneMode = 'day';
   let targetLouverAngle = 38;
   let lastTime = performance.now();
   let firstFramePainted = false;
@@ -94,7 +95,10 @@ if (root && viewport && preview) {
   const status = root.querySelector('[data-3d-status]');
   const resetButton = root.querySelector('[data-3d-reset]');
   const orbitButton = root.querySelector('[data-3d-orbit]');
+  const sceneButton = root.querySelector('[data-3d-scene]');
+  const sceneShell = root.querySelector('[data-scene]');
   const liveLabel = root.querySelector('[data-3d-live-label]');
+  const gestureHint = root.querySelector('.pergola-3d-hint');
 
   const disposeGroup = (group) => {
     if (!group) return;
@@ -129,14 +133,14 @@ if (root && viewport && preview) {
     canvas.width = 256;
     canvas.height = 256;
     const context = canvas.getContext('2d');
-    context.fillStyle = '#477238';
+    context.fillStyle = '#4d6039';
     context.fillRect(0, 0, 256, 256);
     let seed = 74291;
     const random = () => {
       seed = (seed * 1664525 + 1013904223) % 4294967296;
       return seed / 4294967296;
     };
-    const colors = ['#315f2d', '#5f8743', '#78984e', '#244e28', '#8aa95b'];
+    const colors = ['#3c5231', '#5c7343', '#6f814c', '#2f452b', '#7e8f58'];
     for (let index = 0; index < 5200; index += 1) {
       const x = random() * 256;
       const y = random() * 256;
@@ -165,7 +169,7 @@ if (root && viewport && preview) {
       seed = (seed * 1664525 + 1013904223) % 4294967296;
       return seed / 4294967296;
     };
-    const boardColors = ['#8d6b56', '#98735b', '#86644f', '#a07a60', '#906c55', '#9b755c'];
+    const boardColors = ['#7f6551', '#886e58', '#775e4b', '#8f745c', '#816651', '#8a6f58'];
     const pixelsPerInch = canvas.width / (deckingProfile.installationWidthFeet * 12);
     let cursorInches = 0;
 
@@ -247,6 +251,15 @@ if (root && viewport && preview) {
       context.restore();
       cursorInches += boardWidthInches + deckingProfile.gapInches;
     }
+
+    context.save();
+    context.globalCompositeOperation = 'saturation';
+    context.fillStyle = 'rgba(128, 128, 128, 0.42)';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.globalCompositeOperation = 'multiply';
+    context.fillStyle = 'rgba(178, 166, 152, 0.28)';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.restore();
   };
 
   const configureDeckTexture = (texture) => {
@@ -289,7 +302,7 @@ if (root && viewport && preview) {
     scene.add(stageGroup);
 
     const grassMaterial = new THREE.MeshStandardMaterial({
-      color: 0x6f914a,
+      color: 0x72815b,
       map: createGrassTexture(),
       roughness: 0.98,
       metalness: 0
@@ -303,7 +316,7 @@ if (root && viewport && preview) {
     const maximumPadWidth = deckingProfile.installationWidthFeet * 12 * inch;
     const maximumPadLength = deckingProfile.installationLengthFeet * 12 * inch;
     const padMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0xb08a70,
+      color: 0xa4876f,
       map: createDeckTexture(),
       metalness: 0,
       roughness: 0.82,
@@ -413,12 +426,22 @@ if (root && viewport && preview) {
 
   const addLed = (group, configuration, width, length, clearHeight) => {
     if (configuration.lighting === 'none') return;
+    const evening = sceneMode === 'evening';
     const emissiveMaterial = new THREE.MeshStandardMaterial({
       color: 0xffe7a1,
       emissive: 0xffc85a,
-      emissiveIntensity: 2.6,
+      emissiveIntensity: evening ? 3.8 : 2.6,
       toneMapped: false
     });
+    if (evening) {
+      const poolPositions = width > 3.4 ? [-width * 0.24, width * 0.24] : [0];
+      for (const x of poolPositions) {
+        const pool = new THREE.PointLight(0xffc37a, 26, Math.max(width, length) * 1.6, 2);
+        pool.position.set(x, clearHeight - 0.12, 0);
+        pool.castShadow = false;
+        group.add(pool);
+      }
+    }
     const y = clearHeight - 0.015;
     if (configuration.lighting === 'perimeter') {
       addBox(group, [width - 0.2, 0.012, 0.018], [0, y, length / 2 - 0.075], emissiveMaterial, { castShadow: false });
@@ -600,13 +623,19 @@ if (root && viewport && preview) {
 
   const updateLighting = () => {
     if (!scene || !renderer) return;
-    scene.background = new THREE.Color(0xb8d6d3);
-    scene.fog = new THREE.Fog(0xb8d6d3, 17, 36);
+    const evening = sceneMode === 'evening';
+    const horizon = evening ? 0x141c26 : 0xc4d8d2;
+    scene.background = new THREE.Color(horizon);
+    scene.fog = new THREE.Fog(horizon, evening ? 14 : 17, evening ? 32 : 36);
     scene.children.filter((child) => child.userData.globalLight).forEach((child) => child.removeFromParent());
-    const hemisphere = new THREE.HemisphereLight(0xe7f2ff, 0x746c5c, 2.4);
+    const hemisphere = evening
+      ? new THREE.HemisphereLight(0x33465c, 0x1b1712, 0.6)
+      : new THREE.HemisphereLight(0xe7f2ff, 0x6d675b, 2.3);
     hemisphere.userData.globalLight = true;
     scene.add(hemisphere);
-    const key = new THREE.DirectionalLight(0xfff5db, 4.8);
+    const key = evening
+      ? new THREE.DirectionalLight(0xffd9a6, 1.1)
+      : new THREE.DirectionalLight(0xfff5db, 4.6);
     key.position.set(dimensions.width * 0.8, dimensions.height * 2.5, dimensions.length * 1.2);
     key.castShadow = true;
     key.shadow.mapSize.set(isCompact ? 1024 : 2048, isCompact ? 1024 : 2048);
@@ -619,11 +648,14 @@ if (root && viewport && preview) {
     key.shadow.bias = -0.0004;
     key.userData.globalLight = true;
     scene.add(key);
-    const rim = new THREE.DirectionalLight(0xbcd7ff, 0.75);
+    const rim = evening
+      ? new THREE.DirectionalLight(0x4d6d94, 0.5)
+      : new THREE.DirectionalLight(0xbcd7ff, 0.75);
     rim.position.set(-dimensions.width, dimensions.height * 1.4, -dimensions.length);
     rim.userData.globalLight = true;
     scene.add(rim);
-    renderer.toneMappingExposure = 1.08;
+    renderer.toneMappingExposure = evening ? 0.94 : 1.08;
+    scene.environmentIntensity = evening ? 0.22 : 1;
   };
 
   const modelGeometryIsReady = () => {
@@ -714,8 +746,10 @@ if (root && viewport && preview) {
     probeCamera.far = radius * 16;
     probeCamera.updateProjectionMatrix();
     const pixels = new Uint8Array(48 * 36 * 4);
+    const probeLight = new THREE.AmbientLight(0xffffff, 2.4);
     try {
       stageGroup.visible = false;
+      scene.add(probeLight);
       scene.background = new THREE.Color(0x000000);
       scene.fog = null;
       renderer.setRenderTarget(pergolaProbeTarget);
@@ -731,6 +765,7 @@ if (root && viewport && preview) {
       return false;
     } finally {
       stageGroup.visible = stageWasVisible;
+      probeLight.removeFromParent();
       scene.background = previousBackground;
       scene.fog = previousFog;
       renderer.setRenderTarget(previousTarget);
@@ -852,6 +887,12 @@ if (root && viewport && preview) {
       orbitButton?.setAttribute('aria-pressed', 'false');
     });
     orbitButton?.setAttribute('aria-pressed', String(autoRotate));
+    if (isCompact) {
+      controls.touches.ONE = null;
+      controls.touches.TWO = THREE.TOUCH.DOLLY_ROTATE;
+      renderer.domElement.style.touchAction = 'pan-y';
+      if (gestureHint) gestureHint.textContent = 'Rotate with two fingers · pinch to zoom';
+    }
 
     const pmrem = new THREE.PMREMGenerator(renderer);
     environmentTarget = pmrem.fromScene(new RoomEnvironment(), 0.04);
@@ -880,6 +921,15 @@ if (root && viewport && preview) {
     orbitButton?.addEventListener('click', () => {
       autoRotate = !autoRotate;
       orbitButton.setAttribute('aria-pressed', String(autoRotate));
+    });
+    sceneButton?.addEventListener('click', () => {
+      sceneMode = sceneMode === 'day' ? 'evening' : 'day';
+      const evening = sceneMode === 'evening';
+      sceneButton.setAttribute('aria-pressed', String(evening));
+      sceneButton.textContent = evening ? 'Day' : 'Evening';
+      if (sceneShell) sceneShell.dataset.scene = sceneMode;
+      updateLighting();
+      if (state) buildModel(state);
     });
     renderer.domElement.addEventListener('dblclick', () => updateCameraBounds(true));
     new ResizeObserver(resize).observe(viewport);

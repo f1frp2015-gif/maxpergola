@@ -395,6 +395,25 @@ if (inquiryForm) {
   });
   const accessoryField = inquiryForm.elements.namedItem('accessories');
   if (accessoryField && params.get('accessories')) accessoryField.value = params.get('accessories');
+  const recap = document.querySelector('[data-config-recap]');
+  if (recap && (params.get('sku') || params.get('package'))) {
+    const packageNames = {ST: 'Standard — manual louvers', PR: 'Pro — motorized louvers', MX: 'Max — motorized + louver-light prep', CU: 'Custom'};
+    const recapFields = {
+      sku: params.get('sku'),
+      package: packageNames[params.get('package')] || params.get('package'),
+      size: params.get('size'),
+      layout: params.get('layout'),
+      finish: params.get('finish'),
+      accessories: params.get('accessories')
+    };
+    Object.entries(recapFields).forEach(([key, value]) => {
+      const target = recap.querySelector(`[data-recap-${key}]`);
+      const row = recap.querySelector(`[data-recap-row="${key}"]`);
+      if (target && value) target.textContent = value;
+      else if (row) row.hidden = true;
+    });
+    recap.hidden = false;
+  }
   const messageField = inquiryForm.elements.namedItem('message');
   if (messageField && Object.keys(engineeringInputs).length) {
     messageField.value = `Engineering screening inputs:\n${JSON.stringify(engineeringInputs, null, 2)}\n\nPlease review these values against the selected configuration.`;
