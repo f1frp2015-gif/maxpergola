@@ -54,9 +54,9 @@
   };
 
   const modelData = {
-    Standard: {code: 'ST', start: '$4,089', roof: 'Manual adjustable louvers'},
-    Pro: {code: 'PR', start: '$5,034', roof: 'Motorized louvers'},
-    Max: {code: 'MX', start: '$7,239', roof: 'Motorized louvers with louver-light preparation'}
+    Standard: {code: 'ST', start: '$7,490', roof: 'Manual adjustable louvers'},
+    Pro: {code: 'PR', start: '$8,990', roof: 'Motorized louvers'},
+    Max: {code: 'MX', start: '$9,990', roof: 'Motorized louvers with louver-light preparation'}
   };
 
   const labels = {

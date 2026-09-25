@@ -99,8 +99,8 @@ if (configurator) {
       name: 'Standard',
       roof: 'Manual louvers',
       included: 'Aluminum frame, manual louvers, integrated gutters and post drainage',
-      startPrice: '$4,089',
-      comparePrice: '$5,841',
+      startPrice: '$7,490',
+      priceNote: 'MSRP for the base 10×10 configuration',
       image: '/assets/images/poolside-glass-pergola.jpg',
       imageAlt: 'Max Pergola Standard manual louver package beside a pool'
     },
@@ -108,8 +108,8 @@ if (configurator) {
       name: 'Pro',
       roof: 'Motorized louvers',
       included: 'Motorized louvers, perimeter LED preparation, controls and wiring review',
-      startPrice: '$5,034',
-      comparePrice: '$7,191',
+      startPrice: '$8,990',
+      priceNote: 'MSRP for the base 10×10 configuration',
       image: '/assets/images/led-lounge-pergola.jpg',
       imageAlt: 'Max Pergola Pro motorized louver package with warm lighting'
     },
@@ -117,8 +117,8 @@ if (configurator) {
       name: 'Max',
       roof: 'Motorized louvers with louver-mounted LED preparation',
       included: 'Motorized louvers, louver-mounted LED preparation, accessory compatibility review',
-      startPrice: '$7,239',
-      comparePrice: '$10,341',
+      startPrice: '$9,990',
+      priceNote: 'MSRP for the base 10×10 configuration',
       image: '/assets/images/led-lounge-pergola.jpg',
       imageAlt: 'Max Pergola Max premium motorized package with louver lighting preparation'
     },
@@ -127,7 +127,7 @@ if (configurator) {
       roof: 'Manual or motorized louvers — selected during review',
       included: 'Custom dimensions, project shop drawings, configuration-specific packing',
       startPrice: 'Written quote',
-      comparePrice: '',
+      priceNote: 'Project-specific pricing',
       image: '/assets/images/poolside-glass-pergola.jpg',
       imageAlt: 'Custom-sized Max Pergola with optional glass wall system'
     }
@@ -261,7 +261,7 @@ if (configurator) {
     setText('[data-config-finish]', labels.finish[finishCode]);
     setText('[data-config-accessories]', accessoryText);
     setText('[data-config-price]', packageDetails.startPrice);
-    setText('[data-config-compare-price]', packageDetails.comparePrice ? `Compare-at ${packageDetails.comparePrice}` : 'Project-specific pricing');
+    setText('[data-config-compare-price]', packageDetails.priceNote);
     setText('[data-config-imperial]', size.imperial);
     setText('[data-config-metric]', size.metric);
 
