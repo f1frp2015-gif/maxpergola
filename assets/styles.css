@@ -8646,3 +8646,128 @@ a {
     grid-template-columns: 1fr;
   }
 }
+
+/* 2026-09 uplift: evening scene, quote recap, form grouping, motion rhythm */
+.builder-scene[data-scene="evening"] {
+  background: linear-gradient(180deg, #101823 0%, #1a2530 39%, #232a1c 40%, #10130c 100%);
+}
+
+.builder-scene[data-scene="evening"] .builder-scene-wash {
+  background:
+    linear-gradient(180deg, rgb(4 6 9 / 38%) 0%, transparent 34%, transparent 62%, rgb(3 4 3 / 66%) 100%),
+    linear-gradient(90deg, rgb(5 6 8 / 26%), transparent 46%, rgb(5 6 8 / 14%));
+}
+
+.builder-buybox-note {
+  color: #cbb387;
+}
+
+.form-group-title {
+  margin: 14px 0 -4px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid rgba(24, 24, 24, 0.12);
+  color: var(--max-champagne-gold);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.form-group-title:first-child {
+  margin-top: 0;
+}
+
+.config-recap {
+  margin-bottom: 24px;
+  border: 1px solid rgba(190, 153, 91, 0.42);
+  border-radius: var(--radius-md);
+  padding: 18px 20px 16px;
+  background: linear-gradient(135deg, rgba(190, 153, 91, 0.1), rgba(190, 153, 91, 0.03));
+}
+
+.config-recap-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 14px;
+}
+
+.config-recap-head .eyebrow {
+  margin: 0;
+}
+
+.config-recap-head strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.76rem;
+  color: var(--ink);
+}
+
+.config-recap-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px 20px;
+  margin: 14px 0 0;
+}
+
+.config-recap-list div {
+  display: grid;
+  gap: 2px;
+}
+
+.config-recap-list dt {
+  color: #6f6a61;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.config-recap-list dd {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.config-recap-note {
+  margin: 13px 0 0;
+  color: #6f6a61;
+  font-size: 0.75rem;
+}
+
+.js [data-reveal] {
+  transition: opacity 520ms cubic-bezier(0.22, 0.61, 0.21, 1), transform 520ms cubic-bezier(0.22, 0.61, 0.21, 1);
+}
+
+.js .intent-grid > [data-reveal]:nth-child(2),
+.js .package-grid > [data-reveal]:nth-child(2),
+.js .value-grid > [data-reveal]:nth-child(2) {
+  transition-delay: 90ms;
+}
+
+.js .intent-grid > [data-reveal]:nth-child(3),
+.js .package-grid > [data-reveal]:nth-child(3),
+.js .value-grid > [data-reveal]:nth-child(3) {
+  transition-delay: 180ms;
+}
+
+.js .intent-grid > [data-reveal]:nth-child(4) {
+  transition-delay: 270ms;
+}
+
+.menu-button span,
+.menu-button::before,
+.menu-button::after {
+  height: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-delay: 0ms !important;
+  }
+}
